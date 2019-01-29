@@ -2,6 +2,15 @@
 
 #include <iostream>
 
+Area::Area()
+{
+	bg1 = Sprite::create();
+	bg2 = Sprite::create();
+	bg3 = Sprite::create();
+	fg = Sprite::create();
+	initLayers(Vec2(0.5, 0.5)); // initalizes with anchors of (0.5, 0.5)
+}
+
 // creates one background
 Area::Area(std::string backgroundLayer, Vec2 anchour) : bg1(Sprite::create(backgroundLayer))
 {
@@ -109,6 +118,22 @@ void Area::setAllAnchourPoints(Vec2 anchour)
 	bg2->setAnchorPoint(anchour);
 	bg3->setAnchorPoint(anchour);
 	fg->setAnchorPoint(anchour);
+}
+
+// gets all layers as a single draw node.
+Node * Area::getAsSingleNode()
+{
+	Node * tempNode = Node::create(); // temporary node
+	
+	// adds all the backgrounds and foreground ot the draw list.
+	if (bg1->getTexture() != nullptr)
+		tempNode->addChild(bg1);
+	
+	tempNode->addChild(bg2);
+	tempNode->addChild(bg3);
+	tempNode->addChild(fg);
+
+	return tempNode;
 }
 
 // sets the name of the area

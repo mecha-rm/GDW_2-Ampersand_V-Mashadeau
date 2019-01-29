@@ -11,7 +11,8 @@ public:
 
 private:
 	// holds file paths for background images. Make sure you alter the constructor if you fill in these spaces.
-	std::string bg_img1 = "images/backgrounds/AIN_X00a.png";
+	// C:\Users\100701758\source\repos\GDW_2 - Ampersand V - Mashadeau\Resources\images\backgrounds
+	std::string bg_img1 = "./images/backgrounds/AIN_X00a.png";
 	std::string bg_img2 = "";
 	std::string bg_img3 = "";
 

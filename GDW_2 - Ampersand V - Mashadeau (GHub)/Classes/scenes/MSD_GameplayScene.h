@@ -27,9 +27,9 @@ public:
 	
 	void initMouseListener(); // used for mouse actions
 	void initKeyboardListener(); // used for keyboard actions
-	void initContactListener(); // used for collision
-	void initPauseMenu();
+	void initContactListener(); // used for collision;
 	void initSprites();
+	void initPauseMenu();
 
 	// callbacks
 	void mouseDownCallback(Event* event);
@@ -62,7 +62,7 @@ private:
 	bool enableKeyboard = true; // turns keyboard functionality on/off.
 	bool enableContact = true; // turns collision functionality on/off.
 
-	Area sceneArea;
+	Area * sceneArea; // the current area of the scene
 	
 
 } GameplayScene;

@@ -10,6 +10,10 @@ using namespace cocos2d;
 class Area
 {
 public:
+	
+	// default constructor
+	Area();
+
 	// creates the area with a single background layer
 	// the anchour point parameter controls the point that all positionings and transformations work around. By default, it's the middle of the sprite.
 	Area(std::string backgroundLayer, Vec2 anchour = Vec2(0.5F, 0.5F));
@@ -44,6 +48,16 @@ public:
 	// returns the foreground layer
 	Sprite * getForegroundLayer() const;
 
+
+	// sets the position of all background and foreground layers to be the same.
+	void setAllLayerPositions(Vec2 position);
+
+	// sets the anchour points of all layers.
+	void setAllAnchourPoints(Vec2 anchour);
+
+	// gets all layers as a single draw node.
+	Node * getAsSingleNode();
+
 	// gets the name of the area
 	std::string getName() const;
 
@@ -71,13 +85,6 @@ public:
 	// writes the class data to a specific file.
 	void writeToFile(std::string fileName);
 
-protected:
-	// sets the area's name
-	void setName(std::string name);
-
-	// the name of the area.
-	std::string name = "";
-	
 	// Background images
 	Sprite * bg1; // the first background layer; it's the farthest back layer
 	Sprite * bg2; // the second background layer; it's infront of bg1.
@@ -85,6 +92,13 @@ protected:
 
 	// Foreground image.
 	Sprite * fg; // a foreground layer; this would go in front of all other level assets.
+
+protected:
+	// sets the area's name
+	void setName(std::string name);
+
+	// the name of the area.
+	std::string name = "";
 
 	// saves what area file to switch to when the player leaves the area they're currently in.
 	// A negative number is used to denote when the program should switch to another area, which is what these variables save.
@@ -95,6 +109,9 @@ protected:
 	std::string door5;
 
 private:
+	// initalizes the background and foreground layers.
+	void initLayers(Vec2 anchour);
+
 	std::string fileName; // the name of the file
 	std::fstream file; // the file itself
 

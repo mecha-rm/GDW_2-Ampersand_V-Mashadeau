@@ -1,5 +1,7 @@
 #include "scenes/MSD_GameplayScene.h"
 
+#include <iostream>
+
 // constructor
 MSD_GameplayScene::MSD_GameplayScene() {}
 
@@ -9,13 +11,15 @@ MSD_GameplayScene::~MSD_GameplayScene() {}
 Scene * MSD_GameplayScene::createScene()
 {
 	// 'scene' is an autorelease object
-	Scene* scene = Scene::create(); // create without physics
+	auto * scene = Scene::create(); // create without physics
 	// Scene* scene = Scene::createWithPhysics(); // create with physics
-	MSD_GameplayScene* layer = MSD_GameplayScene::create();
+	auto * layer = MSD_GameplayScene::create();
 
 	scene->addChild(layer);
 	// Vec2 winSize = Director::getInstance()->getWinSizeInPixels();
 	return scene;
+
+	// return MSD_GameplayScene::create();
 }
 
 void MSD_GameplayScene::onEnter() { Scene::onEnter(); }
@@ -49,13 +53,13 @@ void MSD_GameplayScene::initListeners()
 {
 	// uses enablers to activate or disable certain listeners.
 	if (enableMouse)
-		initMouseListener(); // init mouse
+		initMouseListener(); // initializes mouse
 	
 	if (enableKeyboard)
-		initKeyboardListener(); // Init keyboard
+		initKeyboardListener(); // initalizes keyboard
 	
 	if (enableContact)
-		initContactListener(); // Init the contact listener
+		initContactListener(); // initalizes the contact listener
 
 }
 
@@ -63,28 +67,28 @@ void MSD_GameplayScene::initListeners()
 void MSD_GameplayScene::initMouseListener()
 {
 	////Init the mouse listener
-	//mouseListener = EventListenerMouse::create();
+	mouseListener = EventListenerMouse::create();
 
-	////On Mouse Down
+	// Mouse Button Down
 	mouseListener->onMouseDown = CC_CALLBACK_1(MSD_GameplayScene::mouseDownCallback, this);
 
-	////On Mouse Up
+	// Mouse Button Up
 	mouseListener->onMouseUp = CC_CALLBACK_1(MSD_GameplayScene::mouseUpCallback, this);
 
-	////On Mouse Move
+	// Mouse Movement
 	mouseListener->onMouseMove = CC_CALLBACK_1(MSD_GameplayScene::mouseMoveCallback, this);
 
-	////On Mouse Scroll
+	// Mouse Scroll
 	mouseListener->onMouseScroll = CC_CALLBACK_1(MSD_GameplayScene::mouseScrollCallback, this);
 
-	////Add the mouse listener to the dispatcher
+	// Adding the mouse listener to the dispatcher
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
 }
 
 // Listens for keyboard input
 void MSD_GameplayScene::initKeyboardListener()
 {
-	//Create the keyboard listener
+	// creating the keyboard listener
 	keyboardListener = EventListenerKeyboard::create();
 
 	//Setting up callbacks
@@ -97,7 +101,7 @@ void MSD_GameplayScene::initKeyboardListener()
 
 void MSD_GameplayScene::initContactListener()
 {
-	//Create the contact listener
+	// creating the contact listener
 	EventListenerPhysicsContact* contactListener = EventListenerPhysicsContact::create();
 
 	//Assign callbacks
@@ -112,7 +116,7 @@ void MSD_GameplayScene::initSprites()
 {
 	sceneArea = World::getArea("AIN_X00"); // makes the area. Remember, all the anchour points are the middle of the sprite layers (0.5, 0.5).
 	sceneArea->setAllLayerPositions(Vec2(director->getWinSizeInPixels().width / 2, director->getWinSizeInPixels().height / 2)); // makes all the layers be at the middle of the screen.
-	
+	this->addChild(sceneArea->getAsSingleNode());
 
 }
 
@@ -122,30 +126,94 @@ void MSD_GameplayScene::initPauseMenu() {}
 
 void MSD_GameplayScene::mouseDownCallback(Event * event)
 {
+	// casting the event as a mouse event
+	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
+
+	//Get the position of the mouse button press
+	Vec2 mouseClickPosition = mouseEvent->getLocationInView(); // this may need to be offset depending on where the window is.
+
+	// get the mouse button from the event handler
+	EventMouse::MouseButton mouseButton = mouseEvent->getMouseButton();
+
+	// Left button was pressed
+	if (mouseButton == cocos2d::EventMouse::MouseButton::BUTTON_LEFT)
+	{
+
+	}
+	// Right button was pressed
+	else if (mouseButton == cocos2d::EventMouse::MouseButton::BUTTON_RIGHT)
+	{
+
+	}
+
+	mouseDown = true;
 }
 
 void MSD_GameplayScene::mouseUpCallback(Event * event)
 {
+	// casting the event as a mouse event
+	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
+
+	//Get the position of the mouse button press
+	Vec2 mouseClickPosition = mouseEvent->getLocationInView(); // this may need to be offset depending on where the window is.
+
+	// get the mouse button from the event handler
+	EventMouse::MouseButton mouseButton = mouseEvent->getMouseButton();
+
+	// Left button was pressed
+	if (mouseButton == cocos2d::EventMouse::MouseButton::BUTTON_LEFT)
+	{
+
+	}
+	// Right button was pressed
+	else if (mouseButton == cocos2d::EventMouse::MouseButton::BUTTON_RIGHT)
+	{
+
+	}
+
+	mouseDown = false;
+
 }
 
 void MSD_GameplayScene::mouseMoveCallback(Event * event)
 {
+	
+	// casting as a mouse event
+	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
+
+	//Get the position of the mouse from the event handler
+	Vec2 mouseEventPos = mouseEvent->getLocationInView();
+
+	//Store the position into the mouse struct
+	mousePosition = Vec2(mouseEventPos.x, 540 + mouseEventPos.y);
+
+	//Output the position to the console
+	//std::cout << this->mouse.position.x << ", " << this->mouse.position.y << std::endl;
 }
 
 void MSD_GameplayScene::mouseScrollCallback(Event * event)
 {
+	// casting as a mouse event
+	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
+
+
 }
 
 void MSD_GameplayScene::keyDownCallback(EventKeyboard::KeyCode keyCode, Event * event)
 {
+	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event); // casting as a keyboard event
+	// change last parameter to check for key codes
+	// if(keyCode == EventKeyboard::KeyCode::KEY_0)
 }
 
 void MSD_GameplayScene::keyUpCallback(EventKeyboard::KeyCode keyCode, Event * event)
 {
+	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event); // casting as a keyboard event
 }
 
 bool MSD_GameplayScene::onContactBeginCallback(PhysicsContact & contact)
 {
+	
 	return false;
 }
 

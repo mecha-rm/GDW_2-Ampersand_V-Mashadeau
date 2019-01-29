@@ -6,7 +6,7 @@
 #include "areas/AIN_X/AIN_X00.h"
 
 
-class World
+struct World
 {
 public:
 	World() = default;

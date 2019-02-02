@@ -24,7 +24,7 @@
 
 #include "AppDelegate.h"
 #include "HelloWorldScene.h"
-#include "scenes/MSD_GameplayScene.h" // the gameplay scene
+#include "scenes/MSQ_GameplayScene.h" // the gameplay scene
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -125,7 +125,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 	
     // create a scene. it's an autorelease object
-	auto scene = MSD_GameplayScene::createScene();
+	auto scene = MSQ_GameplayScene::createScene();
 	// auto scene = HelloWorld::createScene();
 	
     // run
@@ -151,9 +151,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	// INPUTS->init();
 
 	// Originally took no arguments; now takes the screen width and height
-	Scene* scene = MSD_GameplayScene::createScene(width, height);
+	Scene* scene = MSQ_GameplayScene::createScene(width, height);
 
-	// Scene* scene = MSD_GameplayScene::createScene();
+	// Scene* scene = MSQ_GameplayScene::createScene();
 	director->runWithScene(scene);
 
 	return true;

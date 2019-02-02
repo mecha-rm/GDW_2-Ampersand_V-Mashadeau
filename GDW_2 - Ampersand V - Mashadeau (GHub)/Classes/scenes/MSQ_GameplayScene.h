@@ -9,11 +9,11 @@
 
 using namespace cocos2d;
 
-typedef class MSD_GameplayScene : public Scene
+typedef class MSQ_GameplayScene : public Scene
 {
 public:
-	MSD_GameplayScene();
-	~MSD_GameplayScene();
+	MSQ_GameplayScene();
+	~MSQ_GameplayScene();
 
 	// Creates a gameplay scene.
 	static Scene* createScene();
@@ -43,7 +43,7 @@ public:
 	// update function for the scene
 	void update(float deltaTime);
 
-	CREATE_FUNC(MSD_GameplayScene);
+	CREATE_FUNC(MSQ_GameplayScene);
 
 protected:
 private:

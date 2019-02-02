@@ -1,30 +1,30 @@
-#include "scenes/MSD_GameplayScene.h"
+#include "scenes/MSQ_GameplayScene.h"
 
 #include <iostream>
 
 // constructor
-MSD_GameplayScene::MSD_GameplayScene() {}
+MSQ_GameplayScene::MSQ_GameplayScene() {}
 
 // destructor
-MSD_GameplayScene::~MSD_GameplayScene() {}
+MSQ_GameplayScene::~MSQ_GameplayScene() {}
 
-Scene * MSD_GameplayScene::createScene()
+Scene * MSQ_GameplayScene::createScene()
 {
 	// 'scene' is an autorelease object
 	auto * scene = Scene::create(); // create without physics
 	// Scene* scene = Scene::createWithPhysics(); // create with physics
-	auto * layer = MSD_GameplayScene::create();
+	auto * layer = MSQ_GameplayScene::create();
 
 	scene->addChild(layer);
 	// Vec2 winSize = Director::getInstance()->getWinSizeInPixels();
 	return scene;
 
-	// return MSD_GameplayScene::create();
+	// return MSQ_GameplayScene::create();
 }
 
-void MSD_GameplayScene::onEnter() { Scene::onEnter(); }
+void MSQ_GameplayScene::onEnter() { Scene::onEnter(); }
 
-bool MSD_GameplayScene::init()
+bool MSQ_GameplayScene::init()
 {
 	// Ensure the parent init function was called first. If it wasn't, exit this one.
 	if (!Scene::init())
@@ -49,7 +49,7 @@ bool MSD_GameplayScene::init()
 }
 
 // initializes listners; there exists toggles that determine whether a certain listener is activated or not.
-void MSD_GameplayScene::initListeners()
+void MSQ_GameplayScene::initListeners()
 {
 	// uses enablers to activate or disable certain listeners.
 	if (enableMouse)
@@ -64,55 +64,55 @@ void MSD_GameplayScene::initListeners()
 }
 
 // initalizes mouse listener
-void MSD_GameplayScene::initMouseListener()
+void MSQ_GameplayScene::initMouseListener()
 {
 	////Init the mouse listener
 	mouseListener = EventListenerMouse::create();
 
 	// Mouse Button Down
-	mouseListener->onMouseDown = CC_CALLBACK_1(MSD_GameplayScene::mouseDownCallback, this);
+	mouseListener->onMouseDown = CC_CALLBACK_1(MSQ_GameplayScene::mouseDownCallback, this);
 
 	// Mouse Button Up
-	mouseListener->onMouseUp = CC_CALLBACK_1(MSD_GameplayScene::mouseUpCallback, this);
+	mouseListener->onMouseUp = CC_CALLBACK_1(MSQ_GameplayScene::mouseUpCallback, this);
 
 	// Mouse Movement
-	mouseListener->onMouseMove = CC_CALLBACK_1(MSD_GameplayScene::mouseMoveCallback, this);
+	mouseListener->onMouseMove = CC_CALLBACK_1(MSQ_GameplayScene::mouseMoveCallback, this);
 
 	// Mouse Scroll
-	mouseListener->onMouseScroll = CC_CALLBACK_1(MSD_GameplayScene::mouseScrollCallback, this);
+	mouseListener->onMouseScroll = CC_CALLBACK_1(MSQ_GameplayScene::mouseScrollCallback, this);
 
 	// Adding the mouse listener to the dispatcher
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
 }
 
 // Listens for keyboard input
-void MSD_GameplayScene::initKeyboardListener()
+void MSQ_GameplayScene::initKeyboardListener()
 {
 	// creating the keyboard listener
 	keyboardListener = EventListenerKeyboard::create();
 
 	//Setting up callbacks
-	keyboardListener->onKeyPressed = CC_CALLBACK_2(MSD_GameplayScene::keyDownCallback, this);
-	keyboardListener->onKeyReleased = CC_CALLBACK_2(MSD_GameplayScene::keyUpCallback, this);
+	keyboardListener->onKeyPressed = CC_CALLBACK_2(MSQ_GameplayScene::keyDownCallback, this);
+	keyboardListener->onKeyReleased = CC_CALLBACK_2(MSQ_GameplayScene::keyUpCallback, this);
 
 	//Add the keyboard listener to the dispatcher
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
 }
 
-void MSD_GameplayScene::initContactListener()
+void MSQ_GameplayScene::initContactListener()
 {
 	// creating the contact listener
 	EventListenerPhysicsContact* contactListener = EventListenerPhysicsContact::create();
 
 	//Assign callbacks
-	contactListener->onContactBegin = CC_CALLBACK_1(MSD_GameplayScene::onContactBeginCallback, this);
+	contactListener->onContactBegin = CC_CALLBACK_1(MSQ_GameplayScene::onContactBeginCallback, this);
 
 	//Add the listener to the event dispatcher
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 }
 
 // initalizes all sprites
-void MSD_GameplayScene::initSprites() 
+void MSQ_GameplayScene::initSprites() 
 {
 	sceneArea = World::getArea("AIN_X00"); // makes the area. Remember, all the anchour points are the middle of the sprite layers (0.5, 0.5).
 	sceneArea->setAllLayerPositions(Vec2(director->getWinSizeInPixels().width / 2, director->getWinSizeInPixels().height / 2)); // makes all the layers be at the middle of the screen.
@@ -120,11 +120,11 @@ void MSD_GameplayScene::initSprites()
 
 }
 
-void MSD_GameplayScene::initPauseMenu() {}
+void MSQ_GameplayScene::initPauseMenu() {}
 
 //// CALLBACKS /////////////////////////////////////////////////////////////
 
-void MSD_GameplayScene::mouseDownCallback(Event * event)
+void MSQ_GameplayScene::mouseDownCallback(Event * event)
 {
 	// casting the event as a mouse event
 	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
@@ -149,7 +149,7 @@ void MSD_GameplayScene::mouseDownCallback(Event * event)
 	mouseDown = true;
 }
 
-void MSD_GameplayScene::mouseUpCallback(Event * event)
+void MSQ_GameplayScene::mouseUpCallback(Event * event)
 {
 	// casting the event as a mouse event
 	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
@@ -175,7 +175,7 @@ void MSD_GameplayScene::mouseUpCallback(Event * event)
 
 }
 
-void MSD_GameplayScene::mouseMoveCallback(Event * event)
+void MSQ_GameplayScene::mouseMoveCallback(Event * event)
 {
 	
 	// casting as a mouse event
@@ -191,7 +191,7 @@ void MSD_GameplayScene::mouseMoveCallback(Event * event)
 	//std::cout << this->mouse.position.x << ", " << this->mouse.position.y << std::endl;
 }
 
-void MSD_GameplayScene::mouseScrollCallback(Event * event)
+void MSQ_GameplayScene::mouseScrollCallback(Event * event)
 {
 	// casting as a mouse event
 	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
@@ -199,25 +199,25 @@ void MSD_GameplayScene::mouseScrollCallback(Event * event)
 
 }
 
-void MSD_GameplayScene::keyDownCallback(EventKeyboard::KeyCode keyCode, Event * event)
+void MSQ_GameplayScene::keyDownCallback(EventKeyboard::KeyCode keyCode, Event * event)
 {
 	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event); // casting as a keyboard event
 	// change last parameter to check for key codes
 	// if(keyCode == EventKeyboard::KeyCode::KEY_0)
 }
 
-void MSD_GameplayScene::keyUpCallback(EventKeyboard::KeyCode keyCode, Event * event)
+void MSQ_GameplayScene::keyUpCallback(EventKeyboard::KeyCode keyCode, Event * event)
 {
 	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event); // casting as a keyboard event
 }
 
-bool MSD_GameplayScene::onContactBeginCallback(PhysicsContact & contact)
+bool MSQ_GameplayScene::onContactBeginCallback(PhysicsContact & contact)
 {
 	
 	return false;
 }
 
-void MSD_GameplayScene::update(float deltaTime)
+void MSQ_GameplayScene::update(float deltaTime)
 {
 }
 

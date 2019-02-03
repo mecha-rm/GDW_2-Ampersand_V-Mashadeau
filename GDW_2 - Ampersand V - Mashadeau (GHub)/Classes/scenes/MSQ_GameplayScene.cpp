@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-// constructor
-MSQ_GameplayScene::MSQ_GameplayScene() {}
+// constructor; initalizes the mouse listener
+MSQ_GameplayScene::MSQ_GameplayScene() : mouse(OOP::MouseListener(this)) {}
 
 // destructor
 MSQ_GameplayScene::~MSQ_GameplayScene() {}
@@ -11,15 +11,13 @@ MSQ_GameplayScene::~MSQ_GameplayScene() {}
 Scene * MSQ_GameplayScene::createScene()
 {
 	// 'scene' is an autorelease object
-	auto * scene = Scene::create(); // create without physics
+	Scene * scene = Scene::create(); // create without physics
 	// Scene* scene = Scene::createWithPhysics(); // create with physics
 	auto * layer = MSQ_GameplayScene::create();
 
 	scene->addChild(layer);
 	// Vec2 winSize = Director::getInstance()->getWinSizeInPixels();
 	return scene;
-
-	// return MSQ_GameplayScene::create();
 }
 
 void MSQ_GameplayScene::onEnter() { Scene::onEnter(); }
@@ -52,37 +50,18 @@ bool MSQ_GameplayScene::init()
 void MSQ_GameplayScene::initListeners()
 {
 	// uses enablers to activate or disable certain listeners.
-	if (enableMouse)
-		initMouseListener(); // initializes mouse
-	
-	if (enableKeyboard)
+	if (ENABLE_MOUSE) // adds a mouse listener to the scene using the event dispatcher if ENABLE_MOUSE is true. It has a priority of 1.
+		getEventDispatcher()->addEventListenerWithFixedPriority(mouse.getListener(), 1);
+		
+	// Use this if you ever want to take out the mouse listener.
+	// getEventDispatcher()->removeEventListener(mouse.getListener());
+
+	if (ENABLE_KEYBOARD)
 		initKeyboardListener(); // initalizes keyboard
 	
-	if (enableContact)
+	if (ENABLE_CONTACT)
 		initContactListener(); // initalizes the contact listener
 
-}
-
-// initalizes mouse listener
-void MSQ_GameplayScene::initMouseListener()
-{
-	////Init the mouse listener
-	mouseListener = EventListenerMouse::create();
-
-	// Mouse Button Down
-	mouseListener->onMouseDown = CC_CALLBACK_1(MSQ_GameplayScene::mouseDownCallback, this);
-
-	// Mouse Button Up
-	mouseListener->onMouseUp = CC_CALLBACK_1(MSQ_GameplayScene::mouseUpCallback, this);
-
-	// Mouse Movement
-	mouseListener->onMouseMove = CC_CALLBACK_1(MSQ_GameplayScene::mouseMoveCallback, this);
-
-	// Mouse Scroll
-	mouseListener->onMouseScroll = CC_CALLBACK_1(MSQ_GameplayScene::mouseScrollCallback, this);
-
-	// Adding the mouse listener to the dispatcher
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
 }
 
 // Listens for keyboard input
@@ -96,9 +75,10 @@ void MSQ_GameplayScene::initKeyboardListener()
 	keyboardListener->onKeyReleased = CC_CALLBACK_2(MSQ_GameplayScene::keyUpCallback, this);
 
 	//Add the keyboard listener to the dispatcher
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
+	getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboardListener, this);
 }
 
+// Listens for contact.
 void MSQ_GameplayScene::initContactListener()
 {
 	// creating the contact listener
@@ -108,7 +88,7 @@ void MSQ_GameplayScene::initContactListener()
 	contactListener->onContactBegin = CC_CALLBACK_1(MSQ_GameplayScene::onContactBeginCallback, this);
 
 	//Add the listener to the event dispatcher
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
+	getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this);
 }
 
 // initalizes all sprites
@@ -116,89 +96,17 @@ void MSQ_GameplayScene::initSprites()
 {
 	sceneArea = World::getArea("AIN_X00"); // makes the area. Remember, all the anchour points are the middle of the sprite layers (0.5, 0.5).
 	sceneArea->setAllLayerPositions(Vec2(director->getWinSizeInPixels().width / 2, director->getWinSizeInPixels().height / 2)); // makes all the layers be at the middle of the screen.
-	this->addChild(sceneArea->getAsSingleNode());
+	this->addChild(sceneArea->getAsSingleNode()); // gets the backgrounds as one node.
 
+	grid = new OOP::PrimitiveGrid(cocos2d::Vec2(0.0F, 0.0F), cocos2d::Vec2(director->getWinSizeInPixels().width, director->getWinSizeInPixels().height), 128.0F, Color4F::WHITE);
+	grid->getPrimitive()->setVisible(true); // makes the grid visible (or not visible)
+	this->addChild(grid->getPrimitive()); // adds grid to drawList
 }
 
+// initializes pause menu; currently does nothing.
 void MSQ_GameplayScene::initPauseMenu() {}
 
 //// CALLBACKS /////////////////////////////////////////////////////////////
-
-void MSQ_GameplayScene::mouseDownCallback(Event * event)
-{
-	// casting the event as a mouse event
-	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
-
-	//Get the position of the mouse button press
-	Vec2 mouseClickPosition = mouseEvent->getLocationInView(); // this may need to be offset depending on where the window is.
-
-	// get the mouse button from the event handler
-	EventMouse::MouseButton mouseButton = mouseEvent->getMouseButton();
-
-	// Left button was pressed
-	if (mouseButton == cocos2d::EventMouse::MouseButton::BUTTON_LEFT)
-	{
-
-	}
-	// Right button was pressed
-	else if (mouseButton == cocos2d::EventMouse::MouseButton::BUTTON_RIGHT)
-	{
-
-	}
-
-	mouseDown = true;
-}
-
-void MSQ_GameplayScene::mouseUpCallback(Event * event)
-{
-	// casting the event as a mouse event
-	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
-
-	//Get the position of the mouse button press
-	Vec2 mouseClickPosition = mouseEvent->getLocationInView(); // this may need to be offset depending on where the window is.
-
-	// get the mouse button from the event handler
-	EventMouse::MouseButton mouseButton = mouseEvent->getMouseButton();
-
-	// Left button was pressed
-	if (mouseButton == cocos2d::EventMouse::MouseButton::BUTTON_LEFT)
-	{
-
-	}
-	// Right button was pressed
-	else if (mouseButton == cocos2d::EventMouse::MouseButton::BUTTON_RIGHT)
-	{
-
-	}
-
-	mouseDown = false;
-
-}
-
-void MSQ_GameplayScene::mouseMoveCallback(Event * event)
-{
-	
-	// casting as a mouse event
-	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
-
-	//Get the position of the mouse from the event handler
-	Vec2 mouseEventPos = mouseEvent->getLocationInView();
-
-	//Store the position into the mouse struct
-	mousePosition = Vec2(mouseEventPos.x, 540 + mouseEventPos.y);
-
-	//Output the position to the console
-	//std::cout << this->mouse.position.x << ", " << this->mouse.position.y << std::endl;
-}
-
-void MSQ_GameplayScene::mouseScrollCallback(Event * event)
-{
-	// casting as a mouse event
-	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
-
-
-}
-
 void MSQ_GameplayScene::keyDownCallback(EventKeyboard::KeyCode keyCode, Event * event)
 {
 	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event); // casting as a keyboard event
@@ -213,10 +121,10 @@ void MSQ_GameplayScene::keyUpCallback(EventKeyboard::KeyCode keyCode, Event * ev
 
 bool MSQ_GameplayScene::onContactBeginCallback(PhysicsContact & contact)
 {
-	
 	return false;
 }
 
+// update loop
 void MSQ_GameplayScene::update(float deltaTime)
 {
 }

@@ -1,6 +1,6 @@
 #include "areas/World.h"
 
-Area * World::getArea(const std::string AIN)
+Area * World::getArea(std::string AIN)
 {
 	Area * newArea; // the new area to be made.
 	std::string tempStr = AIN; // a temporary string that holds the AIN value.
@@ -17,10 +17,10 @@ Area * World::getArea(const std::string AIN)
 	if (tempStr.length() != 7)
 		return nullptr;
 
-	// Goes through every area and sees if it can find what the 
+	// Goes through every area and sees if it can find what the player has asked for.
 	if (AIN == "AIN_X00")
 	{
-		newArea = &AIN_X00();
+		newArea = new AIN_X00();
 	}
 
 	return newArea;

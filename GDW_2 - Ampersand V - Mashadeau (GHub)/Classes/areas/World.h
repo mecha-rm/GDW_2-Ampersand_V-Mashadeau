@@ -8,11 +8,10 @@
 
 struct World
 {
-public:
 	World() = default;
 
 	// returns an area based on a passed AIN number.
-	static Area * getArea(const std::string AIN);
+	static Area * getArea(std::string AIN);
 
 };
 

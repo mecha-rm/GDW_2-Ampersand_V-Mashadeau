@@ -77,18 +77,30 @@ public:
 	void loadFromFile();
 
 	// Background images
-	Sprite * bg1; // the first background layer; it's the farthest back layer
-	Sprite * bg2; // the second background layer; it's infront of bg1.
-	Sprite * bg3; // the third background layer; it's in front of bg2.
+	Sprite * bg1 = nullptr; // the first background layer; it's the farthest back layer
+	Sprite * bg2 = nullptr; // the second background layer; it's infront of bg1.
+	Sprite * bg3 = nullptr; // the third background layer; it's in front of bg2.
 
 	// Foreground image.
-	Sprite * fg; // a foreground layer; this would go in front of all other level assets.
+	Sprite * fg = nullptr; // a foreground layer; this would go in front of all other level assets.
 
 private:
 	std::string fileName; // the name of the file
 	std::fstream file; // the file itself
 
 protected:
+	// setting bg1 layer
+	void setBackgroundLayer1(std::string backgroundLayer1, Vec2 anchour = Vec2(0.5F, 0.5F));
+
+	// setting bg2 layer
+	void setBackgroundLayer2(std::string backgroundLayer2, Vec2 anchour = Vec2(0.5F, 0.5F));
+
+	// setting bg3 layer
+	void setBackgroundLayer3(std::string backgroundLayer3, Vec2 anchour = Vec2(0.5F, 0.5F));
+
+	// setting the fg layer
+	void setForegroundLayer(std::string foregroundLayer, Vec2 anchour = Vec2(0.5F, 0.5F));
+
 	// sets the area's name
 	void setName(std::string name);
 
@@ -96,18 +108,20 @@ protected:
 	std::string name = "";
 
 	// saves what area file to switch to when the player leaves the area they're currently in.
+	// format: AIN_###_#
+	// * the last digital (after the second underscore) determines what spawn point to use.
 	std::string exit0 = "";
 	std::string exit1 = "";
 	std::string exit2 = "";
 	std::string exit3 = "";
 	std::string exit4 = "";
 
-	// Saves the spawning positions for each 
+	// Saves the spawning positions for each possible exit. When the user enters an exit, a specific spawning point is looking for.
 	Vec2 spawn0 = { 0.0F, 0.0F };
-	Vec2 spawn1 = { 0.0F, 0.0F };
-	Vec2 spawn2 = { 0.0F, 0.0F };
-	Vec2 spawn3 = { 0.0F, 0.0F };
-	Vec2 spawn4 = { 0.0F, 0.0F };
+	Vec2 spawn1 = spawn0;
+	Vec2 spawn2 = spawn1;
+	Vec2 spawn3 = spawn2;
+	Vec2 spawn4 = spawn3;
 
 };
 

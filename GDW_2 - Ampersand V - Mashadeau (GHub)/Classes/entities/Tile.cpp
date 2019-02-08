@@ -2,7 +2,7 @@
 
 
 
-entity::Tile::Tile()
+entity::Tile::Tile(int type, char letter, unsigned int copyUp, unsigned int copyRight, unsigned int copyDown, int copyLeft)
 {
 }
 

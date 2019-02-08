@@ -90,6 +90,30 @@ bool umath::circleCollision(Vec2 pos1, float radius1, Vec2 pos2, float radius2)
 	return (dist <= radius1 + radius2);	
 }
 
+// calculates AABB collision with two rectangles based on a passed minimum and maximum value for both.
+// Takes the minimum and maximum of the two rectangles.
+bool umath::aabbCollision(const Vec2 aMin, Vec2 aMax, Vec2 bMin, Vec2 bMax)
+{
+	// booleans for collision checks
+	bool xCol, yCol;
+
+	// xCol gets the result of this collision check. If the projection on the x-axis shows collision, then xCol is set to true.
+	xCol = ((bMin.x > aMin.x && bMin.x < aMax.x) ^ (aMin.x > bMin.x && aMin.x < bMax.x));
+
+	//  yCol gets the result of this collision check. If the projection on the y-axis shows collision, yCol is set to true.
+	yCol = ((bMin.y > aMin.y && bMin.y < aMax.y) ^ (aMin.y > bMin.y && aMin.y < bMax.y));
+
+	// if the x-collision and y-collision return positive, then there is collision.
+	return (xCol && yCol);
+}
+
+// calculates rectnagle collision using two cocos2d rectangles
+bool umath::aabbCollision(const Rect * rect1, const Rect * rect2)
+{
+	// Reuses the other collison check.
+	return umath::aabbCollision(Vec2(rect1->getMinX, rect1->getMinY), Vec2(rect1->getMaxX, rect1->getMaxY), Vec2(rect2->getMinX, rect2->getMinY), Vec2(rect2->getMaxX, rect2->getMaxY));
+}
+
 // converts from degrees to radians
 float umath::degreesToRadians(float degrees) { return degrees * (M_PI / 180); }
 

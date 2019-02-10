@@ -1,8 +1,10 @@
 // Stores the class that's used to create the level screens in the game.
 #pragma once
 
-#include "2d/CCSprite.h"
+// #include "PlatformManager.h"
+#include "entities/Tile.h"
 
+#include "2d/CCSprite.h"
 #include <string>
 #include <fstream> // used for file reading and writing
 using namespace cocos2d;
@@ -42,6 +44,9 @@ public:
 
 	// sets the anchour points of all layers.
 	void setAllAnchourPoints(Vec2 anchour);
+
+	// puts an array of tiles into a vector.
+	void arrayToVector(entity::Tile ** newTiles, int rows, int columns);
 
 	// gets all layers as a single draw node.
 	Node * getAsSingleNode();
@@ -123,5 +128,12 @@ protected:
 	Vec2 spawn3 = spawn2;
 	Vec2 spawn4 = spawn3;
 
+	// The size of the screen is 13 X 7.5 on full screen (i.e. 13 128 X 128 blocks along the x-axis, and 7.5 128 X 128 blocks along the y-axis.
+	// The ROW_MAX and COL_MAX determines the maximum size of the area. They are currently 30 X 52 (13 * 4, 7.5 * 4)
+	static const unsigned int ROW_MAX = 30; // rows
+	static const unsigned int COL_MAX = 52; // columns
+
+	std::vector<entity::Tile *> sceneTiles;
+	// entity::Tile * tileGrid[ROW_MAX][COL_MAX];
 };
 

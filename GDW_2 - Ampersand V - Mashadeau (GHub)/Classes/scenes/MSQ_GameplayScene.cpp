@@ -127,6 +127,7 @@ bool MSQ_GameplayScene::onContactBeginCallback(PhysicsContact & contact)
 // update loop
 void MSQ_GameplayScene::update(float deltaTime)
 {
+	// this->getDefaultCamera()->setPosition(/*player's position goes here*/);
 }
 
 

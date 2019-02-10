@@ -2,39 +2,18 @@
 
 #include <iostream>
 
+const unsigned int Area::ROW_MAX;
+const unsigned int Area::COL_MAX;
+
 // creates three backgrounds, and a foreground
 Area::Area(std::string backgroundLayer1, std::string backgroundLayer2, std::string backgroundLayer3, std::string foregroundLayer, Vec2 anchour)
 {
+	// creates all the backgrounds and foregrounds
+	setBackgroundLayer1(backgroundLayer1, anchour);
+	setBackgroundLayer2(backgroundLayer2, anchour);
+	setBackgroundLayer3(backgroundLayer3, anchour);
+	setForegroundLayer(foregroundLayer, anchour);
 
-	bg1 = Sprite::create(backgroundLayer1); // creates background layer 1
-	bg1->setAnchorPoint(anchour); // sets the anchour point of the 1st background layer.
-	bg1->setGlobalZOrder(0.0F);
-
-	// For these backgrounds, if no image was provided, they're left as nullptrs. If an image is provided, then the sprites are created.
-	// As with bg1, they all use the same anchour point.
-	// Background Layer 2
-	if (backgroundLayer2 != "")
-	{
-		bg2 = Sprite::create(backgroundLayer2);
-		bg2->setAnchorPoint(anchour);
-		bg2->setGlobalZOrder(0.1F);
-	}
-	
-	// Background Layer 3
-	if (backgroundLayer3 != "")
-	{
-		bg3 = Sprite::create(backgroundLayer3);
-		bg3->setAnchorPoint(anchour);
-		bg3->setGlobalZOrder(0.2F);
-	}
-		
-	// Foreground Layer
-	if (foregroundLayer != "")
-	{
-		fg = Sprite::create(foregroundLayer);
-		fg->setAnchorPoint(anchour);
-		fg->setGlobalZOrder(9.0F); // this should be above everything except the mouse label
-	}
 }
 
 // destructor; releases all sprites.
@@ -52,9 +31,13 @@ Sprite * Area::getBackgroundLayer1() const { return bg1; }
 // sets background layer 1
 void Area::setBackgroundLayer1(std::string backgroundLayer1, Vec2 anchour)
 {
+	if (backgroundLayer1 == "") // if the layer is blank, then the sprite isn't created.
+		return;
+
 	if (bg1 == nullptr) // if bg1 is a nullptr (which it should never be), then the create function is called.
 	{
 		bg1 = Sprite::create(backgroundLayer1);
+		bg1->setGlobalZOrder(0.0F);
 	}
 	else // changes texture.
 	{
@@ -63,12 +46,16 @@ void Area::setBackgroundLayer1(std::string backgroundLayer1, Vec2 anchour)
 
 	bg1->setAnchorPoint(anchour); // setting the anchour point.
 }
+
 // Returns the second background layer
 Sprite * Area::getBackgroundLayer2() const { return bg2; }
 
 // sets background layer 2
 void Area::setBackgroundLayer2(std::string backgroundLayer2, Vec2 anchour)
 {
+	if (backgroundLayer2 == "") // if the layer is blank, then the sprite isn't created.
+		return;
+
 	if (bg2 == nullptr) // if bg2 is a nullptr, then the create function is called.
 	{
 		bg2 = Sprite::create(backgroundLayer2);
@@ -88,6 +75,9 @@ Sprite * Area::getBackgroundLayer3() const { return bg3; }
 // sets background layer 3
 void Area::setBackgroundLayer3(std::string backgroundLayer3, Vec2 anchour)
 {
+	if (backgroundLayer3 == "") // if the layer is blank, then the sprite isn't created.
+		return;
+
 	if (bg3 == nullptr) // if bg3 is a nullptr, then the create function is called.
 	{
 		bg3 = Sprite::create(backgroundLayer3);
@@ -126,9 +116,13 @@ Sprite * Area::getForegroundLayer() const { return fg; }
 // sets foreground layer
 void Area::setForegroundLayer(std::string foregroundLayer, Vec2 anchour)
 {
+	if (foregroundLayer == "") // if the layer is blank, then the sprite isn't created.
+		return;
+
 	if (fg == nullptr) // if bg3 is a nullptr, then the create function is called.
 	{
 		fg = Sprite::create(foregroundLayer);
+		fg->setGlobalZOrder(9.0F);
 	}
 	else // changes texture.
 	{
@@ -171,6 +165,72 @@ void Area::setAllAnchourPoints(Vec2 anchour)
 		fg->setAnchorPoint(anchour);
 }
 
+// puts an array of tiles  into the tile vector.
+void Area::arrayToVector(entity::Tile ** tileGrid, int rows, int columns)
+{
+	float offset = 0.0F;
+
+	for (int row = 0; row < rows; row++)
+	{
+		for (int col = 0; col < columns; col++)
+		{
+			if (&tileGrid[row][col] == NULL) // if the location is a nullptr, the program skips it
+				continue;
+
+			sceneTiles.push_back(&tileGrid[row][col]); // adds the tile to the scene.
+
+			if (tileGrid[row][col].COPY_UP > 0) // Copies Upwards
+			{
+				// If the user wants the sprite to be offset by its actual size, the textureRect's height is used. If not, then 128.0 pixels are used.
+				offset = (tileGrid[row][col].OFFSET_BY_SPRITE_SIZE) ? tileGrid[row][col].getSprite()->getTextureRect().getMaxY() : 128.0F;
+
+				for (int i = 1; i <= tileGrid[row][col].COPY_UP; i++) // while there are still copies left to be made...
+				{
+					sceneTiles.push_back(new entity::Tile(tileGrid[row][col].getTIN(), tileGrid[row][col].getLetter())); // adds the new tile to the vector.
+					sceneTiles.at(sceneTiles.size() - 1)->setPositionY(tileGrid[row][col].getPositionY() + offset * i); // makes a tile one square above the previous tile.
+				}
+			}
+
+			if (tileGrid[row][col].COPY_DOWN > 0) // Copies  Down
+			{
+				// If the user wants the sprite to be offset by its actual size, the textureRect's height is used. If not, then 128.0 pixels are used.
+				offset = (tileGrid[row][col].OFFSET_BY_SPRITE_SIZE) ? tileGrid[row][col].getSprite()->getTextureRect().getMaxY() : 128.0F;
+
+				for (int i = 1; i <= tileGrid[row][col].COPY_DOWN; i++) // while there are still copies left to be made...
+				{
+					sceneTiles.push_back(new entity::Tile(tileGrid[row][col].getTIN(), tileGrid[row][col].getLetter())); // adds the new tile to the vector.
+					sceneTiles.at(sceneTiles.size() - 1)->setPositionY(tileGrid[row][col].getPositionY() - offset * i); // makes a tile one square below the previous tile.
+				}
+			}
+
+			if (tileGrid[row][col].COPY_LEFT > 0) // Copies left
+			{
+				// If the user wants the sprite to be offset by its actual size, the textureRect's width is used. If not, then 128.0 pixels are used.
+				offset = (tileGrid[row][col].OFFSET_BY_SPRITE_SIZE) ? tileGrid[row][col].getSprite()->getTextureRect().getMaxX() : 128.0F;
+
+				for (int i = 1; i <= tileGrid[row][col].COPY_LEFT; i++) // while there are still copies left to be made...
+				{
+					sceneTiles.push_back(new entity::Tile(tileGrid[row][col].getTIN(), tileGrid[row][col].getLetter())); // adds the new tile to the vector.
+					sceneTiles.at(sceneTiles.size() - 1)->setPositionX(tileGrid[row][col].getPositionX() - offset * i); // makes a tile one square below the previous tile.
+				}
+			}
+
+			if (tileGrid[row][col].COPY_RIGHT > 0) // Copies Right
+			{
+				// If the user wants the sprite to be offset by its actual size, the textureRect's width is used. If not, then 128.0 pixels are used.
+				offset = (tileGrid[row][col].OFFSET_BY_SPRITE_SIZE) ? tileGrid[row][col].getSprite()->getTextureRect().getMaxX() : 128.0F;
+
+				for (int i = 1; i <= tileGrid[row][col].COPY_RIGHT; i++) // while there are still copies left to be made...
+				{
+					sceneTiles.push_back(new entity::Tile(tileGrid[row][col].getTIN(), tileGrid[row][col].getLetter())); // adds the new tile to the vector.
+					sceneTiles.at(sceneTiles.size() - 1)->setPositionX(tileGrid[row][col].getPositionX() + offset * i); // makes a tile one square below the previous tile.
+				}
+			}
+
+		}
+	}
+}
+
 // gets all layers as a single draw node.
 Node * Area::getAsSingleNode()
 {
@@ -188,6 +248,10 @@ Node * Area::getAsSingleNode()
 	
 	if(fg != nullptr)
 		tempNode->addChild(fg);
+
+	for (int i = 0; i < sceneTiles.size(); i++) // adds all the sprites from the platform vector
+		tempNode->addChild(sceneTiles.at(i)->getSprite());
+	
 
 	return tempNode;
 }
@@ -232,14 +296,6 @@ void Area::writeToFile(std::string fileName)
 void Area::loadFromFile()
 {
 }
-
-
-
-
-
-
-
-
 
 // sets the area's name.
 void Area::setName(std::string name) { this->name = name; }

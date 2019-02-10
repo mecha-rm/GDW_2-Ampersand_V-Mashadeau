@@ -111,7 +111,7 @@ bool umath::aabbCollision(const Vec2 aMin, Vec2 aMax, Vec2 bMin, Vec2 bMax)
 bool umath::aabbCollision(const Rect * rect1, const Rect * rect2)
 {
 	// Reuses the other collison check.
-	return umath::aabbCollision(Vec2(rect1->getMinX, rect1->getMinY), Vec2(rect1->getMaxX, rect1->getMaxY), Vec2(rect2->getMinX, rect2->getMinY), Vec2(rect2->getMaxX, rect2->getMaxY));
+	return umath::aabbCollision(Vec2(rect1->getMinX(), rect1->getMinY()), Vec2(rect1->getMaxX(), rect1->getMaxY()), Vec2(rect2->getMinX(), rect2->getMinY()), Vec2(rect2->getMaxX(), rect2->getMaxY()));
 }
 
 // converts from degrees to radians

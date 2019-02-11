@@ -14,11 +14,13 @@ entity::Tile::~Tile() {}
 // creates the tile based on a provided type and letter.
 void entity::Tile::createTile(unsigned int TIN, char letter)
 {
-	DrawNode * tempNode = DrawNode::create();
+	DrawNode * tempNode = DrawNode::create(); // used to create an enemy square if no tile of the provided TIN exists.
 	
 	sprite->setGlobalZOrder(3.0F);
-	
 	tempNode->setGlobalZOrder(3.0F);
+
+	this->TIN = TIN; // setting the TIN; this will be changed later if a platform does not exist of this number.
+	this->LETTER = letter; // setting the letter identifier; this will be changed later if it is invalid.
 
 	switch (TIN)
 	{
@@ -37,13 +39,14 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		
 		// this->LETTER = 'a'; // there's only one block at the moment, so it's set as type a.
 		setSprite(Sprite::create("images/tiles/TIN_010.png")); // sets the image for the sprite
-		
-		this->TIN = 10; // setting the TIN
-		switch (LETTER)
+		switch (letter)
 		{
 		case 'a': // 'a' is also the default type.
 		default:
-			this->LETTER = 'a';
+			this->LETTER = 'a'; // since 'a' is also the default, this is set to 'a', just to be sure.
+			name = "Stone Block";
+			description = "A block made of stone.";
+			
 			setTextureRect(0.0F, 0.0F, 128.0F, 128.0F);
 
 			break;
@@ -57,22 +60,29 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 
 
 	default:
-		this->TIN = 0;
-		this->LETTER = 'a';
-		setSprite(cocos2d::Sprite::create("images/tiles/TIN_010.png")); // uses TIN_010 by default. This will be covered up.
+		this->TIN = 0; // a tile of type 0 is invalid. This number is taken up by something else, but said thing does not actuall make a tile.
+		this->LETTER = 'a'; // default letter of 'a'.
+		name = "NON_EXISTENT_TILE";
+		description = "Unable to find data";
+
+		setSprite(cocos2d::Sprite::create()); // uses TIN_010 by default. This will be covered up.
 		sprite->setTextureRect(Rect(0.0F, 0.0F, 128.0F, 128.0F)); // creates a texture rect, so that the default only has one tile
-		
-		tempNode->drawSolidRect(Vec2(0.0F, 0.0F), Vec2(128.0F, 128.0F), Color4F::BLUE); // creates a solid blue rectangle to go over the actual image.
-		tempNode->drawRect(Vec2(0.0F, 0.0F), Vec2(128.0F, 128.0F), Color4F::RED); // creates an outline for the rectangle, and adds it to the sprite.
+		sprite->setColor(Color3B::RED);
+		tempNode->drawRect(Vec2(0.0F, 0.0F), Vec2(sprite->getTextureRect().getMaxX(), sprite->getTextureRect().getMaxY()), Color4F::BLUE); // creates an outline for the rectangle, and adds it to the sprite.
 		sprite->addChild(tempNode); // adds the tempNode so that it goes over the sprite.
+		
 		break;
 	}
 }
 
+// returns the tile identification number
+const unsigned int entity::Tile::getTIN() const { return TIN; }
 
-const unsigned int entity::Tile::getTIN() const
-{
-	return TIN;
-}
 // the letter of the tile
 const char entity::Tile::getLetter() const { return LETTER; }
+
+// the update loop for for the tiles
+void entity::Tile::update(float deltaTime)
+{
+	Entity::update(deltaTime); // calls the 'Entity' update loop
+}

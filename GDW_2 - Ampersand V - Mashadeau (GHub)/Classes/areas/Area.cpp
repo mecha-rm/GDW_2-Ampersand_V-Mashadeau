@@ -2,8 +2,9 @@
 
 #include <iostream>
 
-const unsigned int Area::ROW_MAX;
-const unsigned int Area::COL_MAX;
+const unsigned int Area::ROW_MAX; // maximum row amount
+const unsigned int Area::COL_MAX; // maximum column amount
+const float Area::GRID_UNIT_SIZE = 128.0F; // grid square size
 
 // creates three backgrounds, and a foreground
 Area::Area(std::string backgroundLayer1, std::string backgroundLayer2, std::string backgroundLayer3, std::string foregroundLayer, Vec2 anchour)
@@ -165,73 +166,7 @@ void Area::setAllAnchourPoints(Vec2 anchour)
 		fg->setAnchorPoint(anchour);
 }
 
-// puts an array of tiles  into the tile vector.
-void Area::arrayToVector(entity::Tile ** tileGrid, int rows, int columns)
-{
-	float offset = 0.0F;
-
-	for (int row = 0; row < rows; row++)
-	{
-		for (int col = 0; col < columns; col++)
-		{
-			if (&tileGrid[row][col] == NULL) // if the location is a nullptr, the program skips it
-				continue;
-
-			sceneTiles.push_back(&tileGrid[row][col]); // adds the tile to the scene.
-
-			if (tileGrid[row][col].COPY_UP > 0) // Copies Upwards
-			{
-				// If the user wants the sprite to be offset by its actual size, the textureRect's height is used. If not, then 128.0 pixels are used.
-				offset = (tileGrid[row][col].OFFSET_BY_SPRITE_SIZE) ? tileGrid[row][col].getSprite()->getTextureRect().getMaxY() : 128.0F;
-
-				for (int i = 1; i <= tileGrid[row][col].COPY_UP; i++) // while there are still copies left to be made...
-				{
-					sceneTiles.push_back(new entity::Tile(tileGrid[row][col].getTIN(), tileGrid[row][col].getLetter())); // adds the new tile to the vector.
-					sceneTiles.at(sceneTiles.size() - 1)->setPositionY(tileGrid[row][col].getPositionY() + offset * i); // makes a tile one square above the previous tile.
-				}
-			}
-
-			if (tileGrid[row][col].COPY_DOWN > 0) // Copies  Down
-			{
-				// If the user wants the sprite to be offset by its actual size, the textureRect's height is used. If not, then 128.0 pixels are used.
-				offset = (tileGrid[row][col].OFFSET_BY_SPRITE_SIZE) ? tileGrid[row][col].getSprite()->getTextureRect().getMaxY() : 128.0F;
-
-				for (int i = 1; i <= tileGrid[row][col].COPY_DOWN; i++) // while there are still copies left to be made...
-				{
-					sceneTiles.push_back(new entity::Tile(tileGrid[row][col].getTIN(), tileGrid[row][col].getLetter())); // adds the new tile to the vector.
-					sceneTiles.at(sceneTiles.size() - 1)->setPositionY(tileGrid[row][col].getPositionY() - offset * i); // makes a tile one square below the previous tile.
-				}
-			}
-
-			if (tileGrid[row][col].COPY_LEFT > 0) // Copies left
-			{
-				// If the user wants the sprite to be offset by its actual size, the textureRect's width is used. If not, then 128.0 pixels are used.
-				offset = (tileGrid[row][col].OFFSET_BY_SPRITE_SIZE) ? tileGrid[row][col].getSprite()->getTextureRect().getMaxX() : 128.0F;
-
-				for (int i = 1; i <= tileGrid[row][col].COPY_LEFT; i++) // while there are still copies left to be made...
-				{
-					sceneTiles.push_back(new entity::Tile(tileGrid[row][col].getTIN(), tileGrid[row][col].getLetter())); // adds the new tile to the vector.
-					sceneTiles.at(sceneTiles.size() - 1)->setPositionX(tileGrid[row][col].getPositionX() - offset * i); // makes a tile one square below the previous tile.
-				}
-			}
-
-			if (tileGrid[row][col].COPY_RIGHT > 0) // Copies Right
-			{
-				// If the user wants the sprite to be offset by its actual size, the textureRect's width is used. If not, then 128.0 pixels are used.
-				offset = (tileGrid[row][col].OFFSET_BY_SPRITE_SIZE) ? tileGrid[row][col].getSprite()->getTextureRect().getMaxX() : 128.0F;
-
-				for (int i = 1; i <= tileGrid[row][col].COPY_RIGHT; i++) // while there are still copies left to be made...
-				{
-					sceneTiles.push_back(new entity::Tile(tileGrid[row][col].getTIN(), tileGrid[row][col].getLetter())); // adds the new tile to the vector.
-					sceneTiles.at(sceneTiles.size() - 1)->setPositionX(tileGrid[row][col].getPositionX() + offset * i); // makes a tile one square below the previous tile.
-				}
-			}
-
-		}
-	}
-}
-
-// gets all layers as a single draw node.
+// gets all graphic elements as a single node.
 Node * Area::getAsSingleNode()
 {
 	Node * tempNode = Node::create(); // temporary node
@@ -249,8 +184,11 @@ Node * Area::getAsSingleNode()
 	if(fg != nullptr)
 		tempNode->addChild(fg);
 
-	for (int i = 0; i < sceneTiles.size(); i++) // adds all the sprites from the platform vector
+	for (int i = 0; i < sceneTiles.size(); i++) // adds all the tiles from the tile vector
 		tempNode->addChild(sceneTiles.at(i)->getSprite());
+
+	for (int i = 0; i < sceneEnemies.size(); i++) // adds all the enemies from the enemy vector
+		tempNode->addChild(sceneEnemies[i]->getSprite());
 	
 
 	return tempNode;
@@ -258,6 +196,9 @@ Node * Area::getAsSingleNode()
 
 // sets the name of the area
 std::string Area::getName() const { return name; }
+
+// sets the area's name.
+void Area::setName(std::string name) { this->name = name; }
 
 // returns the location exit 0 leads to.
 std::string Area::getExit0() { return exit0; }
@@ -273,6 +214,27 @@ std::string Area::getExit3() { return exit3; }
 
 // returns the location exit 4 leads to.
 std::string Area::getExit4() { return exit4; }
+
+// returns spawn point #0
+Vec2 Area::getSpawn0() { return spawn0; }
+
+// returns spawn point #1
+Vec2 Area::getSpawn1() { return spawn1; }
+
+// returns spawn point #2
+Vec2 Area::getSpawn2() { return spawn2; }
+
+// returns spawn point #3
+Vec2 Area::getSpawn3() { return spawn3; }
+
+// returns spawn point #4
+Vec2 Area::getSpawn4(){ return spawn4; }
+
+// returns the tiles in the area.
+std::vector<entity::Tile*> Area::getSceneTiles() { return sceneTiles; }
+
+// returns the enemies in the scene
+std::vector<entity::Enemy*> Area::getSceneEnemies() { return sceneEnemies; }
 
 // gets the class data in bytes.
 char * Area::toBytes() const
@@ -295,10 +257,20 @@ void Area::writeToFile(std::string fileName)
 // loads level information from a file if the file isn't empty.
 void Area::loadFromFile()
 {
+
 }
 
-// sets the area's name.
-void Area::setName(std::string name) { this->name = name; }
+// updates the area
+void Area::update(float deltaTime)
+{
+	// updates the scene tiles
+	for (int i = 0; i < sceneTiles.size(); i++)
+		sceneTiles.at(i)->update(deltaTime);
+
+	// updates the enemies
+	for (int i = 0; i < sceneEnemies.size(); i++)
+		sceneEnemies[i]->update(deltaTime);
+}
 
 
 

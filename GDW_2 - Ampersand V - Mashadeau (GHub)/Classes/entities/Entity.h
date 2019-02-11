@@ -71,22 +71,43 @@ namespace entity
 		float getForceX() const;
 		// gets hte amount of force the entity has on the y-axis.
 		float getForceY() const;
-		// sets the amount of force the entity has.
 
+		// sets the force of the entity
 		void setForce(Vec2 force);
+		// sets the force of the entity
+		void setForce(float x, float y);
 		// adds to the entity's current amount of force
 		void addForce(Vec2 force);
 		// adds force on the individual axes.
 		void addForce(float forceX = 0.0F, float forceY = 0.0F);
+		// returns the maximum velocity of the entity.
+		Vec2 getMaxVelocity();
+
+		// returns the deceleration rate of the entity.
+		float getDecelerate() const;
+		// returns at what point the entity comes to a complete stop.
+		float getForceStop() const;
+		// returns whether the entity has a constant velocity or not.
+		bool getConstVelocity() const;
+		
 		// update loop
 		void update(float deltaTime);
 
 	private:
 		float mass = 1.0; // the mass of the entity
 		
-		Vec2 acceleration = Vec2(0.0f, 0.0f); // the acceleration of the entity
-		Vec2 velocity = Vec2(0.0f, 0.0f); // the velocity of the entity
-		bool constVelocity = false; // makes it so that the entity only has one speed.
+		// the velocity of the entity
+		Vec2 velocity = Vec2(0.0f, 0.0f);
+		// the maximum velocity an entity can reach.
+		Vec2 maxVelocity = Vec2(999.0F, 999.0F);
+		
+		// when no force is being applied, the entity slows down by being multiplied by this deceleration rate. This should be less than one.
+		float decelerate = 0.85F;
+		// controls at what point the entity comes to a complete stop.
+		float forceStop = 0.001F;
+
+		// makes it so that the entity goes right to its maximum speed, instead of steadily approaching its max speed.
+		bool constVelocity = false;
 
 		// gets the length of time the entity has existed for, in milliseconds (delta time)
 		float age;
@@ -107,8 +128,21 @@ namespace entity
 		// if USE_CENTRE is true, then the cropped area treats (x, y) as the centre of the area, rather than the corner of the area.
 		void setTextureRect(float x, float y, float width, float height, const bool USE_CENTRE = false);
 
+		// sets the maximum velocity of the entity.  Comparisons use the absolute value of the entity, so it must be above 0.
+		void setMaxVelocity(Vec2 maxVelocity);
+
+		// sets the deleration
+		void setDecelerate(float decelerate);
+		// sets at what point the entity stops. The entity stops once it falls below the value of 'forceStop'
+		void setForceStop(float forceStop);
+		
+		// sets whether the entity has constant velocity or not. If true, the entity will either have a speed of 0, or some other value. 
+		void setConstVelocity(bool constVelocity);
+		//  toggles constant velocity ON/OFF. If true, the entity will either have a speed of 0, or some other value. 
+		void setConstVelocity();
 
 		std::string name; // the entity's name
+		// int NAME_LEN;
 		std::string description; // the entity's description
 
 		Sprite * sprite;

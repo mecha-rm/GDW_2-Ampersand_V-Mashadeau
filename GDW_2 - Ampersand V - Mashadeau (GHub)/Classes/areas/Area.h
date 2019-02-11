@@ -3,6 +3,7 @@
 
 // #include "PlatformManager.h"
 #include "entities/Tile.h"
+#include "entities/Enemy.h"
 
 #include "2d/CCSprite.h"
 #include <string>
@@ -45,10 +46,7 @@ public:
 	// sets the anchour points of all layers.
 	void setAllAnchourPoints(Vec2 anchour);
 
-	// puts an array of tiles into a vector.
-	void arrayToVector(entity::Tile ** newTiles, int rows, int columns);
-
-	// gets all layers as a single draw node.
+	// gets all graphic elements as a single drawNode.
 	Node * getAsSingleNode();
 
 	// gets the name of the area
@@ -69,6 +67,28 @@ public:
 	// gets exit 4, being an exit point in the scene; this holds where the area exits to.
 	std::string getExit4();
 
+	// returns spawn point 0.
+	Vec2 getSpawn0();
+
+	// returns spawn point 1.
+	Vec2 getSpawn1();
+
+	// returns spawn point 2.
+	Vec2 getSpawn2();
+
+	// returns spawn point 3.
+	Vec2 getSpawn3();
+
+	// returns spawn point 4.
+	Vec2 getSpawn4();
+
+
+	// gets the scene tiles
+	std::vector<entity::Tile *> getSceneTiles();
+
+	// gets the enemy vector
+	std::vector<entity::Enemy *> getSceneEnemies();
+
 	// returns the class in bytes.
 	char * toBytes() const;
 
@@ -80,6 +100,9 @@ public:
 
 	// loads level data from a file if there is any.
 	void loadFromFile();
+
+	// updates the Area.
+	void update(float deltaTime);
 
 	// Background images
 	Sprite * bg1 = nullptr; // the first background layer; it's the farthest back layer
@@ -122,7 +145,7 @@ protected:
 	std::string exit4 = "";
 
 	// Saves the spawning positions for each possible exit. When the user enters an exit, a specific spawning point is looking for.
-	Vec2 spawn0 = { 0.0F, 0.0F };
+	Vec2 spawn0 = Vec2{ 64.0F, 64.0F };
 	Vec2 spawn1 = spawn0;
 	Vec2 spawn2 = spawn1;
 	Vec2 spawn3 = spawn2;
@@ -130,10 +153,12 @@ protected:
 
 	// The size of the screen is 13 X 7.5 on full screen (i.e. 13 128 X 128 blocks along the x-axis, and 7.5 128 X 128 blocks along the y-axis.
 	// The ROW_MAX and COL_MAX determines the maximum size of the area. They are currently 30 X 52 (13 * 4, 7.5 * 4)
-	static const unsigned int ROW_MAX = 30; // rows
-	static const unsigned int COL_MAX = 52; // columns
+	static const unsigned int ROW_MAX = 30; // maximum amount of rows
+	static const unsigned int COL_MAX = 52; // maximum amount of columns
+	static const float GRID_UNIT_SIZE; // the size of one square on the grid. Setting an inital value had to be done in the cpp file.
 
-	std::vector<entity::Tile *> sceneTiles;
+	std::vector<entity::Tile *> sceneTiles; // holds all tiles for the scene
+	std::vector<entity::Enemy *> sceneEnemies; // holds all enemies for the scene
 	// entity::Tile * tileGrid[ROW_MAX][COL_MAX];
 };
 

@@ -2,6 +2,8 @@
 #pragma once
 
 #include "areas/World.h"
+#include "entities/Player.h"
+
 #include "Primitives.h"
 #include "MouseListener.h"
 
@@ -48,10 +50,6 @@ private:
 	
 	// event listeners
 	EventListenerKeyboard* keyboardListener;
-	
-	// event Helpers
-	bool mouseDown;
-	Vec2 mousePosition;
 
 	// event toggles; these turn certain functions on or off.
 	const bool ENABLE_MOUSE = true; // turns mouse functionality on/off.
@@ -65,8 +63,14 @@ private:
 	// DrawNode * collisions; // will store primitives that show hitboxes of everything.
 
 	Area * sceneArea; // the current area of the scene
+	entity::Player * plyr; // the object used for the player
 
 	static std::vector<Area *> areas; // this will save the areas gone to, and will be used to switch screens if scenes are not stored. These will be stored in dat files later on.
 	static std::vector <Scene *> loadedScenes; // if scenes remain loaded, then this will be used to return to a previous scene
 	
+	bool moveUp = false;
+	bool moveDown = false;
+	bool moveLeft = false;
+	bool moveRight = false;
+
 } GameplayScene;

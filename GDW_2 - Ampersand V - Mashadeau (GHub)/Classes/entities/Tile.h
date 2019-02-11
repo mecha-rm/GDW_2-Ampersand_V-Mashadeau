@@ -26,11 +26,13 @@ namespace entity
 		// gets the tile identification number.
 		const unsigned int getTIN() const;
 
-		// gets what letter the 
+		// gets what letter the tile has
 		const char getLetter() const;
 
-		// Used for copying the tiles in all four directions.
+		// the update loop for for the tiles
+		void update(float deltaTime);
 
+		// Used for copying the tiles in all four directions.
 		// variable used for copying the tile in the upward direction.
 		const unsigned int COPY_UP = 0;
 		// variable used for copying the tile in the rightward direction.

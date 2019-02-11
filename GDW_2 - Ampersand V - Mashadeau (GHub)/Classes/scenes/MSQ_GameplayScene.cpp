@@ -94,11 +94,18 @@ void MSQ_GameplayScene::initContactListener()
 // initalizes all sprites
 void MSQ_GameplayScene::initSprites() 
 {
+	// creating the scene
 	sceneArea = World::getArea("AIN_X00"); // makes the area. Remember, all the anchour points are the middle of the sprite layers (0.5, 0.5).
 	sceneArea->setAllLayerPositions(Vec2(director->getWinSizeInPixels().width / 2, director->getWinSizeInPixels().height / 2)); // makes all the layers be at the middle of the screen.
 	this->addChild(sceneArea->getAsSingleNode()); // gets the backgrounds as one node.
 
+	// creating the player; the default values handle the creation process.
+	plyr = new entity::Player(); // creates the player
+	plyr->setPosition(sceneArea->getSpawn0()); // sets the player using spawn point 0.
+	this->addChild(plyr->getSprite());
+
 	grid = new OOP::PrimitiveGrid(cocos2d::Vec2(0.0F, 0.0F), cocos2d::Vec2(director->getWinSizeInPixels().width, director->getWinSizeInPixels().height), 128.0F, Color4F::WHITE);
+	grid->getPrimitive()->setGlobalZOrder(10.1F); // makes the grid be above everything else.
 	grid->getPrimitive()->setVisible(true); // makes the grid visible (or not visible)
 	this->addChild(grid->getPrimitive()); // adds grid to drawList
 }
@@ -110,6 +117,26 @@ void MSQ_GameplayScene::initPauseMenu() {}
 void MSQ_GameplayScene::keyDownCallback(EventKeyboard::KeyCode keyCode, Event * event)
 {
 	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event); // casting as a keyboard event
+
+	switch (keyCode)
+	{
+	case EventKeyboard::KeyCode::KEY_UP_ARROW:
+		moveUp = true;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+		moveDown = true;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+		moveLeft = true;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+		moveRight = true;
+		break;
+	}
+
 	// change last parameter to check for key codes
 	// if(keyCode == EventKeyboard::KeyCode::KEY_0)
 }
@@ -117,6 +144,25 @@ void MSQ_GameplayScene::keyDownCallback(EventKeyboard::KeyCode keyCode, Event * 
 void MSQ_GameplayScene::keyUpCallback(EventKeyboard::KeyCode keyCode, Event * event)
 {
 	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event); // casting as a keyboard event
+	
+	switch (keyCode)
+	{
+	case EventKeyboard::KeyCode::KEY_UP_ARROW:
+		moveUp = false;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+		moveDown = false;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+		moveLeft = false;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+		moveRight = false;
+		break;
+	}
 }
 
 bool MSQ_GameplayScene::onContactBeginCallback(PhysicsContact & contact)
@@ -127,7 +173,29 @@ bool MSQ_GameplayScene::onContactBeginCallback(PhysicsContact & contact)
 // update loop
 void MSQ_GameplayScene::update(float deltaTime)
 {
-	// this->getDefaultCamera()->setPosition(/*player's position goes here*/);
+	// this->getDefaultCamera()->setPosition(/*player's position goes here*/)
+	if (moveUp)
+	{
+		plyr->addMoveForceY();
+	}
+	else if (moveDown)
+	{
+		plyr->addForce(0.0F, plyr->getMoveForceY() * -1);
+	}
+
+	if (moveLeft)
+	{
+		plyr->addForce(plyr->getMoveForceX() * -1, 0.0F);
+	}
+	else if (moveRight)
+	{
+		plyr->addForce(plyr->getMoveForceX(), 0.0F);
+	}
+
+	// updates the player
+	plyr->update(deltaTime);
+	// updates the area the player is currently in. This update also updates the scene tiles, and enemies.
+	sceneArea->update(deltaTime);
 }
 
 

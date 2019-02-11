@@ -37,6 +37,7 @@ void OOP::MouseListener::OnMouseDown(cocos2d::Event * a_Event)
 	mouseClickPosition = mouseEvent->getLocationInView(); // gets the mouse position; this may need to be offset depending on where the window is.
 	mouseButton = mouseEvent->getMouseButton(); // gets the mouse button from the event handler.
 	mouseButtonDown = true; // button is being held.
+	mouseLabel->setPosition(mouseClickPosition); // changes the position of the label.
 
 	/*
 	// left is pressed.
@@ -68,7 +69,7 @@ void OOP::MouseListener::OnMouseUp(cocos2d::Event * a_Event)
 	mouseClickPosition = mouseEvent->getLocationInView(); // gets the mouse position; this may need to be offset depending on where the window is.
 	mouseButton = mouseEvent->getMouseButton(); // gets the mouse button from the event handler that has been let go.
 	mouseButtonDown = false; // button has been let go.
-
+	
 	// std::cout << "On Mouse Up" << std::endl;
 	mouseLabel->setString("MouseUp");
 }

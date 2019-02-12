@@ -62,12 +62,16 @@ private:
 	// bool collisionVisible; // turns on collision boxes and circles
 	// DrawNode * collisions; // will store primitives that show hitboxes of everything.
 
-	Area * sceneArea; // the current area of the scene
+	world::Area * sceneArea; // the current area of the scene
 	entity::Player * plyr; // the object used for the player
 
-	static std::vector<Area *> areas; // this will save the areas gone to, and will be used to switch screens if scenes are not stored. These will be stored in dat files later on.
+	static std::vector<world::Area *> areas; // this will save the areas gone to, and will be used to switch screens if scenes are not stored. These will be stored in dat files later on.
 	static std::vector <Scene *> loadedScenes; // if scenes remain loaded, then this will be used to return to a previous scene
 	
+	std::vector<entity::Tile *> * sceneTiles; // the tiles in the scene, which are gotten from the Area class.
+	std::vector<entity::Enemy *> * sceneEnemies; // the enemies in the scene, which are gotten from the Area class.
+
+
 	bool moveUp = false;
 	bool moveDown = false;
 	bool moveLeft = false;

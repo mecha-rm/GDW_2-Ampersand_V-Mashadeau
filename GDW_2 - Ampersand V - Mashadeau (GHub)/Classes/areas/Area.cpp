@@ -2,12 +2,12 @@
 
 #include <iostream>
 
-const unsigned int Area::ROW_MAX; // maximum row amount
-const unsigned int Area::COL_MAX; // maximum column amount
-const float Area::GRID_UNIT_SIZE = 128.0F; // grid square size
+const unsigned int world::Area::ROW_MAX; // maximum row amount
+const unsigned int world::Area::COL_MAX; // maximum column amount
+const float world::Area::GRID_UNIT_SIZE = 128.0F; // grid square size
 
 // creates three backgrounds, and a foreground
-Area::Area(std::string backgroundLayer1, std::string backgroundLayer2, std::string backgroundLayer3, std::string foregroundLayer, Vec2 anchour)
+world::Area::Area(std::string backgroundLayer1, std::string backgroundLayer2, std::string backgroundLayer3, std::string foregroundLayer, Vec2 anchour)
 {
 	// creates all the backgrounds and foregrounds
 	setBackgroundLayer1(backgroundLayer1, anchour);
@@ -18,7 +18,7 @@ Area::Area(std::string backgroundLayer1, std::string backgroundLayer2, std::stri
 }
 
 // destructor; releases all sprites.
-Area::~Area() 
+world::Area::~Area()
 {
 	bg1->release();
 	bg2->release();
@@ -27,10 +27,10 @@ Area::~Area()
 }
 
 // Returns the first background layer
-Sprite * Area::getBackgroundLayer1() const { return bg1; }
+Sprite * world::Area::getBackgroundLayer1() const { return bg1; }
 
 // sets background layer 1
-void Area::setBackgroundLayer1(std::string backgroundLayer1, Vec2 anchour)
+void world::Area::setBackgroundLayer1(std::string backgroundLayer1, Vec2 anchour)
 {
 	if (backgroundLayer1 == "") // if the layer is blank, then the sprite isn't created.
 		return;
@@ -49,10 +49,10 @@ void Area::setBackgroundLayer1(std::string backgroundLayer1, Vec2 anchour)
 }
 
 // Returns the second background layer
-Sprite * Area::getBackgroundLayer2() const { return bg2; }
+Sprite * world::Area::getBackgroundLayer2() const { return bg2; }
 
 // sets background layer 2
-void Area::setBackgroundLayer2(std::string backgroundLayer2, Vec2 anchour)
+void world::Area::setBackgroundLayer2(std::string backgroundLayer2, Vec2 anchour)
 {
 	if (backgroundLayer2 == "") // if the layer is blank, then the sprite isn't created.
 		return;
@@ -71,10 +71,10 @@ void Area::setBackgroundLayer2(std::string backgroundLayer2, Vec2 anchour)
 }
 
 // Returns the third background layer
-Sprite * Area::getBackgroundLayer3() const { return bg3; }
+Sprite * world::Area::getBackgroundLayer3() const { return bg3; }
 
 // sets background layer 3
-void Area::setBackgroundLayer3(std::string backgroundLayer3, Vec2 anchour)
+void world::Area::setBackgroundLayer3(std::string backgroundLayer3, Vec2 anchour)
 {
 	if (backgroundLayer3 == "") // if the layer is blank, then the sprite isn't created.
 		return;
@@ -93,7 +93,7 @@ void Area::setBackgroundLayer3(std::string backgroundLayer3, Vec2 anchour)
 }
 
 // Returns a backgorund layer based on a value.
-Sprite * Area::getBackground(short int bg) const
+Sprite * world::Area::getBackground(short int bg) const
 {
 	switch (bg)
 	{
@@ -112,10 +112,10 @@ Sprite * Area::getBackground(short int bg) const
 }
 
 // gets the foreground layer.
-Sprite * Area::getForegroundLayer() const { return fg; }
+Sprite * world::Area::getForegroundLayer() const { return fg; }
 
 // sets foreground layer
-void Area::setForegroundLayer(std::string foregroundLayer, Vec2 anchour)
+void world::Area::setForegroundLayer(std::string foregroundLayer, Vec2 anchour)
 {
 	if (foregroundLayer == "") // if the layer is blank, then the sprite isn't created.
 		return;
@@ -134,7 +134,7 @@ void Area::setForegroundLayer(std::string foregroundLayer, Vec2 anchour)
 }
 
 // sets the positions of all background and foreground layers.
-void Area::setAllLayerPositions(Vec2 position)
+void world::Area::setAllLayerPositions(Vec2 position)
 {
 	if (bg1 != nullptr)
 		bg1->setPosition(position);
@@ -150,7 +150,7 @@ void Area::setAllLayerPositions(Vec2 position)
 }
 
 // sets the anchour points of all layers.
-void Area::setAllAnchourPoints(Vec2 anchour)
+void world::Area::setAllAnchourPoints(Vec2 anchour)
 {
 	// sets the new achour points for all sprites.
 	if (bg1 != nullptr)
@@ -167,7 +167,7 @@ void Area::setAllAnchourPoints(Vec2 anchour)
 }
 
 // gets all graphic elements as a single node.
-Node * Area::getAsSingleNode()
+Node * world::Area::getAsSingleNode()
 {
 	Node * tempNode = Node::create(); // temporary node
 	
@@ -184,60 +184,114 @@ Node * Area::getAsSingleNode()
 	if(fg != nullptr)
 		tempNode->addChild(fg);
 
-	for (int i = 0; i < sceneTiles.size(); i++) // adds all the tiles from the tile vector
-		tempNode->addChild(sceneTiles.at(i)->getSprite());
+	for (int i = 0; i < areaTiles.size(); i++) // adds all the tiles from the tile vector
+		tempNode->addChild(areaTiles.at(i)->getSprite());
 
-	for (int i = 0; i < sceneEnemies.size(); i++) // adds all the enemies from the enemy vector
-		tempNode->addChild(sceneEnemies[i]->getSprite());
+	for (int i = 0; i < areaEnemies.size(); i++) // adds all the enemies from the enemy vector
+		tempNode->addChild(areaEnemies[i]->getSprite());
 	
 
 	return tempNode;
 }
 
 // sets the name of the area
-std::string Area::getName() const { return name; }
+std::string world::Area::getName() const { return name; }
 
 // sets the area's name.
-void Area::setName(std::string name) { this->name = name; }
+void world::Area::setName(std::string name) { this->name = name; }
 
 // returns the location exit 0 leads to.
-std::string Area::getExit0() { return exit0; }
+std::string world::Area::getExit0() { return exit0; }
 
 // returns the location exit 1 leads to.
-std::string Area::getExit1() { return exit1; }
+std::string world::Area::getExit1() { return exit1; }
 
 // returns the location exit 2 leads to.
-std::string Area::getExit2() { return exit2; }
+std::string world::Area::getExit2() { return exit2; }
 
 // returns the location exit 3 leads to.
-std::string Area::getExit3() { return exit3; }
+std::string world::Area::getExit3() { return exit3; }
 
 // returns the location exit 4 leads to.
-std::string Area::getExit4() { return exit4; }
+std::string world::Area::getExit4() { return exit4; }
 
 // returns spawn point #0
-Vec2 Area::getSpawn0() { return spawn0; }
+Vec2 world::Area::getSpawn0() { return spawn0; }
 
 // returns spawn point #1
-Vec2 Area::getSpawn1() { return spawn1; }
+Vec2 world::Area::getSpawn1() { return spawn1; }
 
 // returns spawn point #2
-Vec2 Area::getSpawn2() { return spawn2; }
+Vec2 world::Area::getSpawn2() { return spawn2; }
 
 // returns spawn point #3
-Vec2 Area::getSpawn3() { return spawn3; }
+Vec2 world::Area::getSpawn3() { return spawn3; }
 
 // returns spawn point #4
-Vec2 Area::getSpawn4(){ return spawn4; }
+Vec2 world::Area::getSpawn4(){ return spawn4; }
 
 // returns the tiles in the area.
-std::vector<entity::Tile*> Area::getSceneTiles() { return sceneTiles; }
+std::vector<entity::Tile*> * world::Area::getAreaTiles() { return &areaTiles; }
+
+// adds a tile to the area
+void world::Area::operator+=(entity::Tile * tile)
+{
+	// check to see if the passed tile already exists in the vector. If it doesn't, it will get added in.
+	for each(entity::Tile * vecTile in areaTiles)
+	{
+		if (vecTile == tile) // returns void if the tile already exists in the vector.
+			return;
+	}
+
+	areaTiles.push_back(tile); // adds the tile into the vector if it isn't in there already.
+}
+
+// subtracts a tile from the area
+void world::Area::operator-=(entity::Tile * tile)
+{
+	// looks to see if the tile exists in the tiles vector
+	for (int i = 0; i < areaTiles.size(); i++)
+	{
+		if (areaTiles.at(i) == tile) // if the passed tile has been found, it is then deleted.
+		{
+			areaTiles.erase(areaTiles.begin() + i);
+			return; // returns 'void' since the check is done.
+		}
+	}
+}
 
 // returns the enemies in the scene
-std::vector<entity::Enemy*> Area::getSceneEnemies() { return sceneEnemies; }
+std::vector<entity::Enemy*> * world::Area::getAreaEnemies() { return &areaEnemies; }
+
+// adds an enemy to the area
+void world::Area::operator+=(entity::Enemy * enemy)
+{
+	// check to see if the passed enemy already exists in the vector. If it doesn't, it will get added in.
+	for each(entity::Enemy * vecEnemy in areaEnemies)
+	{
+		if (vecEnemy == enemy) // returns void if the enemy already exists in the vector.
+			return;
+	}
+
+	areaEnemies.push_back(enemy); // adds the enemy into the vector if it isn't in there already.
+}
+
+// subtracts an enemy from the area
+void world::Area::operator-=(entity::Enemy * enemy)
+{
+	// looks to see if the tile exists in the enemy vector
+	for (int i = 0; i < areaEnemies.size(); i++)
+	{
+		if (areaEnemies[i] == enemy) // if the passed enemy has been found, it is then deleted.
+		{
+			areaEnemies.erase(areaEnemies.begin() + i);
+			return; // returns 'void' since the check is done.
+		}
+	}
+}
 
 // gets the class data in bytes.
-char * Area::toBytes() const
+char * world::Area::toBytes() const
 {
 	char bytes[sizeof(Area)]; // size of the vec2 class
 	memcpy(bytes, this, sizeof(Area)); // getting the current object in byte form
@@ -246,30 +300,30 @@ char * Area::toBytes() const
 }
 
 // writes the level data to a file.
-void Area::writeToFile() { writeToFile(fileName); }
+void world::Area::writeToFile() { writeToFile(fileName); }
 
 // writes the level data to a file.
-void Area::writeToFile(std::string fileName)
+void world::Area::writeToFile(std::string fileName)
 {
 
 }
 
 // loads level information from a file if the file isn't empty.
-void Area::loadFromFile()
+void world::Area::loadFromFile()
 {
 
 }
 
 // updates the area
-void Area::update(float deltaTime)
+void world::Area::update(float deltaTime)
 {
 	// updates the scene tiles
-	for (int i = 0; i < sceneTiles.size(); i++)
-		sceneTiles.at(i)->update(deltaTime);
+	for (int i = 0; i < areaTiles.size(); i++)
+		areaTiles.at(i)->update(deltaTime);
 
 	// updates the enemies
-	for (int i = 0; i < sceneEnemies.size(); i++)
-		sceneEnemies[i]->update(deltaTime);
+	for (int i = 0; i < areaEnemies.size(); i++)
+		areaEnemies[i]->update(deltaTime);
 }
 
 

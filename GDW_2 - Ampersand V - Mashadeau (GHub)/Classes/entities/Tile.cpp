@@ -1,5 +1,4 @@
 #include "entities/Tile.h"
-#include "Primitives.h"
 
 // Constructor for tile. All that's needed is the type of the tile, the letter, and how many copies the user wants to make in a given direction.
 entity::Tile::Tile(unsigned int TIN, char letter, const unsigned int COPY_UP, const unsigned int COPY_DOWN, const unsigned int COPY_LEFT, const unsigned int COPY_RIGHT, const bool OFFSET_BY_SPRITE_SIZE)

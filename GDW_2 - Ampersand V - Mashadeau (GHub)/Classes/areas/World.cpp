@@ -1,8 +1,8 @@
 #include "areas/World.h"
 
-Area * World::getArea(std::string AIN)
+world::Area * world::World::getArea(std::string AIN)
 {
-	Area * newArea; // the new area to be made.
+	world::Area * newArea; // the new area to be made.
 	std::string tempStr = AIN; // a temporary string that holds the AIN value.
 
 	// if the distinction 'AIN' couldn't be found, it's added to the string.

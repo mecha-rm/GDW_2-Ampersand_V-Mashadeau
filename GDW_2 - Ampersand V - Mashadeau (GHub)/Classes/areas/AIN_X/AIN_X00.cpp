@@ -2,7 +2,7 @@
 
 
 // using an initalizer list caused problems, so no parameters were sent.
-AIN_X00::AIN_X00() : Area("images/backgrounds/AIN_X00a.png")
+world::AIN_X00::AIN_X00() : Area("images/backgrounds/AIN_X00a.png")
 {
 	bool flipY = false; // flip the tiles and enemies positions on the y-axis
 
@@ -13,10 +13,10 @@ AIN_X00::AIN_X00() : Area("images/backgrounds/AIN_X00a.png")
 	enemyArrayToVector(flipY); // set to 'true' to flip the enemies along the y-axis.
 }
 
-AIN_X00::~AIN_X00() {}
+world::AIN_X00::~AIN_X00() {}
 
 // stores the elements from the tile array into the tiles vector in the Area class. Variable flipY determines whether the bottom of the array [0][0] is treated as the bottom of the screen, or the top.
-void AIN_X00::tileArrayToVector(const bool flipY)
+void world::AIN_X00::tileArrayToVector(const bool flipY)
 {
 	float offset = 0.0F; // used to offset copies of the element
 
@@ -33,7 +33,7 @@ void AIN_X00::tileArrayToVector(const bool flipY)
 			
 
 			
-			sceneTiles.push_back(tileGrid[row][col]); // adds the tile to the scene.
+			areaTiles.push_back(tileGrid[row][col]); // adds the tile to the scene.
 
 			if (tileGrid[row][col]->COPY_UP > 0) // Copies Upwards
 			{
@@ -42,8 +42,8 @@ void AIN_X00::tileArrayToVector(const bool flipY)
 
 				for (int i = 1; i <= tileGrid[row][col]->COPY_UP; i++) // loops while there are still copies left to be made.
 				{
-					sceneTiles.push_back(new entity::Tile(tileGrid[row][col]->getTIN(), tileGrid[row][col]->getLetter())); // adds the new tile to the vector.
-					sceneTiles.at(sceneTiles.size() - 1)->setPosition(tileGrid[row][col]->getPositionX(), tileGrid[row][col]->getPositionY() + offset * i); // makes a tile one square above the previous tile.
+					areaTiles.push_back(new entity::Tile(tileGrid[row][col]->getTIN(), tileGrid[row][col]->getLetter())); // adds the new tile to the vector.
+					areaTiles.at(areaTiles.size() - 1)->setPosition(tileGrid[row][col]->getPositionX(), tileGrid[row][col]->getPositionY() + offset * i); // makes a tile one square above the previous tile.
 				}
 			}
 
@@ -54,8 +54,8 @@ void AIN_X00::tileArrayToVector(const bool flipY)
 
 				for (int i = 1; i <= tileGrid[row][col]->COPY_DOWN; i++) // loops while there are still copies left to be made.
 				{
-					sceneTiles.push_back(new entity::Tile(tileGrid[row][col]->getTIN(), tileGrid[row][col]->getLetter())); // adds the new tile to the vector.
-					sceneTiles.at(sceneTiles.size() - 1)->setPosition(tileGrid[row][col]->getPositionX(), tileGrid[row][col]->getPositionY() - offset * i); // makes a tile one square below the previous tile.
+					areaTiles.push_back(new entity::Tile(tileGrid[row][col]->getTIN(), tileGrid[row][col]->getLetter())); // adds the new tile to the vector.
+					areaTiles.at(areaTiles.size() - 1)->setPosition(tileGrid[row][col]->getPositionX(), tileGrid[row][col]->getPositionY() - offset * i); // makes a tile one square below the previous tile.
 				}
 			}
 
@@ -66,8 +66,8 @@ void AIN_X00::tileArrayToVector(const bool flipY)
 
 				for (int i = 1; i <= tileGrid[row][col]->COPY_LEFT; i++) // loops while there are still copies left to be made.
 				{
-					sceneTiles.push_back(new entity::Tile(tileGrid[row][col]->getTIN(), tileGrid[row][col]->getLetter())); // adds the new tile to the vector.
-					sceneTiles.at(sceneTiles.size() - 1)->setPosition(tileGrid[row][col]->getPositionX() - offset * i, tileGrid[row][col]->getPositionY()); // makes a tile one square below the previous tile.
+					areaTiles.push_back(new entity::Tile(tileGrid[row][col]->getTIN(), tileGrid[row][col]->getLetter())); // adds the new tile to the vector.
+					areaTiles.at(areaTiles.size() - 1)->setPosition(tileGrid[row][col]->getPositionX() - offset * i, tileGrid[row][col]->getPositionY()); // makes a tile one square below the previous tile.
 				}
 			}
 
@@ -78,8 +78,8 @@ void AIN_X00::tileArrayToVector(const bool flipY)
 
 				for (int i = 1; i <= tileGrid[row][col]->COPY_RIGHT; i++) // loops while there are still copies left to be made.
 				{
-					sceneTiles.push_back(new entity::Tile(tileGrid[row][col]->getTIN(), tileGrid[row][col]->getLetter())); // adds the new tile to the vector.
-					sceneTiles.at(sceneTiles.size() - 1)->setPosition(tileGrid[row][col]->getPositionX() + offset * i, tileGrid[row][col]->getPositionY()); // makes a tile one square below the previous tile.
+					areaTiles.push_back(new entity::Tile(tileGrid[row][col]->getTIN(), tileGrid[row][col]->getLetter())); // adds the new tile to the vector.
+					areaTiles.at(areaTiles.size() - 1)->setPosition(tileGrid[row][col]->getPositionX() + offset * i, tileGrid[row][col]->getPositionY()); // makes a tile one square below the previous tile.
 				}
 			}
 
@@ -88,7 +88,7 @@ void AIN_X00::tileArrayToVector(const bool flipY)
 }
 
 // stores the elements from the enemy array into the enemy vector in the Area class. Variable flipY determines whether the bottom of the array [0][0] is treated as the bottom of the screen, or the top.
-void AIN_X00::enemyArrayToVector(const bool flipY)
+void world::AIN_X00::enemyArrayToVector(const bool flipY)
 {
 	float offset = 0.0F; // used to offset copies of the element
 
@@ -105,7 +105,7 @@ void AIN_X00::enemyArrayToVector(const bool flipY)
 				enemyGrid[row][col]->setPositionY(GRID_UNIT_SIZE * ROW_MAX - enemyGrid[row][col]->getPositionY());
 
 
-			sceneEnemies.push_back(enemyGrid[row][col]); // adds the enemy to the scene.
+			areaEnemies.push_back(enemyGrid[row][col]); // adds the enemy to the scene.
 
 			if (enemyGrid[row][col]->COPY_UP > 0) // Copies Upwards
 			{
@@ -114,8 +114,8 @@ void AIN_X00::enemyArrayToVector(const bool flipY)
 
 				for (int i = 1; i <= enemyGrid[row][col]->COPY_UP; i++) // loops while there are still copies left to be made.
 				{
-					sceneEnemies.push_back(new entity::Enemy(enemyGrid[row][col]->getEIN(), enemyGrid[row][col]->getLetter())); // adds the new enemy to the vector.
-					sceneEnemies.at(sceneEnemies.size() - 1)->setPosition(enemyGrid[row][col]->getPositionX(), enemyGrid[row][col]->getPositionY() + offset * i); // makes a enemy one unit above the previous enemy.
+					areaEnemies.push_back(new entity::Enemy(enemyGrid[row][col]->getEIN(), enemyGrid[row][col]->getLetter())); // adds the new enemy to the vector.
+					areaEnemies.at(areaEnemies.size() - 1)->setPosition(enemyGrid[row][col]->getPositionX(), enemyGrid[row][col]->getPositionY() + offset * i); // makes a enemy one unit above the previous enemy.
 				}
 			}
 
@@ -126,8 +126,8 @@ void AIN_X00::enemyArrayToVector(const bool flipY)
 
 				for (int i = 1; i <= enemyGrid[row][col]->COPY_DOWN; i++) // loops while there are still copies left to be made.
 				{
-					sceneEnemies.push_back(new entity::Enemy(enemyGrid[row][col]->getEIN(), enemyGrid[row][col]->getLetter())); // adds the new enemy to the vector.
-					sceneEnemies.at(sceneEnemies.size() - 1)->setPosition(enemyGrid[row][col]->getPositionX(), enemyGrid[row][col]->getPositionY() - offset * i); // makes a enemy one square below the previous tile.
+					areaEnemies.push_back(new entity::Enemy(enemyGrid[row][col]->getEIN(), enemyGrid[row][col]->getLetter())); // adds the new enemy to the vector.
+					areaEnemies.at(areaEnemies.size() - 1)->setPosition(enemyGrid[row][col]->getPositionX(), enemyGrid[row][col]->getPositionY() - offset * i); // makes a enemy one square below the previous tile.
 				}
 			}
 
@@ -138,8 +138,8 @@ void AIN_X00::enemyArrayToVector(const bool flipY)
 
 				for (int i = 1; i <= enemyGrid[row][col]->COPY_LEFT; i++) // loops while there are still copies left to be made.
 				{
-					sceneEnemies.push_back(new entity::Enemy(enemyGrid[row][col]->getEIN(), enemyGrid[row][col]->getLetter())); // adds the new enemy to the vector.
-					sceneEnemies.at(sceneEnemies.size() - 1)->setPosition(enemyGrid[row][col]->getPositionX() - offset * i, enemyGrid[row][col]->getPositionY()); // makes a enemy one square below the previous tile.
+					areaEnemies.push_back(new entity::Enemy(enemyGrid[row][col]->getEIN(), enemyGrid[row][col]->getLetter())); // adds the new enemy to the vector.
+					areaEnemies.at(areaEnemies.size() - 1)->setPosition(enemyGrid[row][col]->getPositionX() - offset * i, enemyGrid[row][col]->getPositionY()); // makes a enemy one square below the previous tile.
 				}
 			}
 
@@ -150,8 +150,8 @@ void AIN_X00::enemyArrayToVector(const bool flipY)
 
 				for (int i = 1; i <= enemyGrid[row][col]->COPY_RIGHT; i++) // loops while there are still copies left to be made.
 				{
-					sceneEnemies.push_back(new entity::Enemy(enemyGrid[row][col]->getEIN(), enemyGrid[row][col]->getLetter())); // adds the new enemy to the vector.
-					sceneEnemies.at(sceneEnemies.size() - 1)->setPosition(enemyGrid[row][col]->getPositionX() + offset * i, enemyGrid[row][col]->getPositionY()); // makes a enemy one square below the previous tile.
+					areaEnemies.push_back(new entity::Enemy(enemyGrid[row][col]->getEIN(), enemyGrid[row][col]->getLetter())); // adds the new enemy to the vector.
+					areaEnemies.at(areaEnemies.size() - 1)->setPosition(enemyGrid[row][col]->getPositionX() + offset * i, enemyGrid[row][col]->getPositionY()); // makes a enemy one square below the previous tile.
 				}
 			}
 

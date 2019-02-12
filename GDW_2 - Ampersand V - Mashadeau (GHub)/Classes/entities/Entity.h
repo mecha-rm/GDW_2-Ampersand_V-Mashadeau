@@ -1,8 +1,11 @@
+// information for all entities in a scene, which are physical elements part of the game world.
 #pragma once
 
 #include <string>
 #include "cocos2d.h"
 
+#include "magics/MagicTypes.h"
+#include "Primitives.h"
 using namespace cocos2d;
 
 namespace entity
@@ -141,12 +144,19 @@ namespace entity
 		//  toggles constant velocity ON/OFF. If true, the entity will either have a speed of 0, or some other value. 
 		void setConstVelocity();
 
-		std::string name; // the entity's name
-		// int NAME_LEN;
-		std::string description; // the entity's description
+		std::string name = ""; // the entity's name
+		// int NAME_LEN; // maximum name lenth
+		std::string description = ""; // the entity's description
 
-		Sprite * sprite;
+		// the magic type of the entity
+		// magic::MagicTypes type;
+
+		Sprite * sprite; // the entity's sprite
+		// OOP::PrimitiveSquare * boundingBox; // a bounding box hitbox
+		//OOP::PrimitiveCircle * boundingCircle; // a circular hitbox
+
 		Vec2 force = Vec2(0.0f, 0.0f); // the force of the entity
+		
 	};
 }
 

@@ -95,10 +95,13 @@ void MSQ_GameplayScene::initContactListener()
 void MSQ_GameplayScene::initSprites() 
 {
 	// creating the scene
-	sceneArea = World::getArea("AIN_X00"); // makes the area. Remember, all the anchour points are the middle of the sprite layers (0.5, 0.5).
+	sceneArea = world::World::getArea("AIN_X00"); // makes the area. Remember, all the anchour points are the middle of the sprite layers (0.5, 0.5).
 	sceneArea->setAllLayerPositions(Vec2(director->getWinSizeInPixels().width / 2, director->getWinSizeInPixels().height / 2)); // makes all the layers be at the middle of the screen.
-	this->addChild(sceneArea->getAsSingleNode()); // gets the backgrounds as one node.
+	this->addChild(sceneArea->getAsSingleNode()); // gets the scene graphic elements (hitboxes not withstanding) as a single node.
 
+	sceneTiles = sceneArea->getAreaTiles(); // saves a pointer to the scene tiles
+	sceneEnemies = sceneArea->getAreaEnemies(); // saves a pointer to the scene enmies
+	
 	// creating the player; the default values handle the creation process.
 	plyr = new entity::Player(); // creates the player
 	plyr->setPosition(sceneArea->getSpawn0()); // sets the player using spawn point 0.
@@ -174,6 +177,7 @@ bool MSQ_GameplayScene::onContactBeginCallback(PhysicsContact & contact)
 void MSQ_GameplayScene::update(float deltaTime)
 {
 	// this->getDefaultCamera()->setPosition(/*player's position goes here*/)
+	// These movement parameters will need to be changed later.
 	if (moveUp)
 	{
 		plyr->addMoveForceY();

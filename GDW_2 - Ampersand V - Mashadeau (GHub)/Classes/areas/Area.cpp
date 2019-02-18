@@ -7,13 +7,27 @@ const unsigned int world::Area::COL_MAX; // maximum column amount
 const float world::Area::GRID_UNIT_SIZE = 128.0F; // grid square size
 
 // creates three backgrounds, and a foreground
-world::Area::Area(std::string backgroundLayer1, std::string backgroundLayer2, std::string backgroundLayer3, std::string foregroundLayer, Vec2 anchour)
+world::Area::Area(std::string backgroundLayer1, std::string backgroundLayer2, std::string backgroundLayer3, std::string foregroundLayer)
 {
+	entity::Entity::areaGravity = &gravity; // sets the gravity for all entities to the gravity in the area.
+
+	// creates the sprites
+	bg1 = Sprite::create();
+	bg2 = Sprite::create();
+	bg3 = Sprite::create();
+	fg = Sprite::create();
+
+	// sets the global z order of all backgrounds.
+	bg1->setGlobalZOrder(0.0F);
+	bg2->setGlobalZOrder(0.1F);
+	bg3->setGlobalZOrder(0.2F);
+	fg->setGlobalZOrder(9.0F);
+
 	// creates all the backgrounds and foregrounds
-	setBackgroundLayer1(backgroundLayer1, anchour);
-	setBackgroundLayer2(backgroundLayer2, anchour);
-	setBackgroundLayer3(backgroundLayer3, anchour);
-	setForegroundLayer(foregroundLayer, anchour);
+	setBackgroundLayer1(backgroundLayer1);
+	setBackgroundLayer2(backgroundLayer2);
+	setBackgroundLayer3(backgroundLayer3);
+	setForegroundLayer(foregroundLayer);
 
 }
 
@@ -30,66 +44,36 @@ world::Area::~Area()
 Sprite * world::Area::getBackgroundLayer1() const { return bg1; }
 
 // sets background layer 1
-void world::Area::setBackgroundLayer1(std::string backgroundLayer1, Vec2 anchour)
+void world::Area::setBackgroundLayer1(std::string backgroundLayer1)
 {
-	if (backgroundLayer1 == "") // if the layer is blank, then the sprite isn't created.
+	if (backgroundLayer1 == "") // if the layer is blank, then the texture isn't changed.
 		return;
 
-	if (bg1 == nullptr) // if bg1 is a nullptr (which it should never be), then the create function is called.
-	{
-		bg1 = Sprite::create(backgroundLayer1);
-		bg1->setGlobalZOrder(0.0F);
-	}
-	else // changes texture.
-	{
-		bg1->setTexture(backgroundLayer1);
-	}
-
-	bg1->setAnchorPoint(anchour); // setting the anchour point.
+	bg1->setTexture(backgroundLayer1);
 }
 
 // Returns the second background layer
 Sprite * world::Area::getBackgroundLayer2() const { return bg2; }
 
 // sets background layer 2
-void world::Area::setBackgroundLayer2(std::string backgroundLayer2, Vec2 anchour)
+void world::Area::setBackgroundLayer2(std::string backgroundLayer2)
 {
-	if (backgroundLayer2 == "") // if the layer is blank, then the sprite isn't created.
+	if (backgroundLayer2 == "") // if the layer is blank, then the texture isn't changed.
 		return;
 
-	if (bg2 == nullptr) // if bg2 is a nullptr, then the create function is called.
-	{
-		bg2 = Sprite::create(backgroundLayer2);
-		bg2->setGlobalZOrder(0.1F);
-	}
-	else // changes texture.
-	{
-		bg2->setTexture(backgroundLayer2);
-	}
-
-	bg2->setAnchorPoint(anchour); // setting the anchour point.
+	bg2->setTexture(backgroundLayer2);
 }
 
 // Returns the third background layer
 Sprite * world::Area::getBackgroundLayer3() const { return bg3; }
 
 // sets background layer 3
-void world::Area::setBackgroundLayer3(std::string backgroundLayer3, Vec2 anchour)
+void world::Area::setBackgroundLayer3(std::string backgroundLayer3)
 {
-	if (backgroundLayer3 == "") // if the layer is blank, then the sprite isn't created.
+	if (backgroundLayer3 == "") // if the layer is blank, then the texture isn't changed.
 		return;
 
-	if (bg3 == nullptr) // if bg3 is a nullptr, then the create function is called.
-	{
-		bg3 = Sprite::create(backgroundLayer3);
-		bg3->setGlobalZOrder(0.2F);
-	}
-	else // changes texture.
-	{
-		bg3->setTexture(backgroundLayer3);
-	}
-
-	bg3->setAnchorPoint(anchour); // setting the anchour point.
+	bg3->setTexture(backgroundLayer3);
 }
 
 // Returns a backgorund layer based on a value.
@@ -115,38 +99,21 @@ Sprite * world::Area::getBackground(short int bg) const
 Sprite * world::Area::getForegroundLayer() const { return fg; }
 
 // sets foreground layer
-void world::Area::setForegroundLayer(std::string foregroundLayer, Vec2 anchour)
+void world::Area::setForegroundLayer(std::string foregroundLayer)
 {
-	if (foregroundLayer == "") // if the layer is blank, then the sprite isn't created.
+	if (foregroundLayer == "") // if the layer is blank, then the texture isn't changed.
 		return;
 
-	if (fg == nullptr) // if bg3 is a nullptr, then the create function is called.
-	{
-		fg = Sprite::create(foregroundLayer);
-		fg->setGlobalZOrder(9.0F);
-	}
-	else // changes texture.
-	{
-		fg->setTexture(foregroundLayer);
-	}
-
-	fg->setAnchorPoint(anchour); // setting the anchour point.
+	fg->setTexture(foregroundLayer);
 }
 
 // sets the positions of all background and foreground layers.
 void world::Area::setAllLayerPositions(Vec2 position)
 {
-	if (bg1 != nullptr)
-		bg1->setPosition(position);
-	
-	if (bg2 != nullptr)
-		bg2->setPosition(position);
-	
-	if (bg3 != nullptr)
-		bg3->setPosition(position);
-	
-	if (fg != nullptr)
-	 fg->setPosition(position);
+	bg1->setPosition(position);
+	bg2->setPosition(position);
+	bg3->setPosition(position);
+	fg->setPosition(position);
 }
 
 // sets the anchour points of all layers.
@@ -169,28 +136,25 @@ void world::Area::setAllAnchourPoints(Vec2 anchour)
 // gets all graphic elements as a single node.
 Node * world::Area::getAsSingleNode()
 {
+	float gz = 0.0F;
 	Node * tempNode = Node::create(); // temporary node
-	
-	// adds all the backgrounds and foreground to the draw node, checking for null pointers.
-	if(bg1 != nullptr)
-		tempNode->addChild(bg1);
-	
-	if (bg2 != nullptr)
-		tempNode->addChild(bg2);
-	
-	if(bg3 != nullptr)
-		tempNode->addChild(bg3);
-	
-	if(fg != nullptr)
-		tempNode->addChild(fg);
 
+	// adds all the backgrounds and foreground to the draw node, checking for null pointers.
+	tempNode->addChild(bg1);
+	tempNode->addChild(bg2);
+	tempNode->addChild(bg3);
+	tempNode->addChild(fg);
+	
 	for (int i = 0; i < areaTiles.size(); i++) // adds all the tiles from the tile vector
+	{
+		gz = areaTiles.at(i)->getSprite()->getGlobalZOrder();
 		tempNode->addChild(areaTiles.at(i)->getSprite());
+	}
 
 	for (int i = 0; i < areaEnemies.size(); i++) // adds all the enemies from the enemy vector
 		tempNode->addChild(areaEnemies[i]->getSprite());
 	
-
+	// bg2->setGlobalZOrder(0.0F);
 	return tempNode;
 }
 
@@ -201,37 +165,125 @@ std::string world::Area::getName() const { return name; }
 void world::Area::setName(std::string name) { this->name = name; }
 
 // returns the location exit 0 leads to.
-std::string world::Area::getExit0() { return exit0; }
+std::string world::Area::getExit0() const { return exit0; }
 
 // returns the location exit 1 leads to.
-std::string world::Area::getExit1() { return exit1; }
+std::string world::Area::getExit1() const { return exit1; }
 
 // returns the location exit 2 leads to.
-std::string world::Area::getExit2() { return exit2; }
+std::string world::Area::getExit2() const { return exit2; }
 
 // returns the location exit 3 leads to.
-std::string world::Area::getExit3() { return exit3; }
+std::string world::Area::getExit3() const { return exit3; }
 
 // returns the location exit 4 leads to.
-std::string world::Area::getExit4() { return exit4; }
+std::string world::Area::getExit4() const { return exit4; }
 
 // returns spawn point #0
-Vec2 world::Area::getSpawn0() { return spawn0; }
+Vec2 world::Area::getSpawn0() const { return spawn0; }
 
 // returns spawn point #1
-Vec2 world::Area::getSpawn1() { return spawn1; }
+Vec2 world::Area::getSpawn1() const { return spawn1; }
 
 // returns spawn point #2
-Vec2 world::Area::getSpawn2() { return spawn2; }
+Vec2 world::Area::getSpawn2() const { return spawn2; }
 
 // returns spawn point #3
-Vec2 world::Area::getSpawn3() { return spawn3; }
+Vec2 world::Area::getSpawn3() const { return spawn3; }
 
 // returns spawn point #4
-Vec2 world::Area::getSpawn4(){ return spawn4; }
+Vec2 world::Area::getSpawn4() const { return spawn4; }
+
+// gets the strength of the gravity in the area.
+float world::Area::getGravity() const { return gravity; }
+
+// sets the strength of gravity in the area; it cannot be less than or equal to 0. If a value less than 0 is passed, then the gravity stays the same.
+void world::Area::setGravity(float gravity) 
+{ 
+	(gravity > 0.0f) ? this->gravity = gravity : this->gravity = this->gravity;
+}
 
 // returns the tiles in the area.
 std::vector<entity::Tile*> * world::Area::getAreaTiles() { return &areaTiles; }
+
+// takes a array of entity tiles and puts it into the vector. The values of ROW_MAX and COL_MAX are the limits for it.
+void world::Area::tileArrayToVector(entity::Tile * tileGrid[][52], const bool flipY, int rowMax, int colMax)
+{
+	float offset = 0.0F; // used to offset copies of the element
+
+	// if the provided row or column amounts go above the limits of the program, they are cut off at the size limit.
+	if (rowMax > ROW_MAX)
+		rowMax = ROW_MAX;
+	
+	if (colMax > COL_MAX)
+		colMax = COL_MAX;
+
+	for (int row = 0; row < ROW_MAX; row++)
+	{
+		for (int col = 0; col < COL_MAX; col++)
+		{
+			if (tileGrid[row][col] == nullptr) // if the location is a nullptr, the program skips it
+				continue;
+
+			tileGrid[row][col]->setPosition(64.0F + GRID_UNIT_SIZE * col, 64.0F + GRID_UNIT_SIZE * row); // sets the position of the current tile, based on its position in the array.
+			if (flipY)
+				tileGrid[row][col]->setPositionY(GRID_UNIT_SIZE * ROW_MAX - tileGrid[row][col]->getPositionY());
+
+
+
+			areaTiles.push_back(tileGrid[row][col]); // adds the tile to the scene.
+
+			if (tileGrid[row][col]->COPY_UP > 0) // Copies Upwards
+			{
+				// If the user wants the sprite to be offset by its actual size, the textureRect's height is used. If not, then GRID_UNIT_SIZE pixels are used.
+				offset = (tileGrid[row][col]->OFFSET_BY_SPRITE_SIZE) ? tileGrid[row][col]->getSprite()->getTextureRect().getMaxY() : GRID_UNIT_SIZE;
+
+				for (int i = 1; i <= tileGrid[row][col]->COPY_UP; i++) // loops while there are still copies left to be made.
+				{
+					areaTiles.push_back(new entity::Tile(tileGrid[row][col]->getTIN(), tileGrid[row][col]->getLetter())); // adds the new tile to the vector.
+					areaTiles.at(areaTiles.size() - 1)->setPosition(tileGrid[row][col]->getPositionX(), tileGrid[row][col]->getPositionY() + offset * i); // makes a tile one square above the previous tile.
+				}
+			}
+
+			if (tileGrid[row][col]->COPY_DOWN > 0) // Copies  Down
+			{
+				// If the user wants the sprite to be offset by its actual size, the textureRect's height is used. If not, then GRID_UNIT_SIZE pixels are used.
+				offset = (tileGrid[row][col]->OFFSET_BY_SPRITE_SIZE) ? tileGrid[row][col]->getSprite()->getTextureRect().getMaxY() : GRID_UNIT_SIZE;
+
+				for (int i = 1; i <= tileGrid[row][col]->COPY_DOWN; i++) // loops while there are still copies left to be made.
+				{
+					areaTiles.push_back(new entity::Tile(tileGrid[row][col]->getTIN(), tileGrid[row][col]->getLetter())); // adds the new tile to the vector.
+					areaTiles.at(areaTiles.size() - 1)->setPosition(tileGrid[row][col]->getPositionX(), tileGrid[row][col]->getPositionY() - offset * i); // makes a tile one square below the previous tile.
+				}
+			}
+
+			if (tileGrid[row][col]->COPY_LEFT > 0) // Copies left
+			{
+				// If the user wants the sprite to be offset by its actual size, the textureRect's width is used. If not, then GRID_UNIT_SIZE pixels are used.
+				offset = (tileGrid[row][col]->OFFSET_BY_SPRITE_SIZE) ? tileGrid[row][col]->getSprite()->getTextureRect().getMaxX() : GRID_UNIT_SIZE;
+
+				for (int i = 1; i <= tileGrid[row][col]->COPY_LEFT; i++) // loops while there are still copies left to be made.
+				{
+					areaTiles.push_back(new entity::Tile(tileGrid[row][col]->getTIN(), tileGrid[row][col]->getLetter())); // adds the new tile to the vector.
+					areaTiles.at(areaTiles.size() - 1)->setPosition(tileGrid[row][col]->getPositionX() - offset * i, tileGrid[row][col]->getPositionY()); // makes a tile one square below the previous tile.
+				}
+			}
+
+			if (tileGrid[row][col]->COPY_RIGHT > 0) // Copies Right
+			{
+				// If the user wants the sprite to be offset by its actual size, the textureRect's width is used. If not, then GRID_UNIT_SIZE pixels are used.
+				offset = (tileGrid[row][col]->OFFSET_BY_SPRITE_SIZE) ? tileGrid[row][col]->getSprite()->getTextureRect().getMaxX() : GRID_UNIT_SIZE;
+
+				for (int i = 1; i <= tileGrid[row][col]->COPY_RIGHT; i++) // loops while there are still copies left to be made.
+				{
+					areaTiles.push_back(new entity::Tile(tileGrid[row][col]->getTIN(), tileGrid[row][col]->getLetter())); // adds the new tile to the vector.
+					areaTiles.at(areaTiles.size() - 1)->setPosition(tileGrid[row][col]->getPositionX() + offset * i, tileGrid[row][col]->getPositionY()); // makes a tile one square below the previous tile.
+				}
+			}
+
+		}
+	}
+}
 
 // adds a tile to the area
 void world::Area::operator+=(entity::Tile * tile)
@@ -262,6 +314,85 @@ void world::Area::operator-=(entity::Tile * tile)
 
 // returns the enemies in the scene
 std::vector<entity::Enemy*> * world::Area::getAreaEnemies() { return &areaEnemies; }
+
+// takes a array of entity enemies and puts it into the vector. The values of ROW_MAX and COL_MAX are the limits for it.
+void world::Area::enemyArrayToVector(entity::Enemy * enemyGrid[][52], const bool flipY, int rowMax, int colMax)
+{
+	float offset = 0.0F; // used to offset copies of the element
+
+	// if the provided row or column amounts go above the limits of the program, they are cut off at the size limit.
+	if (rowMax > ROW_MAX)
+		rowMax = ROW_MAX;
+
+	if (colMax > COL_MAX)
+		colMax = COL_MAX;
+
+	for (int row = 0; row < ROW_MAX; row++)
+	{
+		for (int col = 0; col < COL_MAX; col++)
+		{
+			if (enemyGrid[row][col] == nullptr) // if the location is a nullptr, the program skips it
+				continue;
+
+			enemyGrid[row][col]->setPosition(64.0F + GRID_UNIT_SIZE * col, 64.0F + GRID_UNIT_SIZE * row); // sets the position of the current enemy, based on its position in the array.
+
+			if (flipY) // flipping the enemy's position if flipY is true
+				enemyGrid[row][col]->setPositionY(GRID_UNIT_SIZE * ROW_MAX - enemyGrid[row][col]->getPositionY());
+
+
+			areaEnemies.push_back(enemyGrid[row][col]); // adds the enemy to the scene.
+
+			if (enemyGrid[row][col]->COPY_UP > 0) // Copies Upwards
+			{
+				// If the user wants the sprite to be offset by its actual size, the textureRect's height is used. If not, then GRID_UNIT_SIZE pixels are used.
+				offset = (enemyGrid[row][col]->OFFSET_BY_SPRITE_SIZE) ? enemyGrid[row][col]->getSprite()->getTextureRect().getMaxY() : GRID_UNIT_SIZE;
+
+				for (int i = 1; i <= enemyGrid[row][col]->COPY_UP; i++) // loops while there are still copies left to be made.
+				{
+					areaEnemies.push_back(new entity::Enemy(enemyGrid[row][col]->getEIN(), enemyGrid[row][col]->getLetter())); // adds the new enemy to the vector.
+					areaEnemies.at(areaEnemies.size() - 1)->setPosition(enemyGrid[row][col]->getPositionX(), enemyGrid[row][col]->getPositionY() + offset * i); // makes a enemy one unit above the previous enemy.
+				}
+			}
+
+			if (enemyGrid[row][col]->COPY_DOWN > 0) // Copies  Down
+			{
+				// If the user wants the sprite to be offset by its actual size, the textureRect's height is used. If not, then GRID_UNIT_SIZE pixels are used.
+				offset = (enemyGrid[row][col]->OFFSET_BY_SPRITE_SIZE) ? enemyGrid[row][col]->getSprite()->getTextureRect().getMaxY() : GRID_UNIT_SIZE;
+
+				for (int i = 1; i <= enemyGrid[row][col]->COPY_DOWN; i++) // loops while there are still copies left to be made.
+				{
+					areaEnemies.push_back(new entity::Enemy(enemyGrid[row][col]->getEIN(), enemyGrid[row][col]->getLetter())); // adds the new enemy to the vector.
+					areaEnemies.at(areaEnemies.size() - 1)->setPosition(enemyGrid[row][col]->getPositionX(), enemyGrid[row][col]->getPositionY() - offset * i); // makes a enemy one square below the previous tile.
+				}
+			}
+
+			if (enemyGrid[row][col]->COPY_LEFT > 0) // Copies left
+			{
+				// If the user wants the sprite to be offset by its actual size, the textureRect's width is used. If not, then GRID_UNIT_SIZE pixels are used.
+				offset = (enemyGrid[row][col]->OFFSET_BY_SPRITE_SIZE) ? enemyGrid[row][col]->getSprite()->getTextureRect().getMaxX() : GRID_UNIT_SIZE;
+
+				for (int i = 1; i <= enemyGrid[row][col]->COPY_LEFT; i++) // loops while there are still copies left to be made.
+				{
+					areaEnemies.push_back(new entity::Enemy(enemyGrid[row][col]->getEIN(), enemyGrid[row][col]->getLetter())); // adds the new enemy to the vector.
+					areaEnemies.at(areaEnemies.size() - 1)->setPosition(enemyGrid[row][col]->getPositionX() - offset * i, enemyGrid[row][col]->getPositionY()); // makes a enemy one square below the previous tile.
+				}
+			}
+
+			if (enemyGrid[row][col]->COPY_RIGHT > 0) // Copies Right
+			{
+				// If the user wants the sprite to be offset by its actual size, the textureRect's width is used. If not, then GRID_UNIT_SIZE pixels are used.
+				offset = (enemyGrid[row][col]->OFFSET_BY_SPRITE_SIZE) ? enemyGrid[row][col]->getSprite()->getTextureRect().getMaxX() : GRID_UNIT_SIZE;
+
+				for (int i = 1; i <= enemyGrid[row][col]->COPY_RIGHT; i++) // loops while there are still copies left to be made.
+				{
+					areaEnemies.push_back(new entity::Enemy(enemyGrid[row][col]->getEIN(), enemyGrid[row][col]->getLetter())); // adds the new enemy to the vector.
+					areaEnemies.at(areaEnemies.size() - 1)->setPosition(enemyGrid[row][col]->getPositionX() + offset * i, enemyGrid[row][col]->getPositionY()); // makes a enemy one square below the previous tile.
+				}
+			}
+
+		}
+	}
+}
 
 // adds an enemy to the area
 void world::Area::operator+=(entity::Enemy * enemy)

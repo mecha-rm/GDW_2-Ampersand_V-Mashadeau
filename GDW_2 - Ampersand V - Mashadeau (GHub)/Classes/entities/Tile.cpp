@@ -15,8 +15,9 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 {
 	DrawNode * tempNode = DrawNode::create(); // used to create an enemy square if no tile of the provided TIN exists.
 	
-	sprite->setGlobalZOrder(3.0F);
+	sprite->setGlobalZOrder(3.0F); // all tiles should be on the same global z-order.
 	tempNode->setGlobalZOrder(3.0F);
+	setAntiGravity(true); // tiles shouldn't be moved by gravity, so their anti gravity gets turned on by default.
 
 	this->TIN = TIN; // setting the TIN; this will be changed later if a platform does not exist of this number.
 	this->LETTER = letter; // setting the letter identifier; this will be changed later if it is invalid.
@@ -24,7 +25,6 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 	switch (TIN)
 	{
 	case 1:
-		// set
 	case 2:
 	case 3:
 	case 4:
@@ -34,10 +34,10 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 	case 8:
 	case 9:
 
-	case 10: // stop block
+	case 10: // stock block
 		
 		// this->LETTER = 'a'; // there's only one block at the moment, so it's set as type a.
-		setSprite(Sprite::create("images/tiles/TIN_010.png")); // sets the image for the sprite
+		setTexture("images/tiles/TIN_010.png"); // sets the image for the sprite
 		switch (letter)
 		{
 		case 'a': // 'a' is also the default type.
@@ -59,12 +59,12 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 
 
 	default:
-		this->TIN = 0; // a tile of type 0 is invalid. This number is taken up by something else, but said thing does not actuall make a tile.
+		this->TIN = 0; // a tile of type 0 is invalid. This number is taken up by something else, but said thing does not actually make a tile.
 		this->LETTER = 'a'; // default letter of 'a'.
 		name = "NON_EXISTENT_TILE";
 		description = "Unable to find data";
 
-		setSprite(cocos2d::Sprite::create()); // uses TIN_010 by default. This will be covered up.
+		// setSprite(cocos2d::Sprite::create()); // uses TIN_010 by default. This will be covered up.
 		sprite->setTextureRect(Rect(0.0F, 0.0F, 128.0F, 128.0F)); // creates a texture rect, so that the default only has one tile
 		sprite->setColor(Color3B::RED);
 		tempNode->drawRect(Vec2(0.0F, 0.0F), Vec2(sprite->getTextureRect().getMaxX(), sprite->getTextureRect().getMaxY()), Color4F::BLUE); // creates an outline for the rectangle, and adds it to the sprite.

@@ -24,7 +24,7 @@ namespace world
 		 *
 		 * Any unitialized layer will be set to have the same default contents as
 		*/
-		Area(std::string backgroundLayer1, std::string backgroundLayer2 = "", std::string backgroundLayer3 = "", std::string foregroundLayer = "", Vec2 anchour = Vec2(0.5F, 0.5F));
+		Area(std::string backgroundLayer1, std::string backgroundLayer2 = "", std::string backgroundLayer3 = "", std::string foregroundLayer = "");
 
 		~Area();
 
@@ -56,38 +56,56 @@ namespace world
 		std::string getName() const;
 
 		// gets exit 0, being an exit point in the scene; this holds where the area exits to.
-		std::string getExit0();
+		std::string getExit0() const;
 
 		// gets exit 1, being an exit point in the scene; this holds where the area exits to.
-		std::string getExit1();
+		std::string getExit1() const;
 
 		// gets exit 2, being an exit point in the scene; this holds where the area exits to.
-		std::string getExit2();
+		std::string getExit2() const;
 
 		// gets exit 3, being an exit point in the scene; this holds where the area exits to.
-		std::string getExit3();
+		std::string getExit3() const;
 
 		// gets exit 4, being an exit point in the scene; this holds where the area exits to.
-		std::string getExit4();
+		std::string getExit4() const;
 
 		// returns spawn point 0.
-		Vec2 getSpawn0();
+		Vec2 getSpawn0() const;
 
 		// returns spawn point 1.
-		Vec2 getSpawn1();
+		Vec2 getSpawn1() const;
 
 		// returns spawn point 2.
-		Vec2 getSpawn2();
+		Vec2 getSpawn2() const;
 
 		// returns spawn point 3.
-		Vec2 getSpawn3();
+		Vec2 getSpawn3() const;
 
 		// returns spawn point 4.
-		Vec2 getSpawn4();
+		Vec2 getSpawn4() const;
+
+		// gets the strength of the gravity in the area.
+		float getGravity() const;
+
+		// sets the strength of gravity in the area; it cannot be less than or equal to 0.
+		void setGravity(float gravity);
 
 		// gets the scene tiles
 		std::vector<entity::Tile *> * getAreaTiles();
 	
+		/*
+		* adds an array to the area tiles vector. The maximum size of the array is the value of ROW_MAX and COL_MAX.
+		* to end the vector additions early, the user can put in a custom row and column size, but if it exceeds the size limit, it will get cut off at the size limit.
+	
+		* VARIABLES:
+			* flipY: flips the locations of the tiles along the y-axis. This determines whether platforms are positioned as the array looks, or how the array actually is.
+			* the 'bottom' of the array above is technically the top of it, and vice-versa. When flipY is true, the 'bottom' of the array is treated as the 'top' of the array for printing purposes.
+			* when flipY is false, the first row of tiles will be at the bottom of the screen, and the final row will be the top of the screen.
+			* when flipY is true, the first row of tiles will be at the top of the screen, and the final row will be at the bottom of the screen.
+		*/
+		void tileArrayToVector(entity::Tile * tileGrid[][52], const bool flipY = false, int rowMax = ROW_MAX, int colMax = COL_MAX);
+
 		// adds a tile to the area
 		void operator+=(entity::Tile *);
 
@@ -96,6 +114,18 @@ namespace world
 
 		// gets the enemy vector
 		std::vector<entity::Enemy *> * getAreaEnemies();
+
+		/*
+		 * adds an array to the area enemiesvector. The maximum size of the array is the value of ROW_MAX and COL_MAX.
+		 * to end the vector additions early, the user can put in a custom row and column size, but if it exceeds the size limit, it will get cut off at the size limit.
+	
+		 * VARIABLES:
+			* flipY: flips the locations of the tiles along the y-axis. This determines whether platforms are positioned as the array looks, or how the array actually is.
+			* the 'bottom' of the array above is technically the top of it, and vice-versa. When flipY is true, the 'bottom' of the array is treated as the 'top' of the array for printing purposes.
+			* when flipY is false, the first row of tiles will be at the bottom of the screen, and the final row will be the top of the screen.
+			* when flipY is true, the first row of tiles will be at the top of the screen, and the final row will be at the bottom of the screen.
+		*/
+		void enemyArrayToVector(entity::Enemy * enemyGrid[][52], const bool flipY = false, int rowMax = ROW_MAX, int colMax = COL_MAX);
 
 		// adds an ememy to the area
 		void operator+=(entity::Enemy *);
@@ -127,21 +157,23 @@ namespace world
 		Sprite * fg = nullptr; // a foreground layer; this would go in front of all other level assets.
 
 	private:
+		float gravity = 1.0F; // the level of gravity in the area.
+
 		std::string fileName; // the name of the file
 		std::fstream file; // the file itself
 
 	protected:
 		// setting bg1 layer
-		void setBackgroundLayer1(std::string backgroundLayer1, Vec2 anchour = Vec2(0.5F, 0.5F));
+		void setBackgroundLayer1(std::string backgroundLayer1);
 
 		// setting bg2 layer
-		void setBackgroundLayer2(std::string backgroundLayer2, Vec2 anchour = Vec2(0.5F, 0.5F));
+		void setBackgroundLayer2(std::string backgroundLayer2);
 
 		// setting bg3 layer
-		void setBackgroundLayer3(std::string backgroundLayer3, Vec2 anchour = Vec2(0.5F, 0.5F));
+		void setBackgroundLayer3(std::string backgroundLayer3);
 
 		// setting the fg layer
-		void setForegroundLayer(std::string foregroundLayer, Vec2 anchour = Vec2(0.5F, 0.5F));
+		void setForegroundLayer(std::string foregroundLayer);
 
 		// sets the area's name
 		void setName(std::string name);

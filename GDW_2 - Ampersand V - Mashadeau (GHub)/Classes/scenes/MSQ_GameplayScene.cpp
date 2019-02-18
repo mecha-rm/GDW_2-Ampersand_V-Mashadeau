@@ -97,6 +97,7 @@ void MSQ_GameplayScene::initSprites()
 	// creating the scene
 	sceneArea = world::World::getArea("AIN_X00"); // makes the area. Remember, all the anchour points are the middle of the sprite layers (0.5, 0.5).
 	sceneArea->setAllLayerPositions(Vec2(director->getWinSizeInPixels().width / 2, director->getWinSizeInPixels().height / 2)); // makes all the layers be at the middle of the screen.
+	
 	this->addChild(sceneArea->getAsSingleNode()); // gets the scene graphic elements (hitboxes not withstanding) as a single node.
 
 	sceneTiles = sceneArea->getAreaTiles(); // saves a pointer to the scene tiles
@@ -176,7 +177,8 @@ bool MSQ_GameplayScene::onContactBeginCallback(PhysicsContact & contact)
 // update loop
 void MSQ_GameplayScene::update(float deltaTime)
 {
-	// this->getDefaultCamera()->setPosition(/*player's position goes here*/)
+	/*player's position goes here*/
+	this->getDefaultCamera()->setPosition(plyr->getPosition());
 	// These movement parameters will need to be changed later.
 	if (moveUp)
 	{

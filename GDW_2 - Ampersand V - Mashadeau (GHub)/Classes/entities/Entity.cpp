@@ -1,12 +1,13 @@
 #include "entities/Entity.h"
 
+float * entity::Entity::areaGravity = new float(1.0F); // the default level of gravity for all entities.
 
-
-entity::Entity::Entity(std::string texture, Vec2 position) : sprite(Sprite::create())
+entity::Entity::Entity(std::string texture, Vec2 position, float globalZOrder) : sprite(Sprite::create())
 {
 	sprite->setTexture(texture);
 	sprite->setAnchorPoint(Vec2(0.5, 0.5)); // anchour point is the middle of the sprite
 	sprite->setPosition(position); // setting position
+	sprite->setGlobalZOrder(globalZOrder);
 }
 
 // releases the sprite 
@@ -152,6 +153,15 @@ void entity::Entity::setForceStop(float forceStop)
 // returns whether the entity has a constant velocity or not.
 bool entity::Entity::getConstVelocity() const { return constVelocity; }
 
+// returns the current bool of 'anti gravity', which determines if the entity is affected by gravity or not.
+bool entity::Entity::getAntiGravity() const { return antiGravity; }
+
+// sets whether the entity has anti gravity or not.
+void entity::Entity::setAntiGravity(float antiGravity) { this->antiGravity = antiGravity; }
+
+// toggles anti gravity on/off.
+void entity::Entity::setAntiGravity() { antiGravity = !antiGravity; }
+
 // sets whether the entity has a constant velocity (i.e. the velocity is either '0', or some value) or not.
 void entity::Entity::setConstVelocity(bool constVelocity) { this->constVelocity = constVelocity; }
 
@@ -165,6 +175,10 @@ void entity::Entity::update(float deltaTime)
 	Vec2 acceleration; // the enemy's current acceleration
 
 	acceleration = force / mass; // gets the force to be applied, divided by the entity's mass.
+
+	if(antiGravity == false)  // applies gravity to the entity if anti gravity is turned off.
+		acceleration.y -= *areaGravity / mass;
+
 	velocity += acceleration * deltaTime; // adds the acceleration to the entity's velocity
 	
 	// Capping Velocity (x, y)

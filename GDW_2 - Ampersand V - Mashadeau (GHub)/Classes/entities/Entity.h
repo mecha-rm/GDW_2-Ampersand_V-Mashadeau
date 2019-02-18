@@ -13,7 +13,7 @@ namespace entity
 	class Entity
 	{
 	public:
-		Entity(std::string texture = "", Vec2 position = Vec2(0.0F, 0.0F));
+		Entity(std::string texture = "", Vec2 position = Vec2(0.0F, 0.0F), float globalZOrder = 0.0F);
 		~Entity();
 
 		// gets how long the entity has existed for.
@@ -92,9 +92,18 @@ namespace entity
 		float getForceStop() const;
 		// returns whether the entity has a constant velocity or not.
 		bool getConstVelocity() const;
-		
+
+		// gets whether the entity is effected by gravity or not. If 'true', the entity is not affected by gravity.
+		bool getAntiGravity() const;
+		// sets whether the entity is effected by gravity or not. If 'false' is passed, then the entity becomes effected by gravity.
+		void setAntiGravity(float antiGravity);
+		// toggles the anti gravity on/off.
+		void setAntiGravity();
+
 		// update loop
 		void update(float deltaTime);
+
+		static float * areaGravity; // saves the level of gravity in the scene. This should be shared by all entities.
 
 	private:
 		float mass = 1.0; // the mass of the entity
@@ -149,14 +158,16 @@ namespace entity
 		std::string description = ""; // the entity's description
 
 		// the magic type of the entity
-		// magic::MagicTypes type;
+		// magic::MagicTypes type = magic::null;
 
 		Sprite * sprite; // the entity's sprite
 		// OOP::PrimitiveSquare * boundingBox; // a bounding box hitbox
 		//OOP::PrimitiveCircle * boundingCircle; // a circular hitbox
 
 		Vec2 force = Vec2(0.0f, 0.0f); // the force of the entity
-		
+	
+		// used to turn on and off the gravity. If 'antiGravity' is false, then the entity IS affected by gravity. If it's false, then the entity ISN'T effected by gravity.
+		bool antiGravity = true;
 	};
 }
 

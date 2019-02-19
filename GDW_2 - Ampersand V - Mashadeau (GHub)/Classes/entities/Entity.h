@@ -6,10 +6,22 @@
 
 #include "magics/MagicTypes.h"
 #include "Primitives.h"
+#include "Utilities.h"
 using namespace cocos2d;
 
 namespace entity
 {
+	// these tags are used to set the identification tags for different entites. These are used for collision detection.
+	enum etag
+	{
+		tile = 0,
+		player = 1,
+		enemy = 2,
+		weapon = 3,
+		item = 4
+	};
+	
+
 	class Entity
 	{
 	public:
@@ -34,6 +46,9 @@ namespace entity
 		// returns the rectangle used for cropping the texture
 		Rect getTextureRect() const;
 
+		// returns the magic type of the entity; changing the magic type will result in the defaults for that type being used.
+		magic::magic_t getMagicType() const;
+
 		// Setting the position
 		void setPosition(Vec2 newPos);
 
@@ -53,6 +68,9 @@ namespace entity
 
 		// Getting the sprite's y position.
 		float getPositionY() const;
+
+		// rotates the entity. An acceleration vector can be passed if the user wants to send the entity in the direction they're being rotated in.
+		Vec2 rotateEntity(float theta, Vec2 acceleration);
 
 		// Sets the sprite's opacity via a percentage. Use a value from 0.0 to 1.0, with 1.0 (i.e. 100%) being full opacity.
 		// Opacity for sprites are out of 255, but this function works on percentages.
@@ -140,6 +158,9 @@ namespace entity
 		// if USE_CENTRE is true, then the cropped area treats (x, y) as the centre of the area, rather than the corner of the area.
 		void setTextureRect(float x, float y, float width, float height, const bool USE_CENTRE = false);
 
+		// sets a new magic type for the entity
+		void setMagicType(magic::magic_t magicType);
+
 		// sets the maximum velocity of the entity.  Comparisons use the absolute value of the entity, so it must be above 0.
 		void setMaxVelocity(Vec2 maxVelocity);
 
@@ -158,11 +179,13 @@ namespace entity
 		std::string description = ""; // the entity's description
 
 		// the magic type of the entity
-		// magic::MagicTypes type = magic::null;
+		magic::MagicTypes * magicType = new magic::MagicTypes(magic::null);
 
 		Sprite * sprite; // the entity's sprite
 		// OOP::PrimitiveSquare * boundingBox; // a bounding box hitbox
 		//OOP::PrimitiveCircle * boundingCircle; // a circular hitbox
+
+		PhysicsBody * collisionBody; // the physics body for the sprite, used for collision.
 
 		Vec2 force = Vec2(0.0f, 0.0f); // the force of the entity
 	

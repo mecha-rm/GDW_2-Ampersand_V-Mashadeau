@@ -9,6 +9,7 @@ const float world::Area::GRID_UNIT_SIZE = 128.0F; // grid square size
 // creates three backgrounds, and a foreground
 world::Area::Area(std::string backgroundLayer1, std::string backgroundLayer2, std::string backgroundLayer3, std::string foregroundLayer)
 {
+
 	entity::Entity::areaGravity = &gravity; // sets the gravity for all entities to the gravity in the area.
 
 	// creates the sprites
@@ -138,6 +139,9 @@ Node * world::Area::getAsSingleNode()
 {
 	float gz = 0.0F;
 	Node * tempNode = Node::create(); // temporary node
+
+	// ParallaxNode * gscl = ParallaxNode::create();
+	// gscl->addChild(bg1, bg1->getGlobalZOrder(), Vec2(1.0F, 1.0F), Vec2::ZERO);
 
 	// adds all the backgrounds and foreground to the draw node, checking for null pointers.
 	tempNode->addChild(bg1);

@@ -8,43 +8,54 @@ using namespace cocos2d;
 namespace ustd
 {
 	// converts a whole string to lowercase
-	static std::string toLower(std::string);
+	std::string toLower(std::string);
 
 	// converts a whole string to uppercase
-	static std::string toUpper(std::string);
+	std::string toUpper(std::string);
 
 	// capitalizes a string, making all but the first character lowercase.
-	static std::string captialize(std::string);
+	std::string captialize(std::string);
 
 	// checks if two strings are equal, ignoring case diffrences.
-	static bool equalsIgnoreCase(std::string, std::string);
+	bool equalsIgnoreCase(std::string, std::string);
 
-	// checks to see if a string is a number; needs reworking.
-	static bool isNum(std::string);
+	// checks to see if a string is an integer; this is improved from isNum.
+	bool isInt(std::string str);
+
+	// checks to see if a string is a decimal, which would be a float or double. However, it is validated under the assumption it will become a double.
+	bool isDecimal(std::string str);
 }
 
 
 namespace umath
 {
 	// calculates circle collision; returns true if collision or at least touching. The cocos version will likely be used instead.
-	static bool circleCollision(const Vec2 pos1, const float radius1, const Vec2 pos2, const float radius2);
+	bool circleCollision(const Vec2 pos1, const float radius1, const Vec2 pos2, const float radius2);
 
 	// collision between two rectangles (rectangle A and rectangle B)
 	// Takes the minimum and maximum of the two rectangles as Vec2s.
-	static bool aabbCollision(const Vec2 aMin, const Vec2 aMax, const Vec2 bMin, const Vec2 bMax);
+	bool aabbCollision(const Vec2 aMin, const Vec2 aMax, const Vec2 bMin, const Vec2 bMax);
 
 	// gets two cocos2d rectangles and calculates AABB collision
-	static bool aabbCollision(const Rect * rect1, const Rect * rect2);
+	bool aabbCollision(const Rect * rect1, const Rect * rect2);
 
-	// static bool aabbCollision(Square)
+	// calculates obb collision between two rectangles; this assumes that the rotation angles are based on the middle of the rectanges.
+	bool obbCollision(Rect rect1, float angle1, Rect rect2, float angle2);
+
+	// checks collision between an aabb and a circle using built in cocos algorithms.
+	bool aabbCircleCollision(const Rect * rect, Vec2 circlePos, float radius);
 
 	// conversion from degrees to radians. 1 degree = pi/180 radians. 
-	static float degreesToRadians(float degrees);
+	float degreesToRadians(float degrees);
+
 	// conversion from radians to degrees. 1 radian = 180/pi degrees.
-	static float radiansToDegrees(float radians);
+	float radiansToDegrees(float radians);
+
+	// rotates the provided points
+	Vec2 rotate(Vec2 points, float angle);
 
 	// Returns a random number starting form 'lbound' upto ubound.
 	// If 'includeUbound' is set to 'true', it's upto and including ubound; if false, it's upto but not including ubound. False by default.
-	static int randInt(int lBound, int uBound, bool includeUBound = false);
+	int randInt(int lBound, int uBound, bool includeUBound = false);
 }
 

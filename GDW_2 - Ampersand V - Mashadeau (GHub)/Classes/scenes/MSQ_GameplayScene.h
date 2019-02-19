@@ -27,16 +27,26 @@ public:
 	// initialization functions
 	bool init(); // what's called when the Cocos2D-X scene is created.
 	void initListeners(); // initalizes event handlers
-
-	void initKeyboardListener(); // used for keyboard actions
-	void initContactListener(); // used for collision;
 	void initSprites();
 	void initPauseMenu();
 
 	// callbacks
-	void keyDownCallback(EventKeyboard::KeyCode keyCode, Event* event); // if a key is held down
-	void keyUpCallback(EventKeyboard::KeyCode keyCode, Event* event); // if a key is let go
-	bool onContactBeginCallback(PhysicsContact& contact); // listening for hit detection (which we're not supposed to use)
+	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event); // if a key is held down
+	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event); // if a key is let go
+	bool OnContactBeginCallback(PhysicsContact& contact); // listening for hit detection (which we're not supposed to use)
+
+	// called to find the tile the player is colliding with, and handle what happens, based on the position(s).
+	void playerTileCollision(Vec2 tilePos);
+	// called to find the enemy the player is colliding with, and handle what happens, based on the position(s).
+	void playerEnemyCollision(Vec2 enemyPos);
+	// called to find the item the player is colliding with, and handle what happens, based on the position(s).
+	void playerItemCollision(Vec2 itemPos);
+	
+	// called to find what tile the enemy is colliding with, based on the position(s).
+	void enemyTileCollision(Vec2 enemyPos, Vec2 tilePos);
+	// called to find what enemy the weapon is colliding with, based on the position(s).
+	void enemyWeaponCollision(Vec2 enemyPos, Vec2 weaponPos);
+
 
 	// update function for the scene
 	void update(float deltaTime);
@@ -50,6 +60,7 @@ private:
 	
 	// event listeners
 	EventListenerKeyboard* keyboardListener;
+	EventListenerPhysicsContact * contactListener; // used for listening for collisions
 
 	// event toggles; these turn certain functions on or off.
 	const bool ENABLE_MOUSE = true; // turns mouse functionality on/off.
@@ -66,7 +77,6 @@ private:
 	entity::Player * plyr; // the object used for the player
 
 	static std::vector<world::Area *> areas; // this will save the areas gone to, and will be used to switch screens if scenes are not stored. These will be stored in dat files later on.
-	static std::vector <Scene *> loadedScenes; // if scenes remain loaded, then this will be used to return to a previous scene
 	
 	std::vector<entity::Tile *> * sceneTiles; // the tiles in the scene, which are gotten from the Area class.
 	std::vector<entity::Enemy *> * sceneEnemies; // the enemies in the scene, which are gotten from the Area class.

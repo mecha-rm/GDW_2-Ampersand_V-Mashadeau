@@ -14,7 +14,6 @@ OOP::MouseListener::MouseListener(cocos2d::Scene * scene) : mouseListener(cocos2
 	mouseListener->onMouseMove = std::bind(&OOP::MouseListener::OnMouseMove, this, std::placeholders::_1); // creates the callback
 	mouseListener->onMouseScroll = std::bind(&OOP::MouseListener::OnMouseScroll, this, std::placeholders::_1); // creates the callback
 
-
 	
 	mouseLabel = cocos2d::Label::create("Hello", "fonts/arial.ttf", 30); // creates the label
 	mouseLabel->setGlobalZOrder(10.0F); // the mouse label should be in front of everything.

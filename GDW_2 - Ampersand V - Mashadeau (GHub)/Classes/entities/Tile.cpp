@@ -15,7 +15,9 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 {
 	DrawNode * tempNode = DrawNode::create(); // used to create an enemy square if no tile of the provided TIN exists.
 	
-	sprite->setGlobalZOrder(3.0F); // all tiles should be on the same global z-order.
+	sprite->setGlobalZOrder(1.0F); // all tiles should be on the same global z-order.
+	sprite->setTag(tile);
+
 	tempNode->setGlobalZOrder(3.0F);
 	setAntiGravity(true); // tiles shouldn't be moved by gravity, so their anti gravity gets turned on by default.
 

@@ -12,7 +12,8 @@ Scene * MSQ_GameplayScene::createScene()
 {
 	// 'scene' is an autorelease object
 	Scene * scene = Scene::create(); // create without physics
-	// Scene* scene = Scene::createWithPhysics(); // create with physics
+	// Scene * scene = Scene::createWithPhysics(); // create with physics
+
 	auto * layer = MSQ_GameplayScene::create();
 
 	scene->addChild(layer);
@@ -49,46 +50,28 @@ bool MSQ_GameplayScene::init()
 // initializes listners; there exists toggles that determine whether a certain listener is activated or not.
 void MSQ_GameplayScene::initListeners()
 {
+	// MOUSE LISTENER SETUP
 	// uses enablers to activate or disable certain listeners.
-	if (ENABLE_MOUSE) // adds a mouse listener to the scene using the event dispatcher if ENABLE_MOUSE is true. It has a priority of 1.
-		getEventDispatcher()->addEventListenerWithFixedPriority(mouse.getListener(), 1);
-		
-	// Use this if you ever want to take out the mouse listener.
-	// getEventDispatcher()->removeEventListener(mouse.getListener());
+	// creates the mouse listener
+	getEventDispatcher()->addEventListenerWithFixedPriority(mouse.getListener(), 1); // adds a mouse listener to the scene using the event dispatcher. It has a priority of 1.
+	mouse.getListener()->setEnabled(ENABLE_MOUSE); // sets whether the mouse is enabled or not.
 
-	if (ENABLE_KEYBOARD)
-		initKeyboardListener(); // initalizes keyboard
-	
-	if (ENABLE_CONTACT)
-		initContactListener(); // initalizes the contact listener
-
-}
-
-// Listens for keyboard input
-void MSQ_GameplayScene::initKeyboardListener()
-{
-	// creating the keyboard listener
+	// KEYBOARD LISTENER SETUP
+	// creates the keyboard listener
 	keyboardListener = EventListenerKeyboard::create();
+	keyboardListener->onKeyPressed = CC_CALLBACK_2(MSQ_GameplayScene::onKeyPressed, this); // creating key pressed callback
+	keyboardListener->onKeyReleased = CC_CALLBACK_2(MSQ_GameplayScene::onKeyReleased, this); // creacting key released callback
 
-	//Setting up callbacks
-	keyboardListener->onKeyPressed = CC_CALLBACK_2(MSQ_GameplayScene::keyDownCallback, this);
-	keyboardListener->onKeyReleased = CC_CALLBACK_2(MSQ_GameplayScene::keyUpCallback, this);
+	getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboardListener, this); // adds the keyboard listener to the event dispatcher
+	keyboardListener->setEnabled(ENABLE_KEYBOARD); // enables the keyboard if it is meant to be turned on.
 
-	//Add the keyboard listener to the dispatcher
-	getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboardListener, this);
-}
 
-// Listens for contact.
-void MSQ_GameplayScene::initContactListener()
-{
-	// creating the contact listener
-	EventListenerPhysicsContact* contactListener = EventListenerPhysicsContact::create();
-
-	//Assign callbacks
-	contactListener->onContactBegin = CC_CALLBACK_1(MSQ_GameplayScene::onContactBeginCallback, this);
-
-	//Add the listener to the event dispatcher
-	getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this);
+	// CONTACT LISTENER SETUP
+	// adds the contact listener to the scene
+	contactListener = EventListenerPhysicsContact::create();
+	contactListener->onContactBegin = std::bind(&MSQ_GameplayScene::OnContactBeginCallback, this, std::placeholders::_1); // creates the callback
+	getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this); // adding the contact listener to the scene
+	contactListener->setEnabled(ENABLE_CONTACT); // determines whether the contact listener is on or not.
 }
 
 // initalizes all sprites
@@ -112,13 +95,16 @@ void MSQ_GameplayScene::initSprites()
 	grid->getPrimitive()->setGlobalZOrder(10.1F); // makes the grid be above everything else.
 	grid->getPrimitive()->setVisible(true); // makes the grid visible (or not visible)
 	this->addChild(grid->getPrimitive()); // adds grid to drawList
+
+	this->getDefaultCamera()->setAnchorPoint(Vec2(0.5F, 0.5F)); // setting the camera's anchour point
+	this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the location of the camera
 }
 
 // initializes pause menu; currently does nothing.
 void MSQ_GameplayScene::initPauseMenu() {}
 
 //// CALLBACKS /////////////////////////////////////////////////////////////
-void MSQ_GameplayScene::keyDownCallback(EventKeyboard::KeyCode keyCode, Event * event)
+void MSQ_GameplayScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event * event)
 {
 	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event); // casting as a keyboard event
 
@@ -145,7 +131,7 @@ void MSQ_GameplayScene::keyDownCallback(EventKeyboard::KeyCode keyCode, Event * 
 	// if(keyCode == EventKeyboard::KeyCode::KEY_0)
 }
 
-void MSQ_GameplayScene::keyUpCallback(EventKeyboard::KeyCode keyCode, Event * event)
+void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * event)
 {
 	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event); // casting as a keyboard event
 	
@@ -169,16 +155,125 @@ void MSQ_GameplayScene::keyUpCallback(EventKeyboard::KeyCode keyCode, Event * ev
 	}
 }
 
-bool MSQ_GameplayScene::onContactBeginCallback(PhysicsContact & contact)
+bool MSQ_GameplayScene::OnContactBeginCallback(PhysicsContact & contact)
 {
+	// gets the two nodes thar are being checked for collision.
+	Node * nodeA = contact.getShapeA()->getBody()->getNode();
+	Node * nodeB = contact.getShapeB()->getBody()->getNode();
+	
+	// sets the tags for both nodeA and nodeB, getting them from the two shapes being compared.
+	nodeA->setTag(contact.getShapeA()->getBody()->getTag());
+	nodeB->setTag(contact.getShapeB()->getBody()->getTag());
+
+	if (!(nodeA && nodeB)) // if one of these nodes do not exist, then a 'false' is returned.
+		return false;
+
+	
+	if (nodeA->getTag() == entity::player) // if the node A has a 'player' tag
+	{
+		switch (nodeB->getTag()) // depending on the tag of the second node, different functions are called.
+		{
+		case entity::tile:
+			playerTileCollision(nodeB->getPosition());
+			break;
+		case entity::enemy:
+			playerEnemyCollision(nodeB->getPosition());
+			break;
+		case entity::item:
+			playerItemCollision(nodeB->getPosition());
+			break;
+		}
+	}
+	else if (nodeA->getTag() == entity::enemy) // if node A has an enemy tag
+	{
+		switch (nodeB->getTag()) // depending on the tag of the second node, different functions are called.
+		{
+		case entity::tile:
+			enemyTileCollision(nodeA->getPosition(), nodeB->getPosition());
+			break;
+		case entity::weapon:
+			enemyWeaponCollision(nodeA->getPosition(), nodeB->getPosition());
+			break;
+		}
+	}
+
 	return false;
+}
+
+// called to find the tile the player is colliding with, and handle what happens, based on the position(s).
+void MSQ_GameplayScene::playerTileCollision(Vec2 tilePos)
+{
+	entity::Tile * sceneTile; // saves the tile that the player has collided with
+
+	for each (entity::Tile * tile in *sceneTiles)
+	{
+		if (tile->getPosition() == tilePos) // if the tile has been found.
+		{
+			sceneTile = tile;
+			break;
+		}
+	}
+}
+
+// called to find the enemy the player is colliding with, and handle what happens, based on the position(s).
+void MSQ_GameplayScene::playerEnemyCollision(Vec2 enemyPos)
+{
+	entity::Enemy * sceneEnemy; // saves the tile that the player has collided with
+
+	for each (entity::Enemy * enemy in *sceneEnemies)
+	{
+		if (enemy->getPosition() == enemyPos) // if the enemy has been found.
+		{
+			sceneEnemy = enemy;
+			break;
+		}
+	}
+}
+
+// called to find the item the player is colliding with, and handle what happens, based on the position(s).
+void MSQ_GameplayScene::playerItemCollision(Vec2 itemPos)
+{
+	// TODO: add an item vector and get the item
+}
+
+// called to find what tile the enemy is colliding with, based on the position(s).
+void MSQ_GameplayScene::enemyTileCollision(Vec2 enemyPos, Vec2 tilePos)
+{
+	entity::Enemy * sceneEnemy;
+	entity::Tile * sceneTile;
+
+	for each (entity::Enemy * enemy in *sceneEnemies) // finds the enemy
+	{
+		if (enemy->getPosition() == enemyPos) // if the enemy has been found.
+		{
+			sceneEnemy = enemy;
+			break;
+		}
+	}
+
+	for each (entity::Tile * tile in *sceneTiles) // finds the tile
+	{
+		if (tile->getPosition() == tilePos) // if the tile has been found.
+		{
+			sceneTile = tile;
+			break;
+		}
+	}
+
+}
+
+// called to find what enemy the weapon is colliding with, based on the position(s).
+void MSQ_GameplayScene::enemyWeaponCollision(Vec2 enemyPos, Vec2 weaponPos)
+{
+	// TODO: check enemy collison with player weapons
 }
 
 // update loop
 void MSQ_GameplayScene::update(float deltaTime)
 {
-	/*player's position goes here*/
-	this->getDefaultCamera()->setPosition(plyr->getPosition());
+	this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the position of the camera so that it follows hte player
+	sceneArea->setAllLayerPositions(this->getDefaultCamera()->getPosition()); // makes the backgrounds be directly behind the player. This needs to be changed later so that it scrolls.
+
 	// These movement parameters will need to be changed later.
 	if (moveUp)
 	{

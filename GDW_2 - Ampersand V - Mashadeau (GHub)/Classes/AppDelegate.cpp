@@ -128,6 +128,14 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	auto scene = MSQ_GameplayScene::createScene();
 	// auto scene = HelloWorld::createScene();
 	
+	bool stats = false; // set it to 'true' if you want the stats to be visisble.
+	
+	if (stats)
+	{
+		director->setDisplayStats(true); // turn on display FPS
+		director->setAnimationInterval(1.0f / 60); // set FPS. the default value is 1.0/60 if you don't call this
+	}
+	
     // run
     director->runWithScene(scene);
 	

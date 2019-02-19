@@ -20,7 +20,8 @@ const char entity::Enemy::getLetter() const { return LETTER; }
 // creates the enemy by using inital values
 void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 {
-	sprite->setGlobalZOrder(1.0F); // the global z order of enemies; they are actually behind the player
+	sprite->setGlobalZOrder(3.0F); // the global z order of enemies
+	sprite->setTag(enemy);
 
 	this->EIN = EIN; // saving the EIN; will be changed if invalid.
 	this->LETTER = letter; // saving the letter; will be changed if invalid.

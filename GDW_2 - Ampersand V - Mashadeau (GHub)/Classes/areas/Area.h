@@ -157,7 +157,7 @@ namespace world
 		Sprite * fg = nullptr; // a foreground layer; this would go in front of all other level assets.
 
 	private:
-		float gravity = 1.0F; // the level of gravity in the area.
+		float gravity = 100.0F; // the level of gravity in the area.
 
 		std::string fileName; // the name of the file
 		std::fstream file; // the file itself

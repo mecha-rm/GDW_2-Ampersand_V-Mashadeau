@@ -1,5 +1,6 @@
 #pragma once
 #include "entities/Active.h"
+#include "entities/Weapon.h"
 
 namespace entity
 {
@@ -14,6 +15,9 @@ namespace entity
 		void update(float deltaTime);
 
 	private:
+
+		std::vector<entity::Weapon *> weapons; // saves all of the weapons the player has.
+
 	protected:
 	};
 }

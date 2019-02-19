@@ -1,4 +1,5 @@
 #include "Utilities.h"
+#include <math.h>
 
 /// STRING AND GENERAL FUNCTIONS //////////////////////////////////////////////////////
 std::string ustd::toLower(std::string str)
@@ -61,25 +62,27 @@ bool ustd::equalsIgnoreCase(std::string str1, std::string str2)
 	return str1 == str2; // returning whether the two are equal
 }
 
-// checks to see if a string is a number; needs reworking.
-bool ustd::isNum(std::string str)
+// checks if a string is an integer.
+bool ustd::isInt(std::string str)
 {
-	std::string arr[10] = { "1","2","3","4","5","6","7","8","9","0" };
+	int strInt; // gets the string as an int.
+	std::stringstream ss(str); // creates a string stream for converting the string to an integer.
 
-	// Checks each index of the stirng, checking if it's a whole, numeric value.
-	for (int x = 0; x < str.length(); x++) {
-		for (int y = 0; y < 10; y++) {
-			if (str.substr(x, 1) == arr[y]) {
-				break;
-			}
-			else if (y == 9) {
-				return false;
-			}
-		}
-	}
-	return true;
+	ss >> strInt; // puts the string stream into the integer. If non-int values exist, then the int is truncated.
+
+	return std::to_string(strInt) == str; // returns 'true' if all values were carried over from the string.
 }
 
+// checks if a string is a decimal number (specifically a double).
+bool ustd::isDecimal(std::string str)
+{
+	double strDbl; // gets the string as an float
+	std::stringstream ss(str); // creates a string stream for converting the string to an integer.
+
+	ss >> strDbl; // puts the string stream into the double. If non-int values exist, then the doubleis truncated.
+
+	return std::to_string(strDbl) == str; // returns 'true' if all values were carried over from the string.
+}
 
 /// MATH /////////////////////////////////////////////////////////////////////////////
 
@@ -114,11 +117,63 @@ bool umath::aabbCollision(const Rect * rect1, const Rect * rect2)
 	return umath::aabbCollision(Vec2(rect1->getMinX(), rect1->getMinY()), Vec2(rect1->getMaxX(), rect1->getMaxY()), Vec2(rect2->getMinX(), rect2->getMinY()), Vec2(rect2->getMaxX(), rect2->getMaxY()));
 }
 
+// calculates obb collision between two rectangles; this assumes that the rotation angles are based on the middle of the rectanges.
+bool umath::obbCollision(Rect rect1, float angle1, Rect rect2, float angle2)
+{
+	float theta = angle2 - angle1; // gets the difference between the two angles.
+	
+	bool collision(false);
+
+	Rect obb1;
+	Rect obb2;
+
+	Vec2 tempPos; // saves the position of a rectangle temporarily, which would be their midX and midY values.
+	Vec2 minXY; // saves the minimum x and y coordinates of a rectangle
+	Vec2 maxXY; // saves the maximum x and y coordinates of a rectangle.
+
+	for (int i = 0; i < 2; i++) // two checks are needed for obb.
+	{
+		obb1 = rect1;
+		tempPos = Vec2(rect2.getMidX(), rect2.getMidY()); // gets the position of rect2 (based on its centre)
+		obb2 = Rect(rect2.getMinX() - tempPos.x, rect2.getMinY() - tempPos.y, rect2.getMaxX() - rect2.getMinX(), rect2.getMaxY() - rect2.getMinY()); // creates the rectangle to be rotated.
+
+		// gets the rotated points of the rectangle
+		minXY = umath::rotate(Vec2(obb2.getMinX(), obb2.getMinY()), theta);
+		maxXY = umath::rotate(Vec2(obb2.getMaxX(), obb2.getMaxY()), theta);
+		obb2 = Rect(minXY.x + tempPos.x, minXY.y + tempPos.y, maxXY.x - minXY.x, maxXY.y - minXY.y); // moves the rectangle back to its original location.
+
+		collision = umath::aabbCollision(&obb1, &obb2);
+
+		if (collision == false) // if there was no collision, then the other check doesn't need to be done.
+			return collision;
+
+		// switches the rectangles around so that the check can be done again.
+		obb2 = rect1;
+		rect1 = rect2;
+		rect2 = obb2;
+	}
+
+	return collision;
+}
+
+// checks collision between an aabb and a circle using built in cocos algorithms.
+bool umath::aabbCircleCollision(const Rect * rect, Vec2 circlePos, float radius) { return rect->intersectsCircle(circlePos, radius); }
+
 // converts from degrees to radians
 float umath::degreesToRadians(float degrees) { return degrees * (M_PI / 180); }
 
 // converts from radians to degrees
 float umath::radiansToDegrees(float radians) { return radians * (180 / M_PI); }
+
+// a rotation function. While it doesn't use a rotation matrix, it's modeled after how one would be used for a rotation.
+Vec2 umath::rotate(Vec2 points, float angle)
+{
+	// rotates the coordinate points using a rotation matrix. Well, it technically ISN'T using a matrix, but it's modeled after how two matrices would be multiplied with one another.
+	// This uses a rotation matrix setup, which is modeled below. With matricies, the calculation would be done in the way shown below, which is what was harcoded below.
+	// [ cos a , -sin a] [x] = [ xcos a - ysin a ]
+	// [ sin a ,  cos a] [y] = [ xsin a + ycos a ]
+	return cocos2d::Vec2(points.x * (cosf(angle)) - points.y * (sinf(angle)), points.x * (sinf(angle)) + points.y * (cosf(angle)));
+}
 
 // generates a random integer
 int umath::randInt(int lBound, int uBound, bool includeUBound)

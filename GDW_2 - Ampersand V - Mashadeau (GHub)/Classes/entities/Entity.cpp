@@ -1,4 +1,5 @@
 #include "entities/Entity.h"
+#include "Utilities.h"
 
 float * entity::Entity::areaGravity = new float(1.0F); // the default level of gravity for all entities.
 
@@ -7,7 +8,13 @@ entity::Entity::Entity(std::string texture, Vec2 position, float globalZOrder) :
 	sprite->setTexture(texture);
 	sprite->setAnchorPoint(Vec2(0.5, 0.5)); // anchour point is the middle of the sprite
 	sprite->setPosition(position); // setting position
-	sprite->setGlobalZOrder(globalZOrder);
+	sprite->setGlobalZOrder(globalZOrder); // setting the global z order
+	sprite->setTag(0);
+
+	// collisionBody = PhysicsBody::create();
+	// sprite->setPhysicsBody(collisionBody);
+
+	
 }
 
 // releases the sprite 
@@ -48,6 +55,16 @@ void entity::Entity::setTextureRect(float x, float y, float width, float height,
 	(USE_CENTRE) ? setTextureRect(Rect(x - width / 2, y - width / 2, width, height)) : setTextureRect(Rect(x, y, width, height));
 }
 
+// gets the magic type of the entity
+magic::magic_t entity::Entity::getMagicType() const { return magicType->getType(); }
+
+// sets the type of magic for the entity. Changing the magic type will result in the defaults for that type being used.
+void entity::Entity::setMagicType(magic::magic_t magicType)
+{
+	magic::MagicTypes * newMagic = new magic::MagicTypes(magicType);
+	this->magicType = newMagic;
+}
+
 // sets the entity's position
 void entity::Entity::setPosition(Vec2 newPos) { sprite->setPosition(newPos); }
 
@@ -66,6 +83,25 @@ void entity::Entity::setPositionY(float y) { sprite->setPositionY(y); }
 
 // gets the sprite's y position.
 float entity::Entity::getPositionY() const { return sprite->getPositionY(); }
+
+// rotates the entity.
+Vec2 entity::Entity::rotateEntity(float theta, Vec2 acceleration)
+{
+	// degrees to radians - 1 degree = pi/180 radians. 
+	// radians to degrees - 1 radian = 180/pi degrees.
+
+	// Rotates Entity
+	cocos2d::Mat4 rotation = Mat4::IDENTITY;
+	// this will make hte sprite rotate on its centre
+	rotation.translate(cocos2d::Vec3(sprite->getCenterRect().size.width * sprite->getAnchorPoint().x, sprite->getCenterRect().size.height * sprite->getAnchorPoint().y, 0.0F));
+	rotation.rotateZ(-theta); // applys the 'theta' to the rotation matrix.
+	// this will move hte sprite back to its original location
+	rotation.translate(-cocos2d::Vec3(sprite->getCenterRect().size.width * sprite->getAnchorPoint().x, sprite->getCenterRect().size.height * sprite->getAnchorPoint().y, 0.0F)); // moves it back
+
+	sprite->setAdditionalTransform((cocos2d::Mat4*)(&rotation)); // rotates the image of the entity.
+
+	return umath::rotate(acceleration, -theta); // this will return the sprite's acceleration, rotated by the same amount the sprite was.
+}
 
 // gets the sprite's opacity as a percentage.
 float entity::Entity::getOpacity() { return sprite->getOpacity() / 255; }
@@ -171,6 +207,7 @@ void entity::Entity::setConstVelocity() { setConstVelocity(!constVelocity); }
 // Update Loop
 void entity::Entity::update(float deltaTime)
 {
+
 	Vec2 position = getPosition(); // gets the entity's current position
 	Vec2 acceleration; // the enemy's current acceleration
 
@@ -203,7 +240,7 @@ void entity::Entity::update(float deltaTime)
 
 	// Stopping the Entity (x, y)
 	// if the entity does not have a constant velocity, it has no force being applied, has a non-zero x-velocity, and has fallen below 'forceStop' on the x-axis, its x velocity is set to 0.
-	if (constVelocity == false && force.x == 0.0F && velocity.x != 0.0F && (velocity.x * deltaTime) < forceStop)
+	if (constVelocity == false && force.x == 0.0F && velocity.x != 0.0F && abs(velocity.x * deltaTime) < forceStop)
 		velocity.x = 0.0F;
 
 	// if the entity does not have a constant velocity, it has no force being applied, has a non-zero y-velocity, and has fallen below 'forceStop' on the y-axis, its y velocity is set to 0.

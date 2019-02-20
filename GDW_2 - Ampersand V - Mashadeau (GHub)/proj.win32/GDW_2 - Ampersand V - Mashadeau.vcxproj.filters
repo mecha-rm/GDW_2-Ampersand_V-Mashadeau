@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="win32">
+      <UniqueIdentifier>{84a8ebd7-7cf0-47f6-b75e-d441df67da40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{715254bc-d70b-4ec5-bf29-467dd3ace079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\scenes">
+      <UniqueIdentifier>{d59c4cb4-6c8f-43ed-ad57-f021670bdb49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\areas">
+      <UniqueIdentifier>{69fe4d82-b17e-4e87-96f5-a10bbf3e14fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\areas\AIN_X">
+      <UniqueIdentifier>{47b7e6c5-10cc-49be-9386-dfb0025f05ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\entities">
+      <UniqueIdentifier>{9909d35e-8326-4d90-a22b-d2465072c144}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\OOP">
+      <UniqueIdentifier>{2273650f-4f69-4ac6-b527-956d4fa28263}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\magics">
+      <UniqueIdentifier>{ed120bd9-6be7-4e94-9e0d-1c1eea32b04c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\AppDelegate.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\HelloWorldScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\areas\Area.cpp">
+      <Filter>src\areas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\areas\AIN_X\AIN_X00.cpp">
+      <Filter>src\areas\AIN_X</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\areas\World.cpp">
+      <Filter>src\areas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Utilities.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\scenes\MSQ_GameplayScene.cpp">
+      <Filter>src\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\entities\Entity.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\entities\Player.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\entities\Tile.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\entities\Active.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\entities\Enemy.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MouseListener.cpp">
+      <Filter>src\OOP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Primitives.cpp">
+      <Filter>src\OOP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\magics\MagicTypes.cpp">
+      <Filter>src\magics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\entities\Item.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\entities\Weapon.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AppDelegate.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\HelloWorldScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\areas\Area.h">
+      <Filter>src\areas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\areas\AIN_X\AIN_X00.h">
+      <Filter>src\areas\AIN_X</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\areas\World.h">
+      <Filter>src\areas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utilities.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\scenes\MSQ_GameplayScene.h">
+      <Filter>src\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\entities\Entity.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\entities\Player.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\entities\Tile.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\entities\Active.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\entities\Enemy.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MouseListener.h">
+      <Filter>src\OOP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Primitives.h">
+      <Filter>src\OOP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\magics\MagicTypes.h">
+      <Filter>src\magics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\entities\Item.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\entities\Weapon.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="game.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

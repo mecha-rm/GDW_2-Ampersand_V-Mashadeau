@@ -35,6 +35,13 @@ public:
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event); // if a key is let go
 	bool OnContactBeginCallback(PhysicsContact& contact); // listening for hit detection (which we're not supposed to use)
 
+	// called to handle collisions between entities.
+	void collisions();
+
+	// all player collisions.
+	void playerCollisions();
+	
+	// These are meant to be used with physics bodies. These are NOT being used at this time.
 	// called to find the tile the player is colliding with, and handle what happens, based on the position(s).
 	void playerTileCollision(Vec2 tilePos);
 	// called to find the enemy the player is colliding with, and handle what happens, based on the position(s).

@@ -40,6 +40,7 @@ namespace umath
 	bool aabbCollision(const Rect * rect1, const Rect * rect2);
 
 	// calculates obb collision between two rectangles; this assumes that the rotation angles are based on the middle of the rectanges.
+	//  The angle is IN RADIANS.
 	bool obbCollision(Rect rect1, float angle1, Rect rect2, float angle2);
 
 	// checks collision between an aabb and a circle using built in cocos algorithms.
@@ -51,7 +52,7 @@ namespace umath
 	// conversion from radians to degrees. 1 radian = 180/pi degrees.
 	float radiansToDegrees(float radians);
 
-	// rotates the provided points
+	// rotates the provided points. The angle is IN RADIANS.
 	Vec2 rotate(Vec2 points, float angle);
 
 	// Returns a random number starting form 'lbound' upto ubound.

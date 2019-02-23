@@ -11,14 +11,16 @@ using namespace cocos2d;
 
 namespace entity
 {
-	// these tags are used to set the identification tags for different entites. These are used for collision detection.
+	// these tags are used to set the identification tags for different entites.
+	// these are currently not being used, but they can discern different entities.
 	enum etag
 	{
-		tile = 0,
-		player = 1,
-		enemy = 2,
-		weapon = 3,
-		item = 4
+		entity = 0,
+		tile = 1,
+		player = 2,
+		enemy = 3,
+		weapon = 4,
+		item = 5
 	};
 	
 
@@ -69,9 +71,17 @@ namespace entity
 		// Getting the sprite's y position.
 		float getPositionY() const;
 
-		// rotates the entity. An acceleration vector can be passed if the user wants to send the entity in the direction they're being rotated in.
-		Vec2 rotateEntity(float theta, Vec2 acceleration);
+		/*
+		Just use sprite->rotate().
 
+		// rotates the entity using the rotation value stored in the class.
+		Vec2 rotateEntity(Vec2 acceleration);
+
+		// rotates the entity. An acceleration vector can be passed if the user wants to send the entity in the direction they're being rotated in.
+		// the rotation factor is assumed to be in radians.
+		Vec2 rotateEntity(float theta, Vec2 acceleration);
+		*/
+		
 		// Sets the sprite's opacity via a percentage. Use a value from 0.0 to 1.0, with 1.0 (i.e. 100%) being full opacity.
 		// Opacity for sprites are out of 255, but this function works on percentages.
 		void setOpacity(float opacity);
@@ -118,11 +128,26 @@ namespace entity
 		// toggles the anti gravity on/off.
 		void setAntiGravity();
 
+		// returns the AABB collision rectangles.
+		const std::vector<OOP::PrimitiveSquare *> const getAABBs() const;
+
+		// returns the vector of collision circles.
+		const std::vector<OOP::PrimitiveCircle *> const getCollisionCircles() const;
+
+		// returns the collision capsules.
+		const std::vector <OOP::PrimitiveCapsule *> const getCapsules() const;
+
+		// checks for collision between the entity object and the one passed.
+		bool collision(entity::Entity * e2);
+
+		// checks for collision between two entities.
+		static bool collision(entity::Entity * e1, entity::Entity * e2);
+
 		// update loop
 		void update(float deltaTime);
 
 		static float * areaGravity; // saves the level of gravity in the scene. This should be shared by all entities.
-
+		float theta = 0.0F; // the rotation factor of the entity. THIS SHOULD BE IN RADIANS.
 	private:
 		float mass = 1.0; // the mass of the entity
 		
@@ -182,13 +207,23 @@ namespace entity
 		magic::MagicTypes * magicType = new magic::MagicTypes(magic::null);
 
 		Sprite * sprite; // the entity's sprite
-		// OOP::PrimitiveSquare * boundingBox; // a bounding box hitbox
-		//OOP::PrimitiveCircle * boundingCircle; // a circular hitbox
-
-		PhysicsBody * collisionBody; // the physics body for the sprite, used for collision.
 
 		Vec2 force = Vec2(0.0f, 0.0f); // the force of the entity
+
+		// a body used for collisions with the sprite. This is currently not being used in favour of manual collisions.
+		// This is currently not being used.
+		PhysicsBody * collisionBody;
+		
+		// the square collision boxes.
+		std::vector<OOP::PrimitiveSquare *> aabbs;
+
+		// the capsule collision boxes.
+		std::vector<OOP::PrimitiveCapsule *> capsules;
 	
+		// the circle collision boxes.
+		std::vector<OOP::PrimitiveCircle *> circles;
+
+
 		// used to turn on and off the gravity. If 'antiGravity' is false, then the entity IS affected by gravity. If it's false, then the entity ISN'T effected by gravity.
 		bool antiGravity = true;
 	};

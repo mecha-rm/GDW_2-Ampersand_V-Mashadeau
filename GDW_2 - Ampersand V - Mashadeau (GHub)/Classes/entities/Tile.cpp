@@ -15,8 +15,15 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 {
 	DrawNode * tempNode = DrawNode::create(); // used to create an enemy square if no tile of the provided TIN exists.
 	
+	//sprite->getPhysicsBody()->createBox(Size(128.0F, 128.0F));
+	
 	sprite->setGlobalZOrder(1.0F); // all tiles should be on the same global z-order.
 	sprite->setTag(tile);
+	sprite->getPhysicsBody()->setTag(tile); // This is currently not being used.
+	/*
+	sprite->getPhysicsBody()->addShape(PhysicsShapeBox::create(Size(128.0F, 128.0F)));
+	sprite->getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
+	*/
 
 	tempNode->setGlobalZOrder(3.0F);
 	setAntiGravity(true); // tiles shouldn't be moved by gravity, so their anti gravity gets turned on by default.
@@ -26,16 +33,60 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 
 	switch (TIN)
 	{
-	case 1:
-	case 2:
-	case 3:
-	case 4:
-	case 5:
-	case 6:
-	case 7:
-	case 8:
-	case 9:
+	case 0: // exit 0
+	case 1: // exit 1
+	case 2: // exit 2
+	case 3: // exit 3
+	case 4: // exit 4
+		// a basic visual is used to represent the exit. In the final game, this should be turned off.
+		sprite->setTextureRect(Rect(0.0F, 0.0F, 128.0F, 128.0F)); // creates a texture rect, so that the default only has one tile
+		sprite->setColor(Color3B::BLUE);
+		tempNode->drawRect(Vec2(sprite->getTextureRect().getMinX(), sprite->getTextureRect().getMinY()), Vec2(sprite->getTextureRect().getMaxX(), sprite->getTextureRect().getMaxY()), Color4F::GREEN);
+		sprite->addChild(tempNode);
 
+		switch (this->LETTER) // places the hitbox in a different position based on where the tile exit hitbox i.s/
+		{
+		case 'a': // exit above
+			aabbs.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 127.0F), Vec2(128.0f, 128.0F)));
+			break;
+
+		case 'b': // exit below
+			aabbs.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 1.0F), Vec2(128.0f, 0.0F)));
+			break;
+		case 'c': // exit left
+			aabbs.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 0.0F), Vec2(1.0F, 128.0F)));
+			break;
+
+		case 'd': // exit right
+			aabbs.push_back(new OOP::PrimitiveSquare(Vec2(127.0F, 0.0F), Vec2(128.0f, 128.0F)));
+			break;
+
+		case 'e': // exit centre
+		default:
+			aabbs.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F));
+			break;
+		}
+
+		aabbs.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
+		aabbs.at(0)->setVisible(true);
+		sprite->addChild(aabbs.at(0)->getPrimitive());	
+
+		// sprite->setVisible(false); // uncomment to hide all graphics
+		break;
+	case 5: // spawn 0
+	case 6: // spawn 1
+	case 7: // spawn 2
+	case 8: // spawn 3
+	case 9: // spawn 4
+		sprite->setTextureRect(Rect(0.0F, 0.0F, 128.0F, 128.0F)); // creates a texture rect, so that the default only has one tile
+		sprite->setColor(Color3B::GREEN);
+		tempNode->drawRect(Vec2(sprite->getTextureRect().getMinX(), sprite->getTextureRect().getMinY()), Vec2(sprite->getTextureRect().getMaxX(), sprite->getTextureRect().getMaxY()), Color4F::BLUE);
+		sprite->addChild(tempNode);
+
+		// spawn points don't have hitboxes, so no primitives are made.
+
+		// sprite->setVisible(false); // uncomment to hide all graphics
+		break;
 	case 10: // stock block
 		
 		// this->LETTER = 'a'; // there's only one block at the moment, so it's set as type a.
@@ -50,15 +101,21 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 			
 			setTextureRect(0.0F, 0.0F, 128.0F, 128.0F);
 
+			aabbs.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F));
+			aabbs.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
+			aabbs.at(0)->setVisible(false);
+			sprite->addChild(aabbs.at(0)->getPrimitive());
 			break;
-
 		}
+
+		// sprite->getPhysicsBody()->createBox(Size(128.0F, 128.0F));
+		// sprite->getPhysicsBody()->getShapes();
 		break;
 
-	
+	case 11: // semi-solid stone platform
 
-	case 11:
-
+		// setTexture()
+		break;
 
 	default:
 		this->TIN = 0; // a tile of type 0 is invalid. This number is taken up by something else, but said thing does not actually make a tile.
@@ -66,12 +123,16 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		name = "NON_EXISTENT_TILE";
 		description = "Unable to find data";
 
-		// setSprite(cocos2d::Sprite::create()); // uses TIN_010 by default. This will be covered up.
+		// a basic visual is used to represent the exit. In the final game, this should be turned off.
 		sprite->setTextureRect(Rect(0.0F, 0.0F, 128.0F, 128.0F)); // creates a texture rect, so that the default only has one tile
-		sprite->setColor(Color3B::RED);
-		tempNode->drawRect(Vec2(0.0F, 0.0F), Vec2(sprite->getTextureRect().getMaxX(), sprite->getTextureRect().getMaxY()), Color4F::BLUE); // creates an outline for the rectangle, and adds it to the sprite.
-		sprite->addChild(tempNode); // adds the tempNode so that it goes over the sprite.
-		
+		sprite->setColor(Color3B::WHITE);
+		tempNode->drawRect(Vec2(sprite->getTextureRect().getMinX(), sprite->getTextureRect().getMinY()), Vec2(sprite->getTextureRect().getMaxX(), sprite->getTextureRect().getMaxY()), Color4F::BLACK);
+		sprite->addChild(tempNode);
+
+		aabbs.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F));
+		aabbs.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
+		aabbs.at(0)->setVisible(true);
+		sprite->addChild(aabbs.at(0)->getPrimitive());
 		break;
 	}
 }

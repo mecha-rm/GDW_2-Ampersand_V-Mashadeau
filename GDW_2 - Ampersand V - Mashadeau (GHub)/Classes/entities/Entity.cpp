@@ -9,12 +9,14 @@ entity::Entity::Entity(std::string texture, Vec2 position, float globalZOrder) :
 	sprite->setAnchorPoint(Vec2(0.5, 0.5)); // anchour point is the middle of the sprite
 	sprite->setPosition(position); // setting position
 	sprite->setGlobalZOrder(globalZOrder); // setting the global z order
-	sprite->setTag(0);
-
-	// collisionBody = PhysicsBody::create();
-	// sprite->setPhysicsBody(collisionBody);
-
+	sprite->setTag(entity);
 	
+	// PhysicsBody * collisionBody = PhysicsBody::create(); // adds a physics body so that it can check for collision
+	collisionBody = PhysicsBody::create();
+	collisionBody->setContactTestBitmask(0xFFFFFFFF);
+	collisionBody->setDynamic(false);
+	sprite->setPhysicsBody(collisionBody);
+
 }
 
 // releases the sprite 
@@ -66,25 +68,47 @@ void entity::Entity::setMagicType(magic::magic_t magicType)
 }
 
 // sets the entity's position
-void entity::Entity::setPosition(Vec2 newPos) { sprite->setPosition(newPos); }
+void entity::Entity::setPosition(Vec2 newPos) 
+{ 
+	sprite->setPosition(newPos);
+	
+
+	// changes the positions of all aabbs so that they're consistent with the player's postion.
+	for each (OOP::PrimitiveSquare * aabb in aabbs)
+		aabb->setPosition(aabb->getPosition() + newPos - sprite->getPosition());
+	
+	// changes the positions of all circles so that they're consistent with the player's postion.
+	for each (OOP::PrimitiveCircle * circ in circles)
+		circ->setPosition(circ->getPosition() + newPos - sprite->getPosition());
+
+	// changes the positions of all capsules so that they're consistent with the player's postion.
+	for each (OOP::PrimitiveCapsule * caps in capsules)
+		caps->setPosition(caps->getPosition() + newPos - sprite->getPosition());
+}
 
 // sets the entity's position
-void entity::Entity::setPosition(float x, float y) { sprite->setPosition(Vec2(x, y)); }
+void entity::Entity::setPosition(float x, float y) { setPosition(Vec2(x, y)); }
 
 // Gets the position of the sprite
 Vec2 entity::Entity::getPosition() const { return sprite->getPosition(); }
 
-void entity::Entity::setPositionX(float x) { sprite->setPositionX(x); }
+void entity::Entity::setPositionX(float x) { setPosition(x, sprite->getPositionY()); }
 
 // gets the sprite's x position.
 float entity::Entity::getPositionX() const { return sprite->getPositionX(); }
 
-void entity::Entity::setPositionY(float y) { sprite->setPositionY(y); }
+void entity::Entity::setPositionY(float y) { setPosition(sprite->getPositionX(), y); }
 
 // gets the sprite's y position.
 float entity::Entity::getPositionY() const { return sprite->getPositionY(); }
 
-// rotates the entity.
+/*
+//Just use sprite->rotate().
+
+// rotates the entity using the rotation value stored in the class.
+Vec2 entity::Entity::rotateEntity(Vec2 acceleration) { return rotateEntity(theta, acceleration); }
+
+// rotates the entity. The rotation factor is assumed to be in radians.
 Vec2 entity::Entity::rotateEntity(float theta, Vec2 acceleration)
 {
 	// degrees to radians - 1 degree = pi/180 radians. 
@@ -94,14 +118,15 @@ Vec2 entity::Entity::rotateEntity(float theta, Vec2 acceleration)
 	cocos2d::Mat4 rotation = Mat4::IDENTITY;
 	// this will make hte sprite rotate on its centre
 	rotation.translate(cocos2d::Vec3(sprite->getCenterRect().size.width * sprite->getAnchorPoint().x, sprite->getCenterRect().size.height * sprite->getAnchorPoint().y, 0.0F));
-	rotation.rotateZ(-theta); // applys the 'theta' to the rotation matrix.
+	rotation.rotateZ(theta); // applys the 'theta' to the rotation matrix.
 	// this will move hte sprite back to its original location
 	rotation.translate(-cocos2d::Vec3(sprite->getCenterRect().size.width * sprite->getAnchorPoint().x, sprite->getCenterRect().size.height * sprite->getAnchorPoint().y, 0.0F)); // moves it back
 
 	sprite->setAdditionalTransform((cocos2d::Mat4*)(&rotation)); // rotates the image of the entity.
 
-	return umath::rotate(acceleration, -theta); // this will return the sprite's acceleration, rotated by the same amount the sprite was.
+	return umath::rotate(acceleration, theta); // this will return the sprite's acceleration, rotated by the same amount the sprite was.
 }
+*/
 
 // gets the sprite's opacity as a percentage.
 float entity::Entity::getOpacity() { return sprite->getOpacity() / 255; }
@@ -198,6 +223,78 @@ void entity::Entity::setAntiGravity(float antiGravity) { this->antiGravity = ant
 // toggles anti gravity on/off.
 void entity::Entity::setAntiGravity() { antiGravity = !antiGravity; }
 
+// returns the AABB squares.
+const std::vector<OOP::PrimitiveSquare*> const entity::Entity::getAABBs() const { return aabbs; }
+
+// returns the collision circles.
+const std::vector<OOP::PrimitiveCircle*> const entity::Entity::getCollisionCircles() const { return circles; }
+
+// returns the capsules used for collision.
+const std::vector<OOP::PrimitiveCapsule*> const entity::Entity::getCapsules() const { return capsules; }
+
+// checks for collision.
+bool entity::Entity::collision(entity::Entity * e2) { return collision(this, e2); }
+
+// checks for collisions
+bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
+{
+	
+	if (e1 == nullptr || e2 == nullptr) // if either one is null, then a 'false' is returned.
+		return false;
+
+	// handles AABB collisions for e1
+	for each(OOP::PrimitiveSquare * e1Box in e1->getAABBs())
+	{
+		// square square collision
+		for each(OOP::PrimitiveSquare * e2Box in e2->getAABBs())
+		{
+			if (umath::aabbCollision(&e1Box->getRect(), &e2Box->getRect()))
+				return true;
+		}
+
+		// square circle collision
+		for each(OOP::PrimitiveCircle * e2Circle in e2->getCollisionCircles())
+		{
+			if (umath::aabbCircleCollision(&e1Box->getRect(), e2Circle->getPosition(), e2Circle->m_RADIUS))
+				return true;
+		}
+
+		// sqaure capsule collision
+		// there is currently no function for square capsule collision...
+	}
+
+	// handles circle collisions for e1
+	for each(OOP::PrimitiveCircle * e1Circle in e1->getCollisionCircles())
+	{
+		// circle circle collision
+		for each(OOP::PrimitiveCircle* e2Circle in e2->getCollisionCircles())
+		{
+			if (umath::circleCollision(e1Circle->getPosition(), e1Circle->m_RADIUS, e2Circle->getPosition(), e2Circle->m_RADIUS))
+				return true;
+		}
+
+		// circle square collision
+		for each(OOP::PrimitiveSquare * e2Box in e2->getAABBs())
+		{
+
+			if (umath::aabbCircleCollision(&e2Box->getRect(), e1Circle->getPosition(), e1Circle->m_RADIUS))
+				return true;
+		}
+
+		// circle capsule collision
+		// there is currently no function for circle capsule collision...
+	}
+
+	/*
+	for each(OOP::PrimitiveCapsule * e1Capsule in *e1->getCapsules())
+	{
+		// there's currently no capsule collisions...
+	}
+	*/
+
+	return false;
+}
+
 // sets whether the entity has a constant velocity (i.e. the velocity is either '0', or some value) or not.
 void entity::Entity::setConstVelocity(bool constVelocity) { this->constVelocity = constVelocity; }
 
@@ -207,7 +304,6 @@ void entity::Entity::setConstVelocity() { setConstVelocity(!constVelocity); }
 // Update Loop
 void entity::Entity::update(float deltaTime)
 {
-
 	Vec2 position = getPosition(); // gets the entity's current position
 	Vec2 acceleration; // the enemy's current acceleration
 

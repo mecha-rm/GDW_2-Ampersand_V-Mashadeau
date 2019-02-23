@@ -233,9 +233,32 @@ void world::Area::tileArrayToVector(entity::Tile * tileGrid[][52], const bool fl
 			if (flipY)
 				tileGrid[row][col]->setPositionY(GRID_UNIT_SIZE * ROW_MAX - tileGrid[row][col]->getPositionY());
 
-
-
 			areaTiles.push_back(tileGrid[row][col]); // adds the tile to the scene.
+
+			// if the tile is a spawn point, then the location is saved to the variable, and the spawn point isn't added in.
+			if (tileGrid[row][col]->getTIN() >= 5 && tileGrid[row][col]->getTIN() <= 9)
+			{
+				switch (tileGrid[row][col]->getTIN()) // sets the spawn point locations.
+				{
+				case 5:
+					spawn0 = tileGrid[row][col]->getPosition();
+					break;
+				case 6:
+					spawn1 = tileGrid[row][col]->getPosition();
+					break;
+				case 7:
+					spawn2 = tileGrid[row][col]->getPosition();
+					break;
+				case 8:
+					spawn3 = tileGrid[row][col]->getPosition();
+					break;
+				case 9:
+					spawn4 = tileGrid[row][col]->getPosition();
+					break;
+				}
+
+				continue; // there shouldn't be any copies of spawn points, so the program just moves on to the next index.
+			}
 
 			if (tileGrid[row][col]->COPY_UP > 0) // Copies Upwards
 			{

@@ -12,7 +12,22 @@ world::AIN_X00::AIN_X00() : Area("")
 	Area::setBackgroundLayer3(bg_img3);
 	Area::setForegroundLayer(fg_img);
 	
+	// there is a default gravity for all areas, so this line isn't required. However, if you want custom gravity for your area, you change it here.
 	// setGravity(200.0F); // sets the level of gravity in the scene. This should NOT be negative.
+
+	// setting all of the exits
+	exit0 = "";
+	exit1 = "";
+	exit2 = "";
+	exit3 = "";
+	exit4 = "";
+
+	// setting all of the spawn points.
+	spawn0 = Vec2(64.0F, 64.0F);
+	spawn1 = Vec2(0.0F, 0.0F);
+	spawn2 = Vec2(0.0F, 0.0F);
+	spawn3 = Vec2(0.0F, 0.0F);
+	spawn4 = Vec2(0.0F, 0.0F);
 
 	Area::tileArrayToVector(tileGrid, flipY); // set to 'true' to flip the tiles along the y-axis
 	Area::enemyArrayToVector(enemyGrid, flipY); // set to 'true' to flip the enemies along the y-axis.

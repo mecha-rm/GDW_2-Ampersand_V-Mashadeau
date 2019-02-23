@@ -118,39 +118,76 @@ bool umath::aabbCollision(const Rect * rect1, const Rect * rect2)
 }
 
 // calculates obb collision between two rectangles; this assumes that the rotation angles are based on the middle of the rectanges.
-bool umath::obbCollision(Rect rect1, float angle1, Rect rect2, float angle2)
+//  The angle is IN RADIANS.
+bool umath::obbCollision(Rect rectA, float angleA, Rect rectB, float angleB)
 {
-	float theta = angle2 - angle1; // gets the difference between the two angles.
+	float theta = angleB - angleA; // gets the difference between the two angles.
 	
 	bool collision(false);
 
-	Rect obb1;
-	Rect obb2;
-
+	Rect tempRect; // a temporary rectangle used to check for collisions.
 	Vec2 tempPos; // saves the position of a rectangle temporarily, which would be their midX and midY values.
-	Vec2 minXY; // saves the minimum x and y coordinates of a rectangle
-	Vec2 maxXY; // saves the maximum x and y coordinates of a rectangle.
+	
+	Vec2 rectVerts[4]; // saves the 4 corner points of rectangle 2
+	Vec2 minXY; // saves the minimum vertex points of rectangle 2
+	Vec2 maxXY; // saves the maximum vertex points of rectangle 2
 
-	for (int i = 0; i < 2; i++) // two checks are needed for obb.
+	for (int check = 1; check <= 2; check++) // does the two checks to see if there is collision. This requires two check total.
 	{
-		obb1 = rect1;
-		tempPos = Vec2(rect2.getMidX(), rect2.getMidY()); // gets the position of rect2 (based on its centre)
-		obb2 = Rect(rect2.getMinX() - tempPos.x, rect2.getMinY() - tempPos.y, rect2.getMaxX() - rect2.getMinX(), rect2.getMaxY() - rect2.getMinY()); // creates the rectangle to be rotated.
+		tempPos = Vec2(rectB.getMidX(), rectB.getMidY()); // gets the position of rect2 (based on its centre)
 
-		// gets the rotated points of the rectangle
-		minXY = umath::rotate(Vec2(obb2.getMinX(), obb2.getMinY()), theta);
-		maxXY = umath::rotate(Vec2(obb2.getMaxX(), obb2.getMaxY()), theta);
-		obb2 = Rect(minXY.x + tempPos.x, minXY.y + tempPos.y, maxXY.x - minXY.x, maxXY.y - minXY.y); // moves the rectangle back to its original location.
+		// gets the corners of the rectangle.
+		rectVerts[0] = Vec2(rectB.getMinX(), rectB.getMaxY()); // top left corner
+		rectVerts[1] = Vec2(rectB.getMaxX(), rectB.getMaxY()); // top right corner
+		rectVerts[2] = Vec2(rectB.getMinX(), rectB.getMinY()); // bottom left corner
+		rectVerts[3] = Vec2(rectB.getMaxX(), rectB.getMinY()); // bottom right corner
 
-		collision = umath::aabbCollision(&obb1, &obb2);
+		// rotates the four corner points after offsetting them by their position.
+		rectVerts[0] = rotate(rectVerts[0] - tempPos, theta);
+		rectVerts[1] = rotate(rectVerts[1] - tempPos, theta);
+		rectVerts[2] = rotate(rectVerts[2] - tempPos, theta);
+		rectVerts[3] = rotate(rectVerts[3] - tempPos, theta);
 
-		if (collision == false) // if there was no collision, then the other check doesn't need to be done.
-			return collision;
+		// puts the rectangle back where it was before.
+		rectVerts[0] += tempPos;
+		rectVerts[1] += tempPos;
+		rectVerts[2] += tempPos;
+		rectVerts[3] += tempPos;
+
+		// these would normally be the min and max values of an unrotated rectangle. However, it still needs to be checked.
+		minXY = rectVerts[2];
+		maxXY = rectVerts[1];
+
+		// gets the minimum x and y points of the rotated rectB
+		for (int i = 0; i < 4; i++)
+		{
+			if (rectVerts[i].x < minXY.x)
+				minXY.x = rectVerts[i].x;
+
+			if (rectVerts[i].y < minXY.y)
+				minXY.y = rectVerts[i].y;
+		}
+
+		// gets the maximum x and y points of the rotated rectB
+		for (int i = 0; i < 4; i++)
+		{
+			if (rectVerts[i].x > maxXY.x)
+				maxXY.x = rectVerts[i].x;
+
+			if (rectVerts[i].y > maxXY.y)
+				maxXY.y = rectVerts[i].y;
+		}
+
+		// checks to see if the two rectangles are colliding.
+		collision = aabbCollision(Vec2(rectA.getMinX(), rectA.getMinY()), Vec2(rectA.getMaxX(), rectA.getMaxY()), minXY, maxXY);
+
+		if (collision == false) // if the collision is set to 'false', then there is no need to do another check; there is no collision.
+			return false;
 
 		// switches the rectangles around so that the check can be done again.
-		obb2 = rect1;
-		rect1 = rect2;
-		rect2 = obb2;
+		tempRect = rectA;
+		rectA = rectB;
+		rectB = tempRect;
 	}
 
 	return collision;
@@ -166,6 +203,7 @@ float umath::degreesToRadians(float degrees) { return degrees * (M_PI / 180); }
 float umath::radiansToDegrees(float radians) { return radians * (180 / M_PI); }
 
 // a rotation function. While it doesn't use a rotation matrix, it's modeled after how one would be used for a rotation.
+//  The angle is IN RADIANS.
 Vec2 umath::rotate(Vec2 points, float angle)
 {
 	// rotates the coordinate points using a rotation matrix. Well, it technically ISN'T using a matrix, but it's modeled after how two matrices would be multiplied with one another.

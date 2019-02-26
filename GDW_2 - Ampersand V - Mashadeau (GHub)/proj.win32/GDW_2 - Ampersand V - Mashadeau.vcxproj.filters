@@ -54,21 +54,6 @@
     <ClCompile Include="..\Classes\scenes\MSQ_GameplayScene.cpp">
       <Filter>src\scenes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\entities\Entity.cpp">
-      <Filter>src\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\entities\Player.cpp">
-      <Filter>src\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\entities\Tile.cpp">
-      <Filter>src\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\entities\Active.cpp">
-      <Filter>src\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\entities\Enemy.cpp">
-      <Filter>src\entities</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\MouseListener.cpp">
       <Filter>src\OOP</Filter>
     </ClCompile>
@@ -78,10 +63,25 @@
     <ClCompile Include="..\Classes\magics\MagicTypes.cpp">
       <Filter>src\magics</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\entities\Weapon.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\entities\Active.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\entities\Enemy.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\entities\Entity.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
     <ClCompile Include="..\Classes\entities\Item.cpp">
       <Filter>src\entities</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\entities\Weapon.cpp">
+    <ClCompile Include="..\Classes\entities\Player.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\entities\Tile.cpp">
       <Filter>src\entities</Filter>
     </ClCompile>
   </ItemGroup>
@@ -110,21 +110,6 @@
     <ClInclude Include="..\Classes\scenes\MSQ_GameplayScene.h">
       <Filter>src\scenes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\entities\Entity.h">
-      <Filter>src\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\entities\Player.h">
-      <Filter>src\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\entities\Tile.h">
-      <Filter>src\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\entities\Active.h">
-      <Filter>src\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\entities\Enemy.h">
-      <Filter>src\entities</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\MouseListener.h">
       <Filter>src\OOP</Filter>
     </ClInclude>
@@ -134,10 +119,25 @@
     <ClInclude Include="..\Classes\magics\MagicTypes.h">
       <Filter>src\magics</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\entities\Weapon.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\entities\Active.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\entities\Enemy.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\entities\Entity.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
     <ClInclude Include="..\Classes\entities\Item.h">
       <Filter>src\entities</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\entities\Weapon.h">
+    <ClInclude Include="..\Classes\entities\Player.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\entities\Tile.h">
       <Filter>src\entities</Filter>
     </ClInclude>
   </ItemGroup>

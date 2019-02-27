@@ -144,7 +144,7 @@ namespace entity
 		static bool collision(entity::Entity * e1, entity::Entity * e2);
 
 		// update loop
-		void update(float deltaTime);
+		virtual void update(float deltaTime);
 
 		static float * areaGravity; // saves the level of gravity in the scene. This should be shared by all entities.
 		float theta = 0.0F; // the rotation factor of the entity. THIS SHOULD BE IN RADIANS.

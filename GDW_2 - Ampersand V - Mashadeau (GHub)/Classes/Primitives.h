@@ -2,13 +2,21 @@
 #ifndef PRIMITIVES_H
 #define PRIMITIVES_H
 
+#include "cocos/base/ccTypes.h"
+#include "cocos/math/Vec2.h"
+#include "cocos/math/Vec3.h"
+#include "cocos/2d/ccdrawnode.h"
+#include "2d/CCDrawNode.h"
+
+/*
+// Using a namespace caused issues, so it is no longer used.
 namespace cocos2d // includes specific classes from cocos2d
 {
 	class Vec2;
 	class Vec3;
 	class DrawNode;
 }
-
+*/
 
 namespace OOP
 {

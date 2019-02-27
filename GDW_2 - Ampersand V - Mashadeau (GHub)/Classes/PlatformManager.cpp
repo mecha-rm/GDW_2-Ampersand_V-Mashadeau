@@ -1,8 +1,5 @@
 // Used for making platforms; this likely will not be used.
 #include "PlatformManager.h"
-#include "cocos/math/Vec2.h"
-#include "cocos/2d/CCDrawNode.h"
-
 
 // Platform Class
 

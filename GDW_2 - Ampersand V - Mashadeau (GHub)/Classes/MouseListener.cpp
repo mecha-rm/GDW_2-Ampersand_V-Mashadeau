@@ -21,7 +21,12 @@ OOP::MouseListener::MouseListener(cocos2d::Scene * scene) : mouseListener(cocos2
 	mouseLabel->setVisible(true); // making hte label not visible
 	
 	this->scene = scene; // sets the mouse's scene to that of the one passed.
-	this->scene->addChild(mouseLabel); // adds the label to the scene so that it's not deleted.
+	this->scene->getEventDispatcher()->addEventListenerWithFixedPriority(mouseListener, 1); // adds the mouse listener to the passed scene.
+	this->scene->addChild(mouseLabel); // adds the label to the scene.
+	
+
+	// 	getEventDispatcher()->addEventListenerWithFixedPriority(mouse.getListener(), 1); // adds a mouse listener to the scene using the event dispatcher. It has a priority of 1.
+	// mouse.getListener()->setEnabled(ENABLE_MOUSE); // sets whether the mouse is enabled or not.
 }
 
 

@@ -2,7 +2,7 @@
 #pragma once
 
 #include <string>
-#include "cocos2d.h"
+// #include "cocos2d.h"
 
 #include "magics/MagicTypes.h"
 #include "Primitives.h"
@@ -115,9 +115,9 @@ namespace entity
 		Vec2 getMaxVelocity();
 
 		// returns the deceleration rate of the entity.
-		float getDecelerate() const;
+		Vec2 getDecelerate() const;
 		// returns at what point the entity comes to a complete stop.
-		float getForceStop() const;
+		Vec2 getForceStop() const;
 		// returns whether the entity has a constant velocity or not.
 		bool getConstVelocity() const;
 
@@ -157,9 +157,9 @@ namespace entity
 		Vec2 maxVelocity = Vec2(999.0F, 999.0F);
 		
 		// when no force is being applied, the entity slows down by being multiplied by this deceleration rate. This should be less than one.
-		float decelerate = 0.85F;
+		Vec2 decelerate = Vec2(0.85F, 0.85F);
 		// controls at what point the entity comes to a complete stop.
-		float forceStop = 0.001F;
+		Vec2 forceStop = Vec2(0.001F, 0.001F);
 
 		// makes it so that the entity goes right to its maximum speed, instead of steadily approaching its max speed.
 		bool constVelocity = false;
@@ -189,10 +189,10 @@ namespace entity
 		// sets the maximum velocity of the entity.  Comparisons use the absolute value of the entity, so it must be above 0.
 		void setMaxVelocity(Vec2 maxVelocity);
 
-		// sets the deleration
-		void setDecelerate(float decelerate);
+		// sets the deleration.  This should be less than 1 but greater than 0.
+		void setDecelerate(Vec2 decelerate);
 		// sets at what point the entity stops. The entity stops once it falls below the value of 'forceStop'
-		void setForceStop(float forceStop);
+		void setForceStop(Vec2 forceStop);
 		
 		// sets whether the entity has constant velocity or not. If true, the entity will either have a speed of 0, or some other value. 
 		void setConstVelocity(bool constVelocity);

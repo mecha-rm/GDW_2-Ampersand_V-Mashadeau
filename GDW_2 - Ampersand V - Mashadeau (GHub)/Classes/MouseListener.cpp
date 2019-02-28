@@ -16,7 +16,7 @@ OOP::MouseListener::MouseListener(cocos2d::Scene * scene) : mouseListener(cocos2
 
 	
 	mouseLabel = cocos2d::Label::create("Hello", "fonts/arial.ttf", 30); // creates the label
-	mouseLabel->setGlobalZOrder(10.0F); // the mouse label should be in front of everything.
+	mouseLabel->setGlobalZOrder(10.2F); // the mouse label should be in front of everything.
 	mouseLabel->setPosition(cocos2d::Vec2(650.0F, 500.0F)); // repositioning the label
 	mouseLabel->setVisible(true); // making hte label not visible
 	

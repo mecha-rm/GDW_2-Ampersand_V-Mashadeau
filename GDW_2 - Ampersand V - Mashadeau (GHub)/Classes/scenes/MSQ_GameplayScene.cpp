@@ -3,7 +3,7 @@
 #include <iostream>
 
 // constructor; initalizes the mouse listener
-MSQ_GameplayScene::MSQ_GameplayScene() : mouse(OOP::MouseListener(this)) {}
+MSQ_GameplayScene::MSQ_GameplayScene() : mouse(OOP::MouseListener(this)), keyboard(OOP::KeyboardListener(this)) {}
 
 // destructor
 MSQ_GameplayScene::~MSQ_GameplayScene() {}
@@ -62,12 +62,20 @@ void MSQ_GameplayScene::initListeners()
 
 	// KEYBOARD LISTENER SETUP
 	// creates the keyboard listener
+	/*
 	keyboardListener = EventListenerKeyboard::create();
 	keyboardListener->onKeyPressed = CC_CALLBACK_2(MSQ_GameplayScene::onKeyPressed, this); // creating key pressed callback
 	keyboardListener->onKeyReleased = CC_CALLBACK_2(MSQ_GameplayScene::onKeyReleased, this); // creacting key released callback
 
 	getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboardListener, this); // adds the keyboard listener to the event dispatcher
 	keyboardListener->setEnabled(ENABLE_KEYBOARD); // enables the keyboard if it is meant to be turned on.
+	*/
+
+	keyboard.setLabelVisible(false);
+	keyboard.getListener()->onKeyPressed = CC_CALLBACK_2(MSQ_GameplayScene::onKeyPressed, this);
+	keyboard.getListener()->onKeyReleased = CC_CALLBACK_2(MSQ_GameplayScene::onKeyReleased, this);
+	keyboard.getListener()->setEnabled(ENABLE_KEYBOARD); // enables (or disables) keyboard
+	
 
 
 	/*
@@ -99,7 +107,7 @@ void MSQ_GameplayScene::initSprites()
 	this->addChild(plyr->getSprite());
 
 	grid = new OOP::PrimitiveGrid(cocos2d::Vec2(0.0F, 0.0F), cocos2d::Vec2(director->getWinSizeInPixels().width, director->getWinSizeInPixels().height), 128.0F, Color4F::WHITE);
-	grid->getPrimitive()->setGlobalZOrder(10.1F); // makes the grid be above everything else.
+	grid->getPrimitive()->setGlobalZOrder(10.3F); // makes the grid be above everything else.
 	grid->getPrimitive()->setVisible(true); // makes the grid visible (or not visible)
 	this->addChild(grid->getPrimitive()); // adds grid to drawList
 
@@ -172,6 +180,10 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 
 	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 		moveRight = false;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_SPACE:
+		jump = true;
 		break;
 	}
 }
@@ -348,6 +360,12 @@ void MSQ_GameplayScene::update(float deltaTime)
 	else if (moveRight)
 	{
 		plyr->addForce(plyr->getMoveForceX(), 0.0F);
+	}
+
+	if (jump)
+	{
+		plyr->addJumpForce();
+		jump = false;
 	}
 
 	// std::cout << DrawNode::create()->getPosition().x << std::endl;

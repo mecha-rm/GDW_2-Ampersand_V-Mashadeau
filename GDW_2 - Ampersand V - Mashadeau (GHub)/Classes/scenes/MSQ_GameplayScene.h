@@ -6,7 +6,7 @@
 
 #include "Primitives.h"
 #include "MouseListener.h"
-
+#include "KeyboardListener.h"
 #include "cocos2d.h"
 #include <vector>
 
@@ -64,6 +64,7 @@ protected:
 private:
 	Director * director; // engine
 	OOP::MouseListener mouse; // the mouse functions
+	OOP::KeyboardListener keyboard;
 	
 	// event listeners
 	EventListenerKeyboard* keyboardListener;
@@ -93,5 +94,6 @@ private:
 	bool moveDown = false;
 	bool moveLeft = false;
 	bool moveRight = false;
+	bool jump = false;
 
 } GameplayScene;

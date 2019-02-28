@@ -32,6 +32,9 @@ namespace entity
 		// adds only the 'Y' value of moveForce to the force of the active entity
 		void addMoveForceY();
 
+		// adds the force of the active entity's jump.
+		void addJumpForce();
+
 		// the update loop for the active entity.
 		void update(float deltaTime);
 
@@ -54,6 +57,7 @@ namespace entity
 		void setMoveForce(Vec2 moveForce);
 
 		Vec2 moveForce; // the amount of force applied when the entity moves.
+		float jump = 0.0F; // the fore applied when an active entity jumps
 	};
 }
 

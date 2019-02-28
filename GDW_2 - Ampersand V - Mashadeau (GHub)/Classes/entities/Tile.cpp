@@ -102,7 +102,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 			setTextureRect(0.0F, 0.0F, 128.0F, 128.0F);
 
 			aabbs.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F));
-			aabbs.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
+			aabbs.at(0)->getPrimitive()->setGlobalZOrder(10.1F);
 			aabbs.at(0)->setVisible(false);
 			sprite->addChild(aabbs.at(0)->getPrimitive());
 			break;

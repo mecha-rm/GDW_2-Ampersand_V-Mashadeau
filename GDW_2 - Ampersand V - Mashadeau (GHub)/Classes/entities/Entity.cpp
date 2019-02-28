@@ -189,25 +189,25 @@ void entity::Entity::setMaxVelocity(Vec2 maxVelocity)
 }
 
 // returns the deceleration rate of the entity.
-float entity::Entity::getDecelerate() const { return decelerate; }
+Vec2 entity::Entity::getDecelerate() const { return decelerate; }
 
-// sets the deceleration rate of the entity.
-void entity::Entity::setDecelerate(float decelerate)
+// sets the deceleration rate of the entity. This should be less than 1 but greater than 0.
+void entity::Entity::setDecelerate(Vec2 decelerate)
 {
 	// if the deceleration rate passed is greater than 0, and less than 1.0 (since this would cause no deceleration).
-	if (decelerate > 0.0F && decelerate < 1.0F)
+	if ((decelerate.x > 0.0F && decelerate.x < 1.0F) && (decelerate.y > 0.0F && decelerate.y < 1.0F))
 		this->decelerate = decelerate;
 }
 
 // returns at what point the entity comes to a complete stop.
-float entity::Entity::getForceStop() const { return forceStop; }
+Vec2 entity::Entity::getForceStop() const { return forceStop; }
 
 // sets the threshold the entity's velocity must pass (i.e. value the entity's velocity must fall below) to be brought into a complete stop.
-void entity::Entity::setForceStop(float forceStop)
+void entity::Entity::setForceStop(Vec2 forceStop)
 {
 	// the provided forceStop must be greater than 0.0F, since a value cannot be divided to become 0.
 	// forceStop must also be positive, as it uses the absolute value of the entity's velocity to check if they're below 'forceStop' or not.
-	if (forceStop > 0.0F)
+	if (forceStop.x > 0.0F && forceStop.y > 0.0F)
 		this->forceStop = forceStop;
 }
 
@@ -327,20 +327,20 @@ void entity::Entity::update(float deltaTime)
 	// Slowing Down (x, y)
 	// if the entity does NOT have a constant velocity, currently has a non-zero x-velocity, and has no force being applied to it on the x-axis, it starts to slow down.
 	if (velocity.x != 0.0F && force.x == 0.0F)
-		velocity.x *= decelerate; // multiplied by the deceleration rate
+		velocity.x *= decelerate.x; // multiplied by the deceleration rate
 
 	// if the entity does NOT have a constant velocity, currently has a non-zero y-velocity, and has no force being applied to it on the y-axis, it starts to slow down.
 	if (velocity.y != 0.0F && force.y == 0.0F)
-		velocity.y *= decelerate; // multiplied by the deceleration rate
+		velocity.y *= decelerate.y; // multiplied by the deceleration rate
 
 
 	// Stopping the Entity (x, y)
 	// if the entity does not have a constant velocity, it has no force being applied, has a non-zero x-velocity, and has fallen below 'forceStop' on the x-axis, its x velocity is set to 0.
-	if (constVelocity == false && force.x == 0.0F && velocity.x != 0.0F && abs(velocity.x * deltaTime) < forceStop)
+	if (constVelocity == false && force.x == 0.0F && velocity.x != 0.0F && abs(velocity.x * deltaTime) < forceStop.x)
 		velocity.x = 0.0F;
 
 	// if the entity does not have a constant velocity, it has no force being applied, has a non-zero y-velocity, and has fallen below 'forceStop' on the y-axis, its y velocity is set to 0.
-	if (constVelocity == false && force.y == 0.0F && velocity.y != 0.0F && abs(velocity.y * deltaTime) < forceStop)
+	if (constVelocity == false && force.y == 0.0F && velocity.y != 0.0F && abs(velocity.y * deltaTime) < forceStop.y)
 		velocity.y = 0.0F;
 	
 	position += velocity * deltaTime; // adds the velocity to the entity's position.

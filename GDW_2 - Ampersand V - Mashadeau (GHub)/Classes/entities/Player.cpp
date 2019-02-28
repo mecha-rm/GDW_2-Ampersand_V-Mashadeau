@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-entity::Player::Player(std::string texture, Vec2 position, Vec2 moveForce) : Active(texture, position)
+entity::Player::Player(std::string texture, Vec2 position, Vec2 moveForce, float jump) : Active(texture, position)
 {
 	name = "Mashadeau"; // the player character's name
 	description = "The shadow mage, Mashadeau!";
@@ -15,13 +15,16 @@ entity::Player::Player(std::string texture, Vec2 position, Vec2 moveForce) : Act
 	// circles.push_back(new OOP::PrimitiveCircle(Vec2(0.0f, 0.0f), 29.0f));
 	// circles.at(0)->getPrimitive()->setGlobalZOrder(20.0F);
 	aabbs.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 37.0F, 91.0F));
-	aabbs.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
+	aabbs.at(0)->getPrimitive()->setGlobalZOrder(10.1F);
 	aabbs.at(0)->setVisible(true);
 
 	// sprite->addChild(circles.at(0)->getPrimitive());
 	sprite->addChild(aabbs.at(0)->getPrimitive());
 
 	this->moveForce = moveForce; // sets the amount of force that gets applied for
+	this->jump = jump;
+	setDecelerate(Vec2(getDecelerate().x, 0.99F));
+	setMass(1.0F);
 
 
 	/* // Not being used currently.

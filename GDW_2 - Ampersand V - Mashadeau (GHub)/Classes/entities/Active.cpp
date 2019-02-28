@@ -53,6 +53,9 @@ void entity::Active::addMoveForceX() { addForce(moveForce.x, 0.0F); }
 // adds 'move force' to the entity's force for movement for the upcoming update (y-axis only)
 void entity::Active::addMoveForceY() { addForce(0.0F, moveForce.y); }
 
+// adds the jump force to the active entity.
+void entity::Active::addJumpForce() { addForce(Vec2(0.0F, jump)); }
+
 // sets the amount of force applied when the entity moves.
 void entity::Active::setMoveForce(Vec2 moveForce) { this->moveForce = moveForce; }
 

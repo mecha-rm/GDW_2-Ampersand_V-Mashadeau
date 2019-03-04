@@ -107,7 +107,7 @@ void MSQ_GameplayScene::initSprites()
 	this->addChild(plyr->getSprite());
 
 	grid = new OOP::PrimitiveGrid(cocos2d::Vec2(0.0F, 0.0F), cocos2d::Vec2(director->getWinSizeInPixels().width, director->getWinSizeInPixels().height), 128.0F, Color4F::WHITE);
-	grid->getPrimitive()->setGlobalZOrder(10.3F); // makes the grid be above everything else.
+	// grid->getPrimitive()->setGlobalZOrder(10.3F); // makes the grid be above everything else.
 	grid->getPrimitive()->setVisible(true); // makes the grid visible (or not visible)
 	this->addChild(grid->getPrimitive()); // adds grid to drawList
 

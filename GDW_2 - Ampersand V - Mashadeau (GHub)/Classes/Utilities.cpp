@@ -113,8 +113,9 @@ bool umath::aabbCollision(const Vec2 aMin, Vec2 aMax, Vec2 bMin, Vec2 bMax)
 // calculates rectnagle collision using two cocos2d rectangles
 bool umath::aabbCollision(const Rect * rect1, const Rect * rect2)
 {
+	return rect1->intersectsRect(*rect2);
 	// Reuses the other collison check.
-	return umath::aabbCollision(Vec2(rect1->getMinX(), rect1->getMinY()), Vec2(rect1->getMaxX(), rect1->getMaxY()), Vec2(rect2->getMinX(), rect2->getMinY()), Vec2(rect2->getMaxX(), rect2->getMaxY()));
+	//return umath::aabbCollision(Vec2(rect1->getMinX(), rect1->getMinY()), Vec2(rect1->getMaxX(), rect1->getMaxY()), Vec2(rect2->getMinX(), rect2->getMinY()), Vec2(rect2->getMaxX(), rect2->getMaxY()));
 }
 
 // calculates obb collision between two rectangles; this assumes that the rotation angles are based on the middle of the rectanges.

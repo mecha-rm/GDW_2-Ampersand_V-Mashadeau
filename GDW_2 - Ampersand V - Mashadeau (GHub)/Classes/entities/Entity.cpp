@@ -70,9 +70,9 @@ void entity::Entity::setMagicType(magic::magic_t magicType)
 // sets the entity's position
 void entity::Entity::setPosition(Vec2 newPos) 
 { 
-	sprite->setPosition(newPos);
+	sprite->setPosition(newPos); // this also moves all of the draw nodes attached to the sprite.
 	
-
+	/*
 	// changes the positions of all aabbs so that they're consistent with the player's postion.
 	for each (OOP::PrimitiveSquare * aabb in aabbs)
 		aabb->setPosition(aabb->getPosition() + newPos - sprite->getPosition());
@@ -84,6 +84,7 @@ void entity::Entity::setPosition(Vec2 newPos)
 	// changes the positions of all capsules so that they're consistent with the player's postion.
 	for each (OOP::PrimitiveCapsule * caps in capsules)
 		caps->setPosition(caps->getPosition() + newPos - sprite->getPosition());
+	*/
 }
 
 // sets the entity's position

@@ -238,30 +238,66 @@ bool MSQ_GameplayScene::OnContactBeginCallback(PhysicsContact & contact)
 // runs collision tests.
 void MSQ_GameplayScene::collisions()
 {
+	
+	std::cout << "PX: " << plyr->getAABBs().at(0)->getPosition().x << ", PY: " << plyr->getAABBs().at(0)->getPosition().y << std::endl;
 	playerCollisions();
 }
 
 // runs player collisions.
 void MSQ_GameplayScene::playerCollisions()
 {
+	playerTileCollisions(); // called for player-tile collisions.
+}
+
+// calculates player collision with tiles.
+void MSQ_GameplayScene::playerTileCollisions()
+{
 	entity::Tile * tile = nullptr;
 
+	OOP::Primitive * colPrim1; // the primitive from the player that encountered a collision
+	OOP::Primitive * colPrim2; // the primitive from the other entity that encounted a collision
+	
+	plyr->setAntiGravity(false); // the player is now affected by gravity. If the player is on a tile, gravity is turned off.
 
 	for (int i = 0; i < sceneArea->getAreaTiles()->size(); i++)
-	{	
+	{
 		if (entity::Entity::collision(plyr, sceneArea->getAreaTiles()->at(i))) // if collision has happened, the program doesn't continue to check.
 		{
 			tile = sceneArea->getAreaTiles()->at(i); // saves the tile the player has collided with.
 			break;
 		}
 	}
-	
+
 	if (tile != nullptr) // if this is not equal to a nullptr, then a collision must have happened.
 	{
+		// gets what primitives collided with the player.
+		colPrim1 = plyr->collidedPrimitive;
+		colPrim2 = tile->collidedPrimitive;
+
+		// if it's a solid block
+		if (tile->getTIN() == 10 || tile->getTIN() == 600 || tile->getTIN() == 602)
+		{
+			plyr->setAntiGravity(true);
+			plyr->zeroVelocityY();
+		}
+
+		if (plyr->getPositionY() > tile->getPositionY()) // if the player is above the platform
+		{
+			// if(plyr->getPositionY() - tile->getPositionY() > tile->)
+		}
+
 		// std::cout << "collide!" << std::endl;
+		
+		// removes the saved data
+		colPrim1 = nullptr;
+		colPrim2 = nullptr;
+		plyr->collidedPrimitive = nullptr;
+		tile->collidedPrimitive = nullptr;
+		tile = nullptr;
 	}
 }
 
+//// THESE ARE UNUSED FUNCTIONS THAT SHOULD BE REMOVED LATER. IGNORE FROM THIS LINE... ///
 // called to find the tile the player is colliding with, and handle what happens, based on the position(s).
 // this is used for physics bodies, which have not been turned on, and likely won't be used.
 void MSQ_GameplayScene::playerTileCollision(Vec2 tilePos)
@@ -336,6 +372,7 @@ void MSQ_GameplayScene::enemyWeaponCollision(Vec2 enemyPos, Vec2 weaponPos)
 {
 	// TODO: check enemy collison with player weapons
 }
+//// TO THIS LINE ///
 
 // update loop
 void MSQ_GameplayScene::update(float deltaTime)

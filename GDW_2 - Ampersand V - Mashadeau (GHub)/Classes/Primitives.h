@@ -20,6 +20,7 @@ namespace cocos2d // includes specific classes from cocos2d
 
 namespace OOP
 {
+
 	// a base primitive class. This has a 'pure virtual' function so that the users can't create a primitive without specifying what shape it is.
 	// NOTE: this class originally didn't have a Primitive class, with said functions being hard coded for each derived class.
 	//	- these functions have been commented out, since they are no longer needed. If these comments are still in place, then they were not removed in time.
@@ -27,7 +28,7 @@ namespace OOP
 	{
 	public:
 	// creates the draw node
-			Primitive();
+			Primitive(const short int ID);
 			// releases the drawNode
 			~Primitive();
 
@@ -47,17 +48,61 @@ namespace OOP
 			// gets the rotation of the primitive IN DEGREES.
 			virtual float getRotation();
 
+			// returns whether the collision shape is visible or not.
+			bool isVisible() const; 
+
 			// turns on/off the visibility of the primitive.
 			void setVisible(bool visible);
 
 			// toggle for visible; it turns it on/off.
 			void setVisible();
 
-			// returns whether the collision shape is visible or not.
-			bool isVisible() const; 
+			// gets the tag of the primitive.
+			unsigned int getTag() const;
+
+			// sets the tag of the primitive. This is 0 by default.
+			void setTag(unsigned int tag);
+			
+			// if 'true', then that means this shape is being used for collisions. If false, then this shape is NOT being used for collisions.
+			// Note that this parameter is essentially meaningless for grid and line primitives.
+			// primitives will have have their opacity cut by 50% when they are not active.
+			// this is true by default.
+			bool isActive() const;
+			
+			// sets whether a primitive is active or not, i.e. if it's open for collisions or not.
+			// Note that this parameter is essentially meaningless for grid and line primitives.
+			// primitives will have have their opacity cut by 50% when they are not active.
+			void setActive(bool active);
+
+			// toggle's primitive functionality as a collision shape on and off.
+			// Note that this parameter is essentially meaningless for grid and line primitives.
+			// primitives will have have their opacity cut put at 50% when they are not active.
+			void setActive();
+
+			/*
+			 * The type of the primitive. Use this for reference when you need to know what to downcast to.
+			 * 1 = sqaure (AABB)
+			 * 2 = square (OBB) (not yet finished)
+			 * 3 = circle 
+			 * 4 = line
+			 * 5 = capsule
+			 * 6 = grid
+			*/
+			
+			/*
+			// this vec2 tells the primitive that it's position is relative to that of another item.
+
+			// when a drawNode is say, made the child of a sprite for example, getPosition() provides the node's position on the sprite, not where it is overall.
+			// so say if the drawNode was (128.0F, 128.0F) off of the sprite's centre
+			*/
+			// cocos2d::Vec2 * relativePos = new cocos2d::Vec2(0.0F, 0.0F);
+
+			const short int ID = 0;
 
 	private:
-		
+		unsigned int tag = 0;
+
+		bool active = true; // used so that this collision shape can be turned on and off.
 
 	protected:
 		cocos2d::DrawNode * m_Node; // drawNode member

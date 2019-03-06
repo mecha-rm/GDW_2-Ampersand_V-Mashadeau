@@ -9,7 +9,7 @@
 
 
 ///// GENERAL PRIMITIVE //////////////////////////////////////////////////////////////////////////
-OOP::Primitive::Primitive() : m_Node(cocos2d::DrawNode::create()) 
+OOP::Primitive::Primitive(const short int ID) : m_Node(cocos2d::DrawNode::create()), ID(ID)
 { 
 	m_Node->setGlobalZOrder(10.1F); // since primitives are treated as collision shapes, they have the global z order of  10.1F.
 	m_Node->setVisible(false); // hides the draw node from view.
@@ -30,19 +30,45 @@ void OOP::Primitive::setRotation(float rotation) { m_Node->setRotation(rotation)
 // returns the rotation factor of the primitive IN DEGREES.
 float OOP::Primitive::getRotation() { return m_Node->getRotation(); }
 
+// gets the visibility of the m_Node
+bool OOP::Primitive::isVisible() const { return m_Node->isVisible(); }
+
 // sets the visibility of the collision shape.
 void OOP::Primitive::setVisible(bool visible) { m_Node->setVisible(visible); }
 
 // toggles the visibility of the collision shape.
 void OOP::Primitive::setVisible() { setVisible(!m_Node->isVisible()); }
 
-// gets the visibility of the m_Node
-bool OOP::Primitive::isVisible() const { return m_Node->isVisible(); }
+// gets the tag for the primitive.
+unsigned int OOP::Primitive::getTag() const { return tag; }
+
+// sets the tag of the primitive.
+void OOP::Primitive::setTag(unsigned int tag) { this->tag = tag; }
+
+// if true, the primitive is active or collisions. If false, it is not active for collisions.
+// this does not apply to lines and grid primitives.
+bool OOP::Primitive::isActive() const { return active; }
+
+// sets whether a primitive is available for collisions or not.
+// primitives that are not available for collisions have their opacity brought down to 50%.
+// this parameter is basically worthless for lines and grids.
+void OOP::Primitive::setActive(bool active)
+{
+	// if the primitive activity is being turned on, then opacity is set for 100%. Opacity is out of 255.
+	(active) ? m_Node->setOpacity(255.0F) : m_Node->setOpacity(127.5);
+
+	this->active = active;
+}
+
+// toggle's the primitive's availibility for collisions on and off.
+// Note that this parameter is essentially meaningless for grid and line primitives.
+// primitives will have have their opacity cut put at 50% when they are not active.
+void OOP::Primitive::setActive() { setActive(!active); }
 
 ///// SQUARE /////////////////////////////////////////////////////////////////////////////
 // Question 3: initalization of the DrawNode (Square)
 OOP::PrimitiveSquare::PrimitiveSquare(const cocos2d::Vec2 &a_StartPosition, const cocos2d::Vec2 &a_EndPosition, const cocos2d::Color4F colour) 
-	: /*m_Node(cocos2d::DrawNode::create()),*/ m_WIDTH(abs((a_EndPosition - a_StartPosition).x)), m_HEIGHT(abs((a_EndPosition - a_StartPosition).y))
+	: Primitive(1), /*m_Node(cocos2d::DrawNode::create()),*/ m_WIDTH(abs((a_EndPosition - a_StartPosition).x)), m_HEIGHT(abs((a_EndPosition - a_StartPosition).y))
 {
 	// draws the rectangle
 	m_Node->drawRect(cocos2d::Vec2(0.0F, 0.0F) - cocos2d::Vec2(m_WIDTH / 2, m_HEIGHT / 2), cocos2d::Vec2(0.0F, 0.0F) + cocos2d::Vec2(m_WIDTH / 2, m_HEIGHT / 2), colour);
@@ -55,7 +81,7 @@ OOP::PrimitiveSquare::PrimitiveSquare(const cocos2d::Vec2 &a_StartPosition, cons
 
 // creates a rect based on a position, length, and width provided by the user. This is based on the middle of the rect.
 OOP::PrimitiveSquare::PrimitiveSquare(const cocos2d::Vec2 position, const float width, const float height, const cocos2d::Color4F colour)
-	: /*m_Node(cocos2d::DrawNode::create()),*/ m_WIDTH(width), m_HEIGHT(height)
+	: Primitive(1), /*m_Node(cocos2d::DrawNode::create()),*/ m_WIDTH(width), m_HEIGHT(height)
 {
 	// draws the rectangle at location (0, 0).
 	m_Node->drawRect(cocos2d::Vec2(0.0F, 0.0F) - cocos2d::Vec2(width / 2, height / 2), cocos2d::Vec2(0.0F, 0.0F) + cocos2d::Vec2(width / 2, height / 2), colour);
@@ -106,7 +132,7 @@ cocos2d::Rect OOP::PrimitiveSquare::getRect() const { return cocos2d::Rect(m_Nod
 
 ///// CIRCLE /////////////////////////////////////////////////////////////////////////////
 // initalizes the drawNode
-OOP::PrimitiveCircle::PrimitiveCircle(cocos2d::Vec2 location, float radius, const cocos2d::Color4F colour) : /*m_Node(cocos2d::DrawNode::create()),*/ m_RADIUS(abs(radius))
+OOP::PrimitiveCircle::PrimitiveCircle(cocos2d::Vec2 location, float radius, const cocos2d::Color4F colour) : Primitive(3), /*m_Node(cocos2d::DrawNode::create()),*/ m_RADIUS(abs(radius))
 {
 	m_Node->drawCircle(cocos2d::Vec2(0.0F, 0.0F), abs(radius), 20.0F, 30, false, cocos2d::Color4F(0.0, 0.0F, 1.0F, 1.0F)); // draws the circle at location (0, 0).
 	m_Node->setPosition(location); // moves the circle to where it shoudld be.
@@ -141,7 +167,7 @@ void OOP::PrimitiveCircle::setPosition(cocos2d::Vec2 position)
 ///// LINE ///////////////////////////////////////////////////////////////////////////////
 // initalization of the DrawNode (Line)
 OOP::PrimitiveLine::PrimitiveLine(cocos2d::Vec2 startingPoint, cocos2d::Vec2 endingPoint, const cocos2d::Color4F colour)
-	: /*m_Node(cocos2d::DrawNode::create()),*/ m_DISTANCE(cocos2d::Vec2(endingPoint - startingPoint)),
+	: Primitive(4), /*m_Node(cocos2d::DrawNode::create()),*/ m_DISTANCE(cocos2d::Vec2(endingPoint - startingPoint)),
 	m_LENGTH (sqrt(pow((endingPoint - startingPoint).x, 2) + pow((endingPoint - startingPoint).y, 2)))
 {
 	// draws the line with its centre at position (0.0F, 0.0F).
@@ -180,7 +206,7 @@ void OOP::PrimitiveLine::setPosition(cocos2d::Vec2 position)
 
 //// CAPSULE /////////////////////////////////////////////////////////////////////////////
 // creates a capsule
-OOP::PrimitiveCapsule::PrimitiveCapsule(cocos2d::Vec2 startingPoint, cocos2d::Vec2 endingPoint, float radius, const cocos2d::Color4F colour) : /*m_Node(cocos2d::DrawNode::create()),*/ m_RADIUS(abs(radius))
+OOP::PrimitiveCapsule::PrimitiveCapsule(cocos2d::Vec2 startingPoint, cocos2d::Vec2 endingPoint, float radius, const cocos2d::Color4F colour) : Primitive(5), /*m_Node(cocos2d::DrawNode::create()),*/ m_RADIUS(abs(radius))
 {
 	// Works when angle is greater than 3.14 rad, or when a 90 degree angle
 
@@ -338,7 +364,7 @@ float OOP::PrimitiveCapsule::getRotation() { return m_theta; }
 ///// GRID ///////////////////////////////////////////////////////////////////////////////
 // creates a grid
 OOP::PrimitiveGrid::PrimitiveGrid(cocos2d::Vec2 startingPoint, cocos2d::Vec2 endingPoint, const float squareSize, const cocos2d::Color4F colour, const bool gridBox)
-	: /*m_Node(cocos2d::DrawNode::create()),*/ m_WIDTH(abs((startingPoint - endingPoint).x)), m_HEIGHT(abs((startingPoint - endingPoint).y)), m_SQUARE_SIZE(squareSize)
+	: Primitive(6), /*m_Node(cocos2d::DrawNode::create()),*/ m_WIDTH(abs((startingPoint - endingPoint).x)), m_HEIGHT(abs((startingPoint - endingPoint).y)), m_SQUARE_SIZE(squareSize)
 {
 	const cocos2d::Vec2 POSITION = (startingPoint + endingPoint) / 2; // gets the position of the grid.
 	cocos2d::Vec2 tempVec1;
@@ -403,8 +429,9 @@ OOP::PrimitiveGrid::PrimitiveGrid(cocos2d::Vec2 startingPoint, cocos2d::Vec2 end
 
 // creates a grid using a size and position instead of a starting point and ending point.
 OOP::PrimitiveGrid::PrimitiveGrid(cocos2d::Vec2 position, cocos2d::Size size, const float squareSize, const cocos2d::Color4F colour, const bool gridBox)
+	: OOP::PrimitiveGrid(cocos2d::Vec2(position - (size / 2)), cocos2d::Vec2(position + (size / 2)), squareSize, colour, gridBox)
 {
-	OOP::PrimitiveGrid(cocos2d::Vec2(position - (size / 2)), cocos2d::Vec2(position + (size / 2)), squareSize, colour, gridBox); // the position is based on the middle of the grid
+	// the position is based on the middle of the grid
 }
 
 // releases the grid node.

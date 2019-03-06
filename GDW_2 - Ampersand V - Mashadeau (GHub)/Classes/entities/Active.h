@@ -6,7 +6,7 @@ namespace entity
 	class Active : public Entity
 	{
 	public:
-		Active(std::string texture = "", Vec2 position = Vec2(0.0F, 0.0F));
+		Active(std::string texture = "");
 		~Active();
 		
 		// gets the entity's health

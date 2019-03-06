@@ -7,6 +7,7 @@
 #include "magics/MagicTypes.h"
 #include "Primitives.h"
 #include "Utilities.h"
+#include <iostream>
 using namespace cocos2d;
 
 namespace entity
@@ -27,7 +28,7 @@ namespace entity
 	class Entity
 	{
 	public:
-		Entity(std::string texture = "", Vec2 position = Vec2(0.0F, 0.0F), float globalZOrder = 0.0F);
+		Entity(std::string texture = "", float globalZOrder = 0.0F);
 		~Entity();
 
 		// gets how long the entity has existed for.
@@ -111,6 +112,19 @@ namespace entity
 		void addForce(Vec2 force);
 		// adds force on the individual axes.
 		void addForce(float forceX = 0.0F, float forceY = 0.0F);
+		
+		// gets the current velocity of the entity.
+		Vec2 getVelocity();
+
+		// zeroes out the entity's velocity on both axes
+		void zeroVelocity();
+
+		// zeroes out the entity's velocity on the x-axis.
+		void zeroVelocityX();
+
+		// zeroes out the entity's velocity on the y-axis.
+		void zeroVelocityY();
+
 		// returns the maximum velocity of the entity.
 		Vec2 getMaxVelocity();
 
@@ -147,7 +161,11 @@ namespace entity
 		virtual void update(float deltaTime);
 
 		static float * areaGravity; // saves the level of gravity in the scene. This should be shared by all entities.
+
 		float theta = 0.0F; // the rotation factor of the entity. THIS SHOULD BE IN RADIANS.
+	
+		OOP::Primitive * collidedPrimitive; // the primitive that has recently encountered a collison.
+
 	private:
 		float mass = 1.0; // the mass of the entity
 		
@@ -186,6 +204,9 @@ namespace entity
 		// sets a new magic type for the entity
 		void setMagicType(magic::magic_t magicType);
 
+		// sets the entity's current velocity.
+		void setVelocity(Vec2 velocity);
+
 		// sets the maximum velocity of the entity.  Comparisons use the absolute value of the entity, so it must be above 0.
 		void setMaxVelocity(Vec2 maxVelocity);
 
@@ -223,9 +244,8 @@ namespace entity
 		// the circle collision boxes.
 		std::vector<OOP::PrimitiveCircle *> circles;
 
-
 		// used to turn on and off the gravity. If 'antiGravity' is false, then the entity IS affected by gravity. If it's false, then the entity ISN'T effected by gravity.
-		bool antiGravity = true;
+		bool antiGravity = false;
 	};
 }
 

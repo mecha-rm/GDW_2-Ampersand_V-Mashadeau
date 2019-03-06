@@ -41,6 +41,10 @@ public:
 	// all player collisions.
 	void playerCollisions();
 	
+	// player tile collisions; called by the playerCollisions();
+	void playerTileCollisions();
+
+	// These are leftovers from when we tried to use physics objects. These should be removed in the final product.
 	// These are meant to be used with physics bodies. These are NOT being used at this time.
 	// called to find the tile the player is colliding with, and handle what happens, based on the position(s).
 	void playerTileCollision(Vec2 tilePos);

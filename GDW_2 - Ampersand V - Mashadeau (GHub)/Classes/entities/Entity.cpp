@@ -3,11 +3,10 @@
 
 float * entity::Entity::areaGravity = new float(1.0F); // the default level of gravity for all entities.
 
-entity::Entity::Entity(std::string texture, Vec2 position, float globalZOrder) : sprite(Sprite::create())
+entity::Entity::Entity(std::string texture, float globalZOrder) : sprite(Sprite::create())
 {
 	sprite->setTexture(texture);
 	sprite->setAnchorPoint(Vec2(0.5, 0.5)); // anchour point is the middle of the sprite
-	sprite->setPosition(position); // setting position
 	sprite->setGlobalZOrder(globalZOrder); // setting the global z order
 	sprite->setTag(entity);
 	
@@ -70,8 +69,28 @@ void entity::Entity::setMagicType(magic::magic_t magicType)
 // sets the entity's position
 void entity::Entity::setPosition(Vec2 newPos) 
 { 
-	sprite->setPosition(newPos); // this also moves all of the draw nodes attached to the sprite.
+
+	/*
+	// updates all of the collision shapes so that they're proportional to the player's new position.
+	for each(OOP::Primitive * primitive in aabbs)
+	{
+		// Vec2 pos1 = sprite->getPosition();
+		// Vec2 primPos = primitive->getPosition();
+		// Vec2 pos3 = primitive->getPosition() + newPos - sprite->getPosition();
+		// primitive->setPosition(newPos + primitive->getPosition() - sprite->getPosition());
+		primitive->setPosition(primitive->getPosition() + newPos - sprite->getPosition());
+	}
+
+	for each(OOP::Primitive * primitive in circles)
+		primitive->setPosition(primitive->getPosition() + newPos - sprite->getPosition());
 	
+	for each(OOP::Primitive * primitive in capsules)
+		primitive->setPosition(primitive->getPosition() + newPos - sprite->getPosition());
+
+	*/
+
+	sprite->setPosition(newPos); // this also moves all of the draw nodes attached to the sprite.
+
 	/*
 	// changes the positions of all aabbs so that they're consistent with the player's postion.
 	for each (OOP::PrimitiveSquare * aabb in aabbs)
@@ -178,6 +197,21 @@ void entity::Entity::addForce(Vec2 force) { this->force += force; }
 // adds to the entity's current force
 void entity::Entity::addForce(float forceX, float forceY) { force += Vec2(forceX, forceY); }
 
+// gets the current velocity of the entity.
+Vec2 entity::Entity::getVelocity() { return velocity; }
+
+// sets the entity's velocity to 0.
+void entity::Entity::zeroVelocity() { setVelocity(Vec2(0.0F, 0.0F)); }
+
+// sets the velocity of the entity.
+void entity::Entity::setVelocity(Vec2 velocity) { this->velocity = velocity; }
+
+// zeroes out the entity's's velocity on the x-axis.
+void entity::Entity::zeroVelocityX() { setVelocity(Vec2(0.0F, velocity.y)); }
+
+// zeroes out the entity's velocity on the y-axis.
+void entity::Entity::zeroVelocityY() { setVelocity(Vec2(velocity.x, 0.0F)); }
+
 // gets the maixmum velocity of the entity
 Vec2 entity::Entity::getMaxVelocity() { return maxVelocity; }
 
@@ -239,25 +273,53 @@ bool entity::Entity::collision(entity::Entity * e2) { return collision(this, e2)
 // checks for collisions
 bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
 {
-	
+	// the positions of the collision shapes are relative to where the sprite is when they become childs of the sprite. Their positions are actually offsets of the sprite's position.
+	// basically, the location of the drawNode for the shape stays the same regardless of where the sprite is due to it being relative to the bottom left-corner of the sprite.
+
 	if (e1 == nullptr || e2 == nullptr) // if either one is null, then a 'false' is returned.
 		return false;
+
+	// these save the bottom-left-hand-corner of the sprite's texture rect, which is what the positions of the hitboxes are relative to.
+	Vec2 e1Bl(e1->getPositionX() - e1->getSprite()->getTextureRect().size.width / 2, e1->getPositionY() - e1->getSprite()->getTextureRect().size.height / 2);
+	Vec2 e2Bl(e2->getPositionX() - e2->getSprite()->getTextureRect().size.width / 2, e2->getPositionY() - e2->getSprite()->getTextureRect().size.height / 2);
+
+	OOP::PrimitiveSquare * tempRect1; // a temporary object that stores a rect from e1, in the position it is in overall.
+	OOP::PrimitiveSquare * tempRect2; // a temporary object that stores a rect from e2, in the position it is in overall.
+
+	OOP::PrimitiveCircle * tempCirc1; // a temporary object that stores a circle from e1, in the position it is in overall. The 'z' variable holds the radius.
+	OOP::PrimitiveCircle * tempCirc2; // a temporary object that stores a circle from e2, in the position it is in overall. The 'z' variable holds the radius.
+
+	// handles all possible collsions. If 'Active' is turned off for either collision shape, then a no collision is checked.
 
 	// handles AABB collisions for e1
 	for each(OOP::PrimitiveSquare * e1Box in e1->getAABBs())
 	{
-		// square square collision
+		tempRect1 = new OOP::PrimitiveSquare(e1Bl + e1Box->getPosition(), e1Box->m_WIDTH, e1Box->m_HEIGHT);
+
 		for each(OOP::PrimitiveSquare * e2Box in e2->getAABBs())
 		{
-			if (umath::aabbCollision(&e1Box->getRect(), &e2Box->getRect()))
+			tempRect2 = new OOP::PrimitiveSquare(e2Bl + e2Box->getPosition(), e2Box->m_WIDTH, e2Box->m_HEIGHT); // creates a new rectangle at the proper position of the collection rect.
+
+			if (e1Box->isActive() && e2Box->isActive() && umath::aabbCollision(&tempRect1->getRect(), &tempRect2->getRect())) // saves pointers to what primitives collided if true.
+			{
+				e1->collidedPrimitive = e1Box;
+				e2->collidedPrimitive = e2Box;
 				return true;
+			}
+				
 		}
 
 		// square circle collision
 		for each(OOP::PrimitiveCircle * e2Circle in e2->getCollisionCircles())
 		{
-			if (umath::aabbCircleCollision(&e1Box->getRect(), e2Circle->getPosition(), e2Circle->m_RADIUS))
+			tempCirc2 = new OOP::PrimitiveCircle(Vec2(e2Bl.x + e2Circle->getPosition().x, e2Bl.y + e2Circle->getPosition().y), e2Circle->m_RADIUS); // recreates the e2 circle with the proper position.
+
+			if (e1Box->isActive() && e2Circle->isActive() && umath::aabbCircleCollision(&tempRect1->getRect(), Vec2(tempCirc2->getPosition().x, tempCirc2->getPosition().y), tempCirc2->m_RADIUS))  // saves pointers to what primitives collided if true.
+			{
+				e1->collidedPrimitive = e1Box;
+				e2->collidedPrimitive = e2Circle;
 				return true;
+			}
 		}
 
 		// sqaure capsule collision
@@ -265,26 +327,43 @@ bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
 	}
 
 	// handles circle collisions for e1
-	for each(OOP::PrimitiveCircle * e1Circle in e1->getCollisionCircles())
-	{
-		// circle circle collision
-		for each(OOP::PrimitiveCircle* e2Circle in e2->getCollisionCircles())
-		{
-			if (umath::circleCollision(e1Circle->getPosition(), e1Circle->m_RADIUS, e2Circle->getPosition(), e2Circle->m_RADIUS))
-				return true;
-		}
+	//for each(OOP::PrimitiveCircle * e1Circle in e1->getCollisionCircles())
+	//{
+	//	tempCirc1 = Vec3(e1Bl.x + e1Circle->getPosition().x, e1Bl.y + e1Circle->getPosition().y, e1Circle->m_RADIUS); // creates a temporary version of e1 in its overall location.
 
-		// circle square collision
-		for each(OOP::PrimitiveSquare * e2Box in e2->getAABBs())
-		{
+	//	// circle circle collision
+	//	for each(OOP::PrimitiveCircle* e2Circle in e2->getCollisionCircles())
+	//	{
+	//		tempCirc2 = Vec3(e2Bl.x + e2Circle->getPosition().x, e2Bl.y + e2Circle->getPosition().y, e2Circle->m_RADIUS); // recreates the e2 circle with the proper position.
 
-			if (umath::aabbCircleCollision(&e2Box->getRect(), e1Circle->getPosition(), e1Circle->m_RADIUS))
-				return true;
-		}
+	//		// if true, the primitives that collided are saved in their resepctive entities.
+	//		if (e1Circle->isActive() && e2Circle->isActive() && umath::circleCollision(Vec2(tempCirc1.x, tempCirc1.y), tempCirc1.z, Vec2(tempCirc2.x, tempCirc2.y), tempCirc2.z))
+	//		{
+	//			e1->collidedPrimitive = e1Circle;
+	//			e2->collidedPrimitive = e2Circle;
+	//			return true;
+	//		}
+	//			
+	//	}
 
-		// circle capsule collision
-		// there is currently no function for circle capsule collision...
-	}
+	//	// circle square collision
+	//	for each(OOP::PrimitiveSquare * e2Box in e2->getAABBs())
+	//	{
+	//		tempRect2 = OOP::PrimitiveSquare(e2Bl + e2Box->getPosition(), e2Box->m_WIDTH, e2Box->m_HEIGHT).getRect(); // creates a new rectangle at the proper position of the collection rect.
+
+	//		// if true, the primitives that collided are saved in their resepctive entities.
+	//		if (e1Circle->isActive() && e2Box->isActive() && umath::aabbCircleCollision(&tempRect2, Vec2(tempCirc1.x, tempCirc1.y), tempCirc1.z))
+	//		{
+	//			e1->collidedPrimitive = e1Circle;
+	//			e2->collidedPrimitive = e2Box;
+	//			return true;
+	//		}
+	//			
+	//	}
+
+	//	// circle capsule collision
+	//	// there is currently no function for circle capsule collision...
+	//}
 
 	/*
 	for each(OOP::PrimitiveCapsule * e1Capsule in *e1->getCapsules())
@@ -292,6 +371,61 @@ bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
 		// there's currently no capsule collisions...
 	}
 	*/
+
+	//if (e1 == nullptr || e2 == nullptr) // if either one is null, then a 'false' is returned.
+	//	return false;
+
+	//// handles AABB collisions for e1
+	//for each(OOP::PrimitiveSquare * e1Box in e1->getAABBs())
+	//{
+	//	// square square collision
+	//	for each(OOP::PrimitiveSquare * e2Box in e2->getAABBs())
+	//	{
+	//		if (umath::aabbCollision(&e1Box->getRect(), &e2Box->getRect()))
+	//			return true;
+	//	}
+
+	//	// square circle collision
+	//	for each(OOP::PrimitiveCircle * e2Circle in e2->getCollisionCircles())
+	//	{
+	//		if (umath::aabbCircleCollision(&e1Box->getRect(), e2Circle->getPosition(), e2Circle->m_RADIUS))
+	//			return true;
+	//	}
+
+	//	// sqaure capsule collision
+	//	// there is currently no function for square capsule collision...
+	//}
+
+	//// handles circle collisions for e1
+	//for each(OOP::PrimitiveCircle * e1Circle in e1->getCollisionCircles())
+	//{
+	//	// circle circle collision
+	//	for each(OOP::PrimitiveCircle* e2Circle in e2->getCollisionCircles())
+	//	{
+	//		if (umath::circleCollision(e1Circle->getPosition(), e1Circle->m_RADIUS, e2Circle->getPosition(), e2Circle->m_RADIUS))
+	//			return true;
+	//	}
+
+	//	// circle square collision
+	//	for each(OOP::PrimitiveSquare * e2Box in e2->getAABBs())
+	//	{
+
+	//		if (umath::aabbCircleCollision(&e2Box->getRect(), e1Circle->getPosition(), e1Circle->m_RADIUS))
+	//			return true;
+	//	}
+
+	//	// circle capsule collision
+	//	// there is currently no function for circle capsule collision...
+	//}
+
+	///*
+	//for each(OOP::PrimitiveCapsule * e1Capsule in *e1->getCapsules())
+	//{
+	//	// there's currently no capsule collisions...
+	//}
+	//*/
+	//
+	// return false;
 
 	return false;
 }

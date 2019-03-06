@@ -1,7 +1,7 @@
 #include "entities/Active.h"
 
 
-entity::Active::Active(std::string texture, Vec2 position) : entity::Entity(texture, position) {}
+entity::Active::Active(std::string texture) : entity::Entity(texture) {}
 
 entity::Active::~Active() {}
 

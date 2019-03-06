@@ -1,10 +1,10 @@
 // used for storing ifnormation on the weapons the player uses
 #pragma once
-#include "entities/Entity.h"
+#include "entities/Inactive.h"
 
 namespace entity
 {
-	class Weapon : public Entity
+	class Weapon : public Inactive
 	{
 	public:
 		

@@ -239,7 +239,7 @@ bool MSQ_GameplayScene::OnContactBeginCallback(PhysicsContact & contact)
 void MSQ_GameplayScene::collisions()
 {
 	
-	std::cout << "PX: " << plyr->getAABBs().at(0)->getPosition().x << ", PY: " << plyr->getAABBs().at(0)->getPosition().y << std::endl;
+	// std::cout << "PX: " << plyr->getAABBs().at(0)->getPosition().x << ", PY: " << plyr->getAABBs().at(0)->getPosition().y << std::endl;
 	playerCollisions();
 }
 
@@ -257,43 +257,92 @@ void MSQ_GameplayScene::playerTileCollisions()
 	OOP::Primitive * colPrim1; // the primitive from the player that encountered a collision
 	OOP::Primitive * colPrim2; // the primitive from the other entity that encounted a collision
 	
+	cocos2d::Vec2 distVec(0.0F, 0.0F); // saves the distance between the two entities on the (x, y)
+	cocos2d::Vec2 minDistVec(0.0F, 0.0F); // saves the minimum distance 
+	float dist = 0.0F; // the distance between the two entities, which is the 'c' value in the pythagorean theorem.
+	float angle;
+
 	plyr->setAntiGravity(false); // the player is now affected by gravity. If the player is on a tile, gravity is turned off.
+	plyr->cancelUp = false;
+	plyr->cancelDown = false;
+	plyr->cancelLeft = false;
+	plyr->cancelRight = false;
+	
+
 
 	for (int i = 0; i < sceneArea->getAreaTiles()->size(); i++)
 	{
 		if (entity::Entity::collision(plyr, sceneArea->getAreaTiles()->at(i))) // if collision has happened, the program doesn't continue to check.
 		{
 			tile = sceneArea->getAreaTiles()->at(i); // saves the tile the player has collided with.
-			break;
-		}
-	}
+			
+			// gets what primitives collided with the player.
+			colPrim1 = plyr->collidedPrimitive;
+			colPrim2 = tile->collidedPrimitive;
 
-	if (tile != nullptr) // if this is not equal to a nullptr, then a collision must have happened.
-	{
-		// gets what primitives collided with the player.
-		colPrim1 = plyr->collidedPrimitive;
-		colPrim2 = tile->collidedPrimitive;
+			distVec = plyr->getPosition() - tile->getPosition(); // calculates the distance along the x and y between the player and the tile.
 
-		// if it's a solid block
-		if (tile->getTIN() == 10 || tile->getTIN() == 600 || tile->getTIN() == 602)
-		{
-			plyr->setAntiGravity(true);
-			plyr->zeroVelocityY();
-		}
+			dist = sqrt(pow(distVec.x, 2) + pow(distVec.y, 2)); // gets the distance between the player and the tile, usin the pythagoren theorem.
 
-		if (plyr->getPositionY() > tile->getPositionY()) // if the player is above the platform
-		{
-			// if(plyr->getPositionY() - tile->getPositionY() > tile->)
-		}
+			// gets the minimum distance the two items can be apart without being within one another.
+			// both of them are squares.
+			if (colPrim1->ID == 1 && colPrim2->ID == 1)
+			{
+				minDistVec.x = ((OOP::PrimitiveSquare *) colPrim1)->m_WIDTH + ((OOP::PrimitiveSquare *) colPrim2)->m_WIDTH;
+				minDistVec.y = ((OOP::PrimitiveSquare *) colPrim2)->m_HEIGHT + ((OOP::PrimitiveSquare *) colPrim2)->m_HEIGHT;
+			
+				// distVec = plyr->getPosition() - Vec2(0.0F, ((OOP::PrimitiveSquare *) colPrim2)->m_HEIGHT / 2) - tile->getPosition();
+			}
 
-		// std::cout << "collide!" << std::endl;
+			// angle = asinf(distVec.y / dist);
+			angle = atanf(distVec.y / distVec.x); // gets the angle between the the player and the tile using TOA (opposite/adjacent) 
+
+			std::cout << umath::radiansToDegrees(angle) << std::endl;
+
+			// if the abs angle is less than 45.0F, then the player is next to the tile.
+			if (abs(umath::radiansToDegrees(angle)) < 45.0F)
+			{
+				if (distVec.x <= 0.0F)
+				{
+					plyr->cancelRight = true;
+					// plyr->setPositionX(tile->getPositionX() - minDistVec.x / 2);
+					// plyr->setPositionX(plyr->getPositionX() - 1.0); // this will move the player out of the wall. The player's jump wouldn't work properly 
+				}
+				else if (distVec.x > 0.0F)
+				{
+					plyr->cancelLeft = true;
+					// plyr->setPositionX(tile->getPositionX() + minDistVec.y / 2);
+					// plyr->setPositionX(plyr->getPositionX() + 1.0);
+				}
+				plyr->zeroVelocityX();
+
+			}
+			// if the player is at an angle greater than 45.0F, the player is on top or below the platform.
+			else if (abs(umath::radiansToDegrees(angle)) >= 45.0F)
+			{
+				if (distVec.y > 0.0F)
+				{
+					plyr->cancelDown = true;
+					plyr->setAntiGravity(true);
+					// plyr->setPositionY(plyr->getPositionY() + 1.0);
+				}
+				else if (distVec.y <= 0.0F)
+				{
+					plyr->cancelUp = true;
+					plyr->setAntiGravity(false);
+					// plyr->setPositionY(plyr->getPositionY() - 1.0);
+				}
+
+				plyr->zeroVelocityY();
+			}
+
+			colPrim1 = nullptr;
+			colPrim2 = nullptr;
+			plyr->collidedPrimitive = nullptr;
+			tile->collidedPrimitive = nullptr;
+			tile = nullptr;
 		
-		// removes the saved data
-		colPrim1 = nullptr;
-		colPrim2 = nullptr;
-		plyr->collidedPrimitive = nullptr;
-		tile->collidedPrimitive = nullptr;
-		tile = nullptr;
+		}
 	}
 }
 
@@ -381,20 +430,21 @@ void MSQ_GameplayScene::update(float deltaTime)
 	//sceneArea->setAllLayerPositions(this->getDefaultCamera()->getPosition()); // makes the backgrounds be directly behind the player. This needs to be changed later so that it scrolls.
 
 	// These movement parameters will need to be changed later.
-	if (moveUp)
+	// if the cancels are true, then the player can't move that given direction.
+	if (moveUp && !plyr->cancelUp)
 	{
 		plyr->addMoveForceY();
 	}
-	else if (moveDown)
+	else if (moveDown && !plyr->cancelDown) // this should be disabled later
 	{
 		plyr->addForce(0.0F, plyr->getMoveForceY() * -1);
 	}
 
-	if (moveLeft)
+	if (moveLeft && !plyr->cancelLeft)
 	{
 		plyr->addForce(plyr->getMoveForceX() * -1, 0.0F);
 	}
-	else if (moveRight)
+	else if (moveRight && !plyr->cancelRight)
 	{
 		plyr->addForce(plyr->getMoveForceX(), 0.0F);
 	}

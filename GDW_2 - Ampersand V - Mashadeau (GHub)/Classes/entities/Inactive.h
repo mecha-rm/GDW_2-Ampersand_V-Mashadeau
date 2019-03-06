@@ -1,3 +1,4 @@
+// At the moment this class doesn't do anything
 #pragma once
 #include "entities/Entity.h"
 

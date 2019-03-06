@@ -88,15 +88,6 @@ namespace OOP
 			 * 5 = capsule
 			 * 6 = grid
 			*/
-			
-			/*
-			// this vec2 tells the primitive that it's position is relative to that of another item.
-
-			// when a drawNode is say, made the child of a sprite for example, getPosition() provides the node's position on the sprite, not where it is overall.
-			// so say if the drawNode was (128.0F, 128.0F) off of the sprite's centre
-			*/
-			// cocos2d::Vec2 * relativePos = new cocos2d::Vec2(0.0F, 0.0F);
-
 			const short int ID = 0;
 
 	private:

@@ -166,6 +166,11 @@ namespace entity
 	
 		OOP::Primitive * collidedPrimitive; // the primitive that has recently encountered a collison.
 
+		bool cancelUp = false;
+		bool cancelDown = false;
+		bool cancelLeft = false;
+		bool cancelRight = false;
+
 	private:
 		float mass = 1.0; // the mass of the entity
 		

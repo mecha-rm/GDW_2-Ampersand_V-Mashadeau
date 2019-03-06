@@ -2,7 +2,7 @@
 
 
 
-entity::Weapon::Weapon(unsigned int WIN) : Entity() {}
+entity::Weapon::Weapon(unsigned int WIN) : Inactive() {}
 
 
 entity::Weapon::~Weapon() {}

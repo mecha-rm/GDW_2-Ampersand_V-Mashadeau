@@ -42,12 +42,6 @@ namespace OOP
 			// the setPosition() was made virtual because some other things may need to be repositioned in specific primitives.
 			virtual void setPosition(cocos2d::Vec2 position) = 0;
 
-			// sets the rotation of the primitive IN DEGREES.
-			virtual void setRotation(float rotation);
-			
-			// gets the rotation of the primitive IN DEGREES.
-			virtual float getRotation();
-
 			// returns whether the collision shape is visible or not.
 			bool isVisible() const; 
 
@@ -82,24 +76,39 @@ namespace OOP
 			/*
 			 * The type of the primitive. Use this for reference when you need to know what to downcast to.
 			 * 1 = sqaure (AABB)
-			 * 2 = square (OBB) (not yet finished)
-			 * 3 = circle 
+			 * 2 = square (OBB)
+			 * 3 = circle
 			 * 4 = line
 			 * 5 = capsule
 			 * 6 = grid
+
+			 // returns an id that identifies what type the primitive is.
 			*/
-			const short int ID = 0;
+			short int getId();
 
 	private:
-		unsigned int tag = 0;
+		unsigned int tag = 0; // an identification tag
 
 		bool active = true; // used so that this collision shape can be turned on and off.
 
 	protected:
 		cocos2d::DrawNode * m_Node; // drawNode member
+
+		/*
+		 * The type of the primitive. Use this for reference when you need to know what to downcast to.
+		 * 1 = sqaure (AABB)
+		 * 2 = square (OBB)
+		 * 3 = circle
+		 * 4 = line
+		 * 5 = capsule
+		 * 6 = grid
+
+		 // an 'ID' used to determine what type a primitive is. This can't be const because PrimitiveOrientedSquare has a different ID than PrimitiveSquare, and cannot set this variable it it's const.
+		*/
+		short int ID = 0;
 	};
 
-	class PrimitiveSquare : public Primitive
+	class PrimitiveSquare : public Primitive // square
 	{
 	public:
 		// creates and initalizes drawNode for square.
@@ -118,20 +127,11 @@ namespace OOP
 		// returns square primitive
 		cocos2d::DrawNode * getPrimitive() const;
 
-		// gets the position of the vector.
-		//cocos2d::Vec2 getPosition() const;
-
 		// sets the position of the primitive.
 		void setPosition(cocos2d::Vec2 position);
 
 		// returns a rect representing the primitive.
 		cocos2d::Rect getRect() const;
-
-		// turns on/off the visibility of the primitive.
-		//void setVisible(bool visible);
-
-		// toggle for visible; it turns it on/off.
-		//void setVisible();
 
 		// the width of the rectangle primitive.
 		const float m_WIDTH;
@@ -140,11 +140,36 @@ namespace OOP
 		const float m_HEIGHT;
 
 	private:
-		// we use this node to draw primitives
-		//cocos2d::DrawNode * m_Node; // drawNode member
 
-		// the position of the primitive, based on its centre.
-		// cocos2d::Vec2 m_Position;
+	};
+
+	// a child of the PrimitiveSquare class that allows for rotations.
+	class PrimitiveOrientedSquare : public PrimitiveSquare
+	{
+	public:
+		// creates and initalizes drawNode for an oriented square
+		PrimitiveOrientedSquare(const cocos2d::Vec2 &a_StartPosition, const cocos2d::Vec2 &a_EndPosition, float rotation = 0.0F, bool inDegrees = false, const cocos2d::Color4F colour = cocos2d::Color4F::RED);
+
+		// creates an oriented square draw primitive. This is based on the middle of the rect.
+		PrimitiveOrientedSquare(const cocos2d::Vec2 & position, const float & width, const float & height, float rotation = 0.0F, bool inDegrees = false, const cocos2d::Color4F colour = cocos2d::Color4F::RED);
+
+		// creates an oriented square draw primitive. This is based on the middle of the rect.
+		PrimitiveOrientedSquare(const cocos2d::Vec2 & position, const float  & sideLength, float rotation = 0.0F, bool inDegrees = false, const cocos2d::Color4F colour = cocos2d::Color4F::RED);
+
+		// returns the rotation factor of the primitive in degrees.
+		float getRotationInDegrees() const;
+
+		// sets the rotation factor of the primitive in degrees.
+		void setRotationInDegrees(float rotation);
+
+		// returns the rotation factor of the primitive in radians.
+		float getRotationInRadians() const;
+
+		// sets the rotation factor of the primitive in radians.
+		void setRotationInRadians(float rotation);
+		
+	private:
+		
 	};
 
 	// Primitive Circle Class
@@ -157,29 +182,14 @@ namespace OOP
 		// destructor for primitive circle
 		~PrimitiveCircle();
 
-		// returns circle primitive
-		//cocos2d::DrawNode * getPrimitive() const;
-
-		// gets the position of the circle, based on its centre.
-		//cocos2d::Vec2 getPosition() const;
-
 		// sets the position of the primitive.
 		void setPosition(cocos2d::Vec2 position);
-
-		// turns on/off the visibility of the primitive.
-		//void setVisible(bool visible);
-
-		// toggle for visible; it turns it on/off.
-		//void setVisible();
 
 		// the radius of the circle.
 		const float m_RADIUS = 0.0F;
 
 	private:
-		// cocos2d::DrawNode * m_Node; // Question 3: DrawNode member
 
-		// the position of the primitive.
-		// cocos2d::Vec2 m_Position;
 	};
 
 	// Line Primiive Class
@@ -188,23 +198,24 @@ namespace OOP
 	public:
 		// creates a line draw primitive
 		PrimitiveLine(cocos2d::Vec2 startingPoint, cocos2d::Vec2 endingPoint, const cocos2d::Color4F colour = cocos2d::Color4F::RED);
+		
 		// destructor
 		~PrimitiveLine();
-
-		// Question 4: returns line primitive
-		// cocos2d::DrawNode * getPrimitive() const;
-
-		// gets the position of the line, based on its midpoint.
-		// cocos2d::Vec2 getPosition() const;
 
 		// sets the position of the primitive.
 		void setPosition(cocos2d::Vec2 position);
 
-		// turns on/off the visibility of the primitive.
-		// void setVisible(bool visible);
+		// returns the rotation factor of the primitive in degrees.
+		float getRotationInDegrees() const;
 
-		// toggle for visible; it turns it on/off.
-		// void setVisible();
+		// sets the rotation factor of the primitive in degrees.
+		void setRotationInDegrees(float rotation);
+
+		// returns the rotation factor of the primitive in radians.
+		float getRotationInRadians() const;
+
+		// sets the rotation factor of the primitive in radians.
+		void setRotationInRadians(float rotation);
 
 		// the slope of the line.
 		const cocos2d::Vec2 m_DISTANCE;
@@ -212,9 +223,7 @@ namespace OOP
 		// the length of the line.
 		const float m_LENGTH;
 	private:
-		// cocos2d::DrawNode * m_Node; // Question 3: DrawNode member
 
-		// cocos2d::Vec2 m_Position;
 	};
 
 	// Capsule Primitive Class
@@ -231,12 +240,6 @@ namespace OOP
 		// destructor for capsules
 		~PrimitiveCapsule();
 
-		// returns the capsule primitive
-		// cocos2d::DrawNode * getPrimitive() const;
-
-		// gets the position of the capsule, based on its centre.
-		// cocos2d::Vec2 getPosition() const;
-
 		// sets the position of the primitive.
 		void setPosition(cocos2d::Vec2 position);
 
@@ -246,27 +249,26 @@ namespace OOP
 		// gets the position of the circle at one of the endings of the capsule. This should be at the ending of the capsule.
 		cocos2d::Vec2 getCirclePosition2() const;
 
-		// turns on/off the visibility of the primitive.
-		// void setVisible(bool visible);
+		// returns the rotation factor of the primitive in degrees.
+		float getRotationInDegrees() const;
 
-		// toggle for visible; it turns it on/off.
-		// void setVisible();
-
-		// sets the rotation factor of the capsule. Keep in mind that the capsule is drawn rotated, so the rotation factor of the drawingNode is NOT the same as that the capsule.
-		// this is set IN DEGREES.
+		// Keep in mind that the capsule is drawn rotated, so the rotation factor of the drawingNode is NOT the same as that the capsule.
 		// e.g. if the capsule was drawn at a 30 degree angle, the drawNode is still at an angle of 0.0 degrees.
-		void setRotation(float newTheta);
+		// sets the rotation factor of the primitive in degrees.
+		void setRotationInDegrees(float newTheta);
 
-		// gets the angle that the capsule is at. This is NOT the same as the rotation factor of the drawNode.
-		float getRotation();
+		// returns the rotation factor of the primitive in radians.
+		float getRotationInRadians() const;
+
+		// Keep in mind that the capsule is drawn rotated, so the rotation factor of the drawingNode is NOT the same as that the capsule.
+		// e.g. if the capsule was drawn at a 0.8 radian angle, the drawNode is still at an angle of 0.0 radians.
+		// sets the rotation factor of the primitive in radians.
+		void setRotationInRadians(float newTheta);
 
 		// the radius of the capsule.
 		const float m_RADIUS;
 
 	private:
-		// cocos2d::DrawNode * m_Node; // DrawNode member
-
-		// cocos2d::Vec2 m_Position; // the position of the primitive (based on its centre).
 
 		cocos2d::Vec2 m_Circle1; // saves the position of the starting circle of the capsule.
 
@@ -303,20 +305,8 @@ namespace OOP
 
 		~PrimitiveGrid();
 
-		// returns the grid primitive
-		// cocos2d::DrawNode * getPrimitive() const;
-
-		// gets the position of the vector.
-		// cocos2d::Vec2 getPosition() const;
-
 		// sets the position of the primitive.
 		void setPosition(cocos2d::Vec2 position);
-
-		// turns on/off the visibility of the primitive.
-		// void setVisible(bool visible);
-
-		// toggle for visible; it turns it on/off.
-		// void setVisible();
 
 		// the width of the grid. This is based on the passed parameters, and not the farthest left line and farthest right line.  As such, it assumes that all grid spaces are of equal size.
 		float m_WIDTH;
@@ -327,10 +317,6 @@ namespace OOP
 		float m_SQUARE_SIZE; 
 
 	private:
-
-		// cocos2d::DrawNode * m_Node; // DrawNode member
-
-		// cocos2d::Vec2 m_Position; // the position of the grid (based on its centre).
 
 	};
 }

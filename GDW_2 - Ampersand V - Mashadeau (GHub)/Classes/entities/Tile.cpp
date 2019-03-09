@@ -47,29 +47,29 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		switch (this->LETTER) // places the hitbox in a different position based on where the tile exit hitbox i.s/
 		{
 		case 'a': // exit above
-			aabbs.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 127.0F), Vec2(128.0f, 128.0F)));
+			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 127.0F), Vec2(128.0f, 128.0F)));
 			break;
 
 		case 'b': // exit below
-			aabbs.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 1.0F), Vec2(128.0f, 0.0F)));
+			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 1.0F), Vec2(128.0f, 0.0F)));
 			break;
 		case 'c': // exit left
-			aabbs.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 0.0F), Vec2(1.0F, 128.0F)));
+			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 0.0F), Vec2(1.0F, 128.0F)));
 			break;
 
 		case 'd': // exit right
-			aabbs.push_back(new OOP::PrimitiveSquare(Vec2(127.0F, 0.0F), Vec2(128.0f, 128.0F)));
+			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(127.0F, 0.0F), Vec2(128.0f, 128.0F)));
 			break;
 
 		case 'e': // exit centre
 		default:
-			aabbs.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F));
+			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F));
 			break;
 		}
 
-		aabbs.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
-		aabbs.at(0)->setVisible(true);
-		sprite->addChild(aabbs.at(0)->getPrimitive());	
+		collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
+		collisionShapes.at(0)->setVisible(true);
+		sprite->addChild(collisionShapes.at(0)->getPrimitive());	
 
 		// sprite->setVisible(false); // uncomment to hide all graphics
 		break;
@@ -101,10 +101,10 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 			
 			setTextureRect(0.0F, 0.0F, 128.0F, 128.0F);
 
-			aabbs.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 128.0F));
-			// aabbs.at(0)->getPrimitive()->setGlobalZOrder(10.1F);
-			aabbs.at(0)->setVisible(false);
-			sprite->addChild(aabbs.at(0)->getPrimitive());
+			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 128.0F));
+			// collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(10.1F);
+			collisionShapes.at(0)->setVisible(false);
+			sprite->addChild(collisionShapes.at(0)->getPrimitive());
 			break;
 		}
 
@@ -129,10 +129,10 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		tempNode->drawRect(Vec2(sprite->getTextureRect().getMinX(), sprite->getTextureRect().getMinY()), Vec2(sprite->getTextureRect().getMaxX(), sprite->getTextureRect().getMaxY()), Color4F::BLACK);
 		sprite->addChild(tempNode);
 
-		aabbs.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F));
-		// aabbs.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
-		aabbs.at(0)->setVisible(true);
-		sprite->addChild(aabbs.at(0)->getPrimitive());
+		collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F));
+		// collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
+		collisionShapes.at(0)->setVisible(true);
+		sprite->addChild(collisionShapes.at(0)->getPrimitive());
 		break;
 	}
 }

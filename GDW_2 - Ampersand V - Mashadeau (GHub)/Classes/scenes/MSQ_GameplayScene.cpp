@@ -286,7 +286,7 @@ void MSQ_GameplayScene::playerTileCollisions()
 
 			// gets the minimum distance the two items can be apart without being within one another.
 			// both of them are squares.
-			if (colPrim1->ID == 1 && colPrim2->ID == 1)
+			if (colPrim1->getId() == 1 && colPrim2->getId() == 1)
 			{
 				minDistVec.x = ((OOP::PrimitiveSquare *) colPrim1)->m_WIDTH + ((OOP::PrimitiveSquare *) colPrim2)->m_WIDTH;
 				minDistVec.y = ((OOP::PrimitiveSquare *) colPrim2)->m_HEIGHT + ((OOP::PrimitiveSquare *) colPrim2)->m_HEIGHT;
@@ -297,7 +297,7 @@ void MSQ_GameplayScene::playerTileCollisions()
 			// angle = asinf(distVec.y / dist);
 			angle = atanf(distVec.y / distVec.x); // gets the angle between the the player and the tile using TOA (opposite/adjacent) 
 
-			std::cout << umath::radiansToDegrees(angle) << std::endl;
+			// std::cout << umath::radiansToDegrees(angle) << std::endl;
 
 			// if the abs angle is less than 45.0F, then the player is next to the tile.
 			if (abs(umath::radiansToDegrees(angle)) < 45.0F)

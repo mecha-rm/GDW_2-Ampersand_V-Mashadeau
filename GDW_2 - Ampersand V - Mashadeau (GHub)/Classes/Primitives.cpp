@@ -24,12 +24,6 @@ cocos2d::DrawNode * OOP::Primitive::getPrimitive() const { return m_Node; }
 // gets the position of the drawNode.
 cocos2d::Vec2 OOP::Primitive::getPosition() const { return m_Node->getPosition(); }
 
-// sets the rotation of the primitive IN DEGREES.
-void OOP::Primitive::setRotation(float rotation) { m_Node->setRotation(rotation); }
-
-// returns the rotation factor of the primitive IN DEGREES.
-float OOP::Primitive::getRotation() { return m_Node->getRotation(); }
-
 // gets the visibility of the m_Node
 bool OOP::Primitive::isVisible() const { return m_Node->isVisible(); }
 
@@ -64,6 +58,9 @@ void OOP::Primitive::setActive(bool active)
 // Note that this parameter is essentially meaningless for grid and line primitives.
 // primitives will have have their opacity cut put at 50% when they are not active.
 void OOP::Primitive::setActive() { setActive(!active); }
+
+// returns an id that identifies what type the primitive is.
+short int OOP::Primitive::getId() { return ID; }
 
 ///// SQUARE /////////////////////////////////////////////////////////////////////////////
 // Question 3: initalization of the DrawNode (Square)
@@ -100,9 +97,6 @@ OOP::PrimitiveSquare::~PrimitiveSquare() { /*m_Node->release();*/ }
 // Question 4: returns the square primitive
 cocos2d::DrawNode * OOP::PrimitiveSquare::getPrimitive() const { return m_Node; }
 
-// gets the position of the primitive square
-// cocos2d::Vec2 OOP::PrimitiveSquare::getPosition() const { return m_Node->getPosition(); }
-
 // sets the position of the primitive.
 void OOP::PrimitiveSquare::setPosition(cocos2d::Vec2 position)
 {
@@ -129,6 +123,39 @@ cocos2d::Rect OOP::PrimitiveSquare::getRect() const { return cocos2d::Rect(m_Nod
 // toggles the visibility of the primitive on/off.
 // void OOP::PrimitiveSquare::setVisible() { setVisible(!m_Node->isVisible()); }
 
+///// ORIENTED SQUARE ////////////////////////////////////////////////////////////////////
+// bases on start and end position. This reuses a different function.
+OOP::PrimitiveOrientedSquare::PrimitiveOrientedSquare(const cocos2d::Vec2 & a_StartPosition, const cocos2d::Vec2 & a_EndPosition, float rotation, bool inDegrees, const cocos2d::Color4F colour)
+	: PrimitiveOrientedSquare((a_StartPosition + a_EndPosition) / 2.0F, abs((a_EndPosition - a_StartPosition).x), abs((a_EndPosition - a_StartPosition).y), rotation, inDegrees, colour) {}
+
+OOP::PrimitiveOrientedSquare::PrimitiveOrientedSquare(const cocos2d::Vec2 & position, const float & width, const float & height, float rotation, bool inDegrees, const cocos2d::Color4F colour)
+	: PrimitiveSquare(position, width, height, colour)
+{
+	ID = 2; // sets the ID for the oriented square.
+
+	if (inDegrees == false) // if the angle is in radians, it is converted into degrees.
+		rotation = umath::radiansToDegrees(rotation);
+
+	m_Node->setRotation(rotation); // rotates the drawNode.
+}
+
+// creates a rotatable square based on a provided position and side length. It reuses another function.
+OOP::PrimitiveOrientedSquare::PrimitiveOrientedSquare(const cocos2d::Vec2 & position, const float & sideLength, float rotation, bool inDegrees, const cocos2d::Color4F colour)
+	: PrimitiveOrientedSquare(position, sideLength, sideLength, rotation, inDegrees, colour) {}
+
+// gets the rotation factor in degrees. This is inherently how the rotation factor is stored.
+float OOP::PrimitiveOrientedSquare::getRotationInDegrees() const { return m_Node->getRotation(); }
+
+// sets the rotation factor of the primitive using degrees. // sets the rotation factor for the primitive. 
+void OOP::PrimitiveOrientedSquare::setRotationInDegrees(float rotation)  { m_Node->setRotation(rotation); }
+
+// gets rthe rotation of the primitive in radians
+float OOP::PrimitiveOrientedSquare::getRotationInRadians() const { return umath::degreesToRadians(m_Node->getRotation()); }
+
+// sets the rotation of the primitive in radians
+void OOP::PrimitiveOrientedSquare::setRotationInRadians(float rotation) { m_Node->setRotation(umath::radiansToDegrees(rotation)); }
+
+
 
 ///// CIRCLE /////////////////////////////////////////////////////////////////////////////
 // initalizes the drawNode
@@ -142,12 +169,6 @@ OOP::PrimitiveCircle::PrimitiveCircle(cocos2d::Vec2 location, float radius, cons
 
 OOP::PrimitiveCircle::~PrimitiveCircle() { /*m_Node->release();*/ }
 
-// Returns the circle primitive
-// cocos2d::DrawNode * OOP::PrimitiveCircle::getPrimitive() const { return m_Node; }
-
-// gets the position of the primitive square
-// cocos2d::Vec2 OOP::PrimitiveCircle::getPosition() const { return m_Node->getPosition(); }
-
 // sets the position of the primitive.
 void OOP::PrimitiveCircle::setPosition(cocos2d::Vec2 position)
 {
@@ -156,12 +177,6 @@ void OOP::PrimitiveCircle::setPosition(cocos2d::Vec2 position)
 	// m_Node->setPosition(m_Node->getPosition() + position - m_Position);
 	//this->m_Position = position;
 }
-
-// sets the visibility of the primitive.
-// void OOP::PrimitiveCircle::setVisible(bool visible) { m_Node->setVisible(visible); }
-
-// toggles the visibility of the primitive on/off.
-// void OOP::PrimitiveCircle::setVisible() { setVisible(!m_Node->isVisible()); }
 
 
 ///// LINE ///////////////////////////////////////////////////////////////////////////////
@@ -181,12 +196,6 @@ OOP::PrimitiveLine::PrimitiveLine(cocos2d::Vec2 startingPoint, cocos2d::Vec2 end
 
 OOP::PrimitiveLine::~PrimitiveLine() { /*m_Node->release();*/ }
 
-// Question 4: returns the line primitive
-// cocos2d::DrawNode * OOP::PrimitiveLine::getPrimitive() const { return m_Node; }
-
-// gets the position of the primitive square
-// cocos2d::Vec2 OOP::PrimitiveLine::getPosition() const { return m_Node->getPosition(); }
-
 // sets the position of the primitive.
 void OOP::PrimitiveLine::setPosition(cocos2d::Vec2 position)
 {
@@ -197,12 +206,17 @@ void OOP::PrimitiveLine::setPosition(cocos2d::Vec2 position)
 	// this->m_Position = position;
 }
 
-// sets the visibility of the primitive.
-// void OOP::PrimitiveLine::setVisible(bool visible) { m_Node->setVisible(visible); }
+// gets the rotation factor in degrees. This is inherently how the rotation factor is stored.
+float OOP::PrimitiveLine::getRotationInDegrees() const { return m_Node->getRotation(); }
 
-// toggles the visibility of the primitive on/off.
-// void OOP::PrimitiveLine::setVisible() { setVisible(!m_Node->isVisible()); }
+// sets the rotation factor of the primitive using degrees. // sets the rotation factor for the primitive. 
+void OOP::PrimitiveLine::setRotationInDegrees(float rotation) { m_Node->setRotation(rotation); }
 
+// gets rthe rotation of the primitive in radians
+float OOP::PrimitiveLine::getRotationInRadians() const { return umath::degreesToRadians(m_Node->getRotation()); }
+
+// sets the rotation of the primitive in radians
+void OOP::PrimitiveLine::setRotationInRadians(float rotation) { m_Node->setRotation(umath::radiansToDegrees(rotation)); }
 
 //// CAPSULE /////////////////////////////////////////////////////////////////////////////
 // creates a capsule
@@ -308,12 +322,6 @@ OOP::PrimitiveCapsule::PrimitiveCapsule(cocos2d::Vec2 position, float length, fl
 // destructor for a capsule
 OOP::PrimitiveCapsule::~PrimitiveCapsule() { /*m_Node->release();*/ }
 
-// returns the capsule primitive
-// cocos2d::DrawNode * OOP::PrimitiveCapsule::getPrimitive() const { return m_Node; }
-
-// gets the position of the primitive square
-// cocos2d::Vec2 OOP::PrimitiveCapsule::getPosition() const { return m_Node->getPosition(); }
-
 // sets the position of the primitive.
 void OOP::PrimitiveCapsule::setPosition(cocos2d::Vec2 position)
 {
@@ -341,8 +349,11 @@ cocos2d::Vec2 OOP::PrimitiveCapsule::getCirclePosition1() const { return m_Circl
 // gets the ending circle of the capsule
 cocos2d::Vec2 OOP::PrimitiveCapsule::getCirclePosition2() const { return m_Circle2; }
 
+// gets the rotation factor of the capsule in degrees.
+float OOP::PrimitiveCapsule::getRotationInDegrees() const { return m_theta; }
+
 // sets the rotation factor of the capsule.
-void OOP::PrimitiveCapsule::setRotation(float newTheta)
+void OOP::PrimitiveCapsule::setRotationInDegrees(float newTheta)
 {
 	float nodeTheta = m_Node->getRotation(); // gets the rotation factor of the drawNode (in degrees).
 	float netTheta = newTheta - m_theta; // gets the net change in the capsule's rotation factor.
@@ -351,15 +362,11 @@ void OOP::PrimitiveCapsule::setRotation(float newTheta)
 	m_theta = newTheta; // saves the rotation factor of the capsule.
 }
 
+// gets the rotation factor in radians
+float OOP::PrimitiveCapsule::getRotationInRadians() const { return umath::degreesToRadians(m_Node->getRotation()); }
 
-// gets the rotation factor of the capsule.
-float OOP::PrimitiveCapsule::getRotation() { return m_theta; }
-
-// sets the visibility of the primitive.
-// void OOP::PrimitiveCapsule::setVisible(bool visible) { m_Node->setVisible(visible); }
-
-// toggles the visibility of the primitive on/off.
-// void OOP::PrimitiveCapsule::setVisible() { setVisible(!m_Node->isVisible()); }
+// sets the rotation factor in radians
+void OOP::PrimitiveCapsule::setRotationInRadians(float newTheta){ setRotationInDegrees(umath::radiansToDegrees(newTheta)); }
 
 ///// GRID ///////////////////////////////////////////////////////////////////////////////
 // creates a grid
@@ -437,12 +444,6 @@ OOP::PrimitiveGrid::PrimitiveGrid(cocos2d::Vec2 position, cocos2d::Size size, co
 // releases the grid node.
 OOP::PrimitiveGrid::~PrimitiveGrid() { /*m_Node->release();*/ }
 
-// returns the grid primitive.
-// cocos2d::DrawNode * OOP::PrimitiveGrid::getPrimitive() const { return m_Node; }
-
-// gets the position of the primitive square
-// cocos2d::Vec2 OOP::PrimitiveGrid::getPosition() const { return m_Node->getPosition(); }
-
 // sets the position of the primitive.
 void OOP::PrimitiveGrid::setPosition(cocos2d::Vec2 position)
 {
@@ -451,9 +452,3 @@ void OOP::PrimitiveGrid::setPosition(cocos2d::Vec2 position)
 	//m_Node->setPosition(m_Node->getPosition() + position - m_Position);
 	//this->m_Position = position;
 }
-
-// sets the visibility of the primitive.
-// void OOP::PrimitiveGrid::setVisible(bool visible) { m_Node->setVisible(visible); }
-
-// toggles the visibility of the primitive on/off.
-// void OOP::PrimitiveGrid::setVisible() { setVisible(!m_Node->isVisible()); }

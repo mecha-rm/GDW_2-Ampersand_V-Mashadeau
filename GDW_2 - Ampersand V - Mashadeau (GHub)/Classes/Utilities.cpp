@@ -95,7 +95,7 @@ bool umath::circleCollision(Vec2 pos1, float radius1, Vec2 pos2, float radius2)
 
 // calculates AABB collision with two rectangles based on a passed minimum and maximum value for both.
 // Takes the minimum and maximum of the two rectangles.
-bool umath::aabbCollision(const Vec2 aMin, Vec2 aMax, Vec2 bMin, Vec2 bMax)
+bool umath::aabbCollision(const Vec2 aMin, const Vec2 aMax, const Vec2 bMin, const Vec2 bMax)
 {
 	// booleans for collision checks
 	bool xCol, yCol;
@@ -110,92 +110,86 @@ bool umath::aabbCollision(const Vec2 aMin, Vec2 aMax, Vec2 bMin, Vec2 bMax)
 	return (xCol && yCol);
 }
 
+// calls another aabb function to do the collision.
+bool umath::aabbCollision(const Vec2 topLeftA, const Vec2 topRightA, const Vec2 bottomLeftA, const Vec2 bottomRightA, const Vec2 topLeftB, const Vec2 topRightB, const Vec2 bottomLeftB, const Vec2 bottomRightB)
+{
+	Vec2 aMin(bottomLeftA), aMax(topRightA); // the minimum and maximum values of the first rectangle (rect A).
+	Vec2 bMin(bottomLeftB), bMax(topRightB); // the minimum and maximum values of the second rectangle (rect B).
+	
+	return aabbCollision(aMin, aMax, bMin, bMax);
+}
+
 // calculates rectnagle collision using two cocos2d rectangles
 bool umath::aabbCollision(const Rect * rect1, const Rect * rect2)
 {
 	return rect1->intersectsRect(*rect2);
-	// Reuses the other collison check.
+	// Reuses the other collison check. It originally had its own algorithm, which is shwon below.
 	//return umath::aabbCollision(Vec2(rect1->getMinX(), rect1->getMinY()), Vec2(rect1->getMaxX(), rect1->getMaxY()), Vec2(rect2->getMinX(), rect2->getMinY()), Vec2(rect2->getMaxX(), rect2->getMaxY()));
 }
 
-// calculates obb collision between two rectangles; this assumes that the rotation angles are based on the middle of the rectanges.
-//  The angle is IN RADIANS.
-bool umath::obbCollision(Rect rectA, float angleA, Rect rectB, float angleB)
+// calculates obb collision between two rectangles; this assumes that the rotation angles are based on the middle of the rectangles.
+// These calculations require that the angle is put into radians, but since cocos2d inherently uses degrees, 'isRadians' needs to check what form the angle is in.
+bool umath::obbCollision(Rect & rectA, float angleA, Rect & rectB, float angleB, bool inDegrees)
 {
-	float theta = angleB - angleA; // gets the difference between the two angles.
-	
-	bool collision(false);
-
-	Rect tempRect; // a temporary rectangle used to check for collisions.
-	Vec2 tempPos; // saves the position of a rectangle temporarily, which would be their midX and midY values.
-	
-	Vec2 rectVerts[4]; // saves the 4 corner points of rectangle 2
-	Vec2 minXY; // saves the minimum vertex points of rectangle 2
-	Vec2 maxXY; // saves the maximum vertex points of rectangle 2
-
-	for (int check = 1; check <= 2; check++) // does the two checks to see if there is collision. This requires two check total.
-	{
-		tempPos = Vec2(rectB.getMidX(), rectB.getMidY()); // gets the position of rect2 (based on its centre)
-
-		// gets the corners of the rectangle.
-		rectVerts[0] = Vec2(rectB.getMinX(), rectB.getMaxY()); // top left corner
-		rectVerts[1] = Vec2(rectB.getMaxX(), rectB.getMaxY()); // top right corner
-		rectVerts[2] = Vec2(rectB.getMinX(), rectB.getMinY()); // bottom left corner
-		rectVerts[3] = Vec2(rectB.getMaxX(), rectB.getMinY()); // bottom right corner
-
-		// rotates the four corner points after offsetting them by their position.
-		rectVerts[0] = rotate(rectVerts[0] - tempPos, theta);
-		rectVerts[1] = rotate(rectVerts[1] - tempPos, theta);
-		rectVerts[2] = rotate(rectVerts[2] - tempPos, theta);
-		rectVerts[3] = rotate(rectVerts[3] - tempPos, theta);
-
-		// puts the rectangle back where it was before.
-		rectVerts[0] += tempPos;
-		rectVerts[1] += tempPos;
-		rectVerts[2] += tempPos;
-		rectVerts[3] += tempPos;
-
-		// these would normally be the min and max values of an unrotated rectangle. However, it still needs to be checked.
-		minXY = rectVerts[2];
-		maxXY = rectVerts[1];
-
-		// gets the minimum x and y points of the rotated rectB
-		for (int i = 0; i < 4; i++)
-		{
-			if (rectVerts[i].x < minXY.x)
-				minXY.x = rectVerts[i].x;
-
-			if (rectVerts[i].y < minXY.y)
-				minXY.y = rectVerts[i].y;
-		}
-
-		// gets the maximum x and y points of the rotated rectB
-		for (int i = 0; i < 4; i++)
-		{
-			if (rectVerts[i].x > maxXY.x)
-				maxXY.x = rectVerts[i].x;
-
-			if (rectVerts[i].y > maxXY.y)
-				maxXY.y = rectVerts[i].y;
-		}
-
-		// checks to see if the two rectangles are colliding.
-		collision = aabbCollision(Vec2(rectA.getMinX(), rectA.getMinY()), Vec2(rectA.getMaxX(), rectA.getMaxY()), minXY, maxXY);
-
-		if (collision == false) // if the collision is set to 'false', then there is no need to do another check; there is no collision.
-			return false;
-
-		// switches the rectangles around so that the check can be done again.
-		tempRect = rectA;
-		rectA = rectB;
-		rectB = tempRect;
+	// if the angles have been provided in degrees, then they are converted to radians for the rotation calculations.
+	if (inDegrees) // converts angle A and B into radians.
+	{ 
+		angleA = umath::degreesToRadians(angleA);
+		angleB = umath::degreesToRadians(angleB);
 	}
 
-	return collision;
+	return umath::obbCollision(Vec2(rectA.getMinX(), rectA.getMaxY()), Vec2(rectA.getMaxX(), rectA.getMaxY()), Vec2(rectA.getMinX(), rectA.getMinY()), Vec2(rectA.getMaxX(), rectA.getMinY()), angleA,
+							   Vec2(rectB.getMinX(), rectB.getMaxY()), Vec2(rectB.getMaxX(), rectB.getMaxY()), Vec2(rectB.getMinX(), rectB.getMinY()), Vec2(rectB.getMaxX(), rectB.getMinY()), angleB
+	);
+}
+
+// obb collision function. If IS_ROTATED is false, then the program rotates the two rectangles before doing any collision checks.
+bool umath::obbCollision(const Vec2 topLeftA, const Vec2 topRightA, const Vec2 bottomLeftA, const Vec2 bottomRightA, const float thetaA, const Vec2 topLeftB, const Vec2 topRightB, const Vec2 bottomLeftB, const Vec2 bottomRightB, const float thetaB, const bool IS_ROTATED)
+{
+	Vec2 posA = ((bottomLeftA + topRightA) / 2); // the position of rectangle A
+	Vec2 posB = ((bottomLeftB + topRightB) / 2); // the position of rectangle B
+	Vec2 rPos = (posA + posB) / 2; // the centre position that the two rectangles are rotated around.
+
+	// makes copies of all the passed vector values.
+	Vec2 tempTLA(topLeftA), tempTRA(topRightA), tempBLA(bottomLeftA), tempBRA(bottomRightA);
+	Vec2 tempTLB(topLeftB), tempTRB(topRightB), tempBLB(bottomLeftB), tempBRB(bottomRightB);
+
+	bool intersects = false; // saves the results of intersection checks.
+
+	if (IS_ROTATED == false) // if the boxes have not been rotated, the function does so around their centre
+	{
+		tempTLA = umath::rotate(topLeftA - posA, thetaA) + posA;
+		tempTRA = umath::rotate(topRightA - posA, thetaA) + posA;
+		tempBLA = umath::rotate(bottomLeftA - posA, thetaA) + posA;
+		tempBRA = umath::rotate(bottomRightA - posA, thetaA) + posA;
+
+		tempTLB = umath::rotate(topLeftB - posB, thetaB) + posB;
+		tempTRB = umath::rotate(topRightB - posB, thetaB) + posB;
+		tempBLB = umath::rotate(bottomLeftB - posB, thetaB) + posB;
+		tempBRB = umath::rotate(bottomRightB - posB, thetaB) + posB;
+	}
+
+	// checks for collision with rectangle A aligned with the axis.
+	intersects = aabbCollision(
+		umath::rotate(tempTLA - rPos, -thetaA) + rPos, umath::rotate(tempTRA - rPos, -thetaA) + rPos, umath::rotate(tempBLA - rPos, -thetaA) + rPos, umath::rotate(tempBRA - rPos, -thetaA) + rPos,
+		umath::rotate(tempTLB - rPos, -thetaA) + rPos, umath::rotate(tempTRB - rPos, -thetaA) + rPos, umath::rotate(tempBLB - rPos, -thetaA) + rPos, umath::rotate(tempBRB - rPos, -thetaA) + rPos
+	);
+
+	if (intersects == false) // if there was no intersection, a false is returned.
+		return false;
+
+	// checks for collision with rectangle B aligned with the axis.
+	intersects = aabbCollision(
+		umath::rotate(tempTLA - rPos, -thetaB) + rPos, umath::rotate(tempTRA - rPos, -thetaB) + rPos, umath::rotate(tempBLA - rPos, -thetaB) + rPos, umath::rotate(tempBRA - rPos, -thetaB) + rPos,
+		umath::rotate(tempTLB - rPos, -thetaB) + rPos, umath::rotate(tempTRB - rPos, -thetaB) + rPos, umath::rotate(tempBLB - rPos, -thetaB) + rPos, umath::rotate(tempBRB - rPos, -thetaB) + rPos
+	);
+
+	// if intersects is true, then there is collision. If not, then there is no intersection.
+	return intersects;
 }
 
 // checks collision between an aabb and a circle using built in cocos algorithms.
-bool umath::aabbCircleCollision(const Rect * rect, Vec2 circlePos, float radius) { return rect->intersectsCircle(circlePos, radius); }
+bool umath::aabbCircleCollision(const Rect & rect, const Vec2 circlePos, const float radius) { return rect.intersectsCircle(circlePos, radius); }
 
 // converts from degrees to radians
 float umath::degreesToRadians(float degrees) { return degrees * (M_PI / 180); }
@@ -205,12 +199,16 @@ float umath::radiansToDegrees(float radians) { return radians * (180 / M_PI); }
 
 // a rotation function. While it doesn't use a rotation matrix, it's modeled after how one would be used for a rotation.
 //  The angle is IN RADIANS.
-Vec2 umath::rotate(Vec2 points, float angle)
+Vec2 umath::rotate(Vec2 points, float angle, bool inDegrees)
 {
 	// rotates the coordinate points using a rotation matrix. Well, it technically ISN'T using a matrix, but it's modeled after how two matrices would be multiplied with one another.
 	// This uses a rotation matrix setup, which is modeled below. With matricies, the calculation would be done in the way shown below, which is what was harcoded below.
 	// [ cos a , -sin a] [x] = [ xcos a - ysin a ]
 	// [ sin a ,  cos a] [y] = [ xsin a + ycos a ]
+
+	if (inDegrees) // if the angle provided is in degrees, it's converted to radians.
+		angle = umath::degreesToRadians(angle);
+
 	return cocos2d::Vec2(points.x * (cosf(angle)) - points.y * (sinf(angle)), points.x * (sinf(angle)) + points.y * (cosf(angle)));
 }
 

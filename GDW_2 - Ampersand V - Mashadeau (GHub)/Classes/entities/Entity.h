@@ -142,14 +142,8 @@ namespace entity
 		// toggles the anti gravity on/off.
 		void setAntiGravity();
 
-		// returns the AABB collision rectangles.
-		const std::vector<OOP::PrimitiveSquare *> const getAABBs() const;
-
-		// returns the vector of collision circles.
-		const std::vector<OOP::PrimitiveCircle *> const getCollisionCircles() const;
-
-		// returns the collision capsules.
-		const std::vector <OOP::PrimitiveCapsule *> const getCapsules() const;
+		// returns a vector of all collision shapes for the entity.
+		const std::vector<OOP::Primitive *> getCollisionShapes() const;
 
 		// checks for collision between the entity object and the one passed.
 		bool collision(entity::Entity * e2);
@@ -164,7 +158,8 @@ namespace entity
 
 		float theta = 0.0F; // the rotation factor of the entity. THIS SHOULD BE IN RADIANS.
 	
-		OOP::Primitive * collidedPrimitive; // the primitive that has recently encountered a collison.
+		// the primitive that has recently encountered a collison. The location of this primitive is where it is overall, NOT where it is relevant to the player.
+		OOP::Primitive * collidedPrimitive;
 
 		bool cancelUp = false;
 		bool cancelDown = false;
@@ -239,15 +234,9 @@ namespace entity
 		// a body used for collisions with the sprite. This is currently not being used in favour of manual collisions.
 		// This is currently not being used.
 		PhysicsBody * collisionBody;
-		
-		// the square collision boxes.
-		std::vector<OOP::PrimitiveSquare *> aabbs;
 
-		// the capsule collision boxes.
-		std::vector<OOP::PrimitiveCapsule *> capsules;
-	
-		// the circle collision boxes.
-		std::vector<OOP::PrimitiveCircle *> circles;
+		// the collision shapes for the program. There is an 'ID' that tells you what type is stored there so you can downcast.
+		std::vector<OOP::Primitive * > collisionShapes;
 
 		// used to turn on and off the gravity. If 'antiGravity' is false, then the entity IS affected by gravity. If it's false, then the entity ISN'T effected by gravity.
 		bool antiGravity = false;

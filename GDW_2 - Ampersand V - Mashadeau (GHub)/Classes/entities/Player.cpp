@@ -12,19 +12,19 @@ entity::Player::Player(std::string texture, Vec2 moveForce, float jump) : Active
 	sprite->setTag(player);
 	sprite->getPhysicsBody()->setTag(player); // setting the tag used for collision identification. This is currently not being used.
 
-	// circles.push_back(new OOP::PrimitiveCircle(Vec2(0.0f, 0.0f), 29.0f));
-	aabbs.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 53.0F, 185.0F));
-	// aabbs.at(0)->getPrimitive()->setGlobalZOrder(10.1F); // the z-order is now set upon initalization.
-	aabbs.at(0)->setVisible(true);
+	// collisionShapes.push_back(new OOP::PrimitiveCircle(Vec2(0.0f, 0.0f), 29.0f));
+	collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 53.0F, 185.0F));
+	// collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(10.1F); // the z-order is now set upon initalization.
+	collisionShapes.at(0)->setVisible(true);
 
-	sprite->addChild(aabbs.at(0)->getPrimitive());
+	sprite->addChild(collisionShapes.at(0)->getPrimitive());
 
 
-	capsules.push_back(new OOP::PrimitiveCapsule(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 53.0F, 185.0F / 2, 90.0F));
-	// capsules.at(0)->getPrimitive()->setGlobalZOrder(10.1F); // the z-order is now set upon initalization.
-	capsules.at(0)->setVisible(false);
+	collisionShapes.push_back(new OOP::PrimitiveCapsule(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 53.0F, 185.0F / 2, 90.0F));
+	// collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(10.1F); // the z-order is now set upon initalization.
+	collisionShapes.at(0)->setVisible(false);
 
-	sprite->addChild(capsules.at(0)->getPrimitive());
+	sprite->addChild(collisionShapes.at(1)->getPrimitive());
 	// sprite->addChild(circles.at(0)->getPrimitive());
 	
 

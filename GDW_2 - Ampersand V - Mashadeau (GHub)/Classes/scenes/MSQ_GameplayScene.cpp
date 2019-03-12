@@ -92,6 +92,11 @@ void MSQ_GameplayScene::initListeners()
 // initalizes all sprites
 void MSQ_GameplayScene::initSprites() 
 {
+	// the hp bar's position
+	Vec2 hpBarPos{ director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.96F };
+	// the magic bar's position
+	Vec2 mpBarPos;
+
 	// creating the scene
 	sceneArea = world::World::getArea("AIN_X00"); // makes the area. Remember, all the anchour points are the middle of the sprite layers (0.5, 0.5).
 	sceneArea->setAllLayerPositions(Vec2(director->getWinSizeInPixels().width / 2, director->getWinSizeInPixels().height / 2)); // makes all the layers be at the middle of the screen.
@@ -106,11 +111,35 @@ void MSQ_GameplayScene::initSprites()
 	plyr->setPosition(sceneArea->getSpawn0()); // sets the player using spawn point 0.
 	this->addChild(plyr->getSprite());
 
+	// creating the hud
+	hud = DrawNode::create(); // creating the hud
+	hpBarRect = Rect(0.0F, 0.0F, 465.0F, 67.0F); // the size of an individual space
+	
+	// initalizes the HP bar
+	// [0] = front, [1] = middle (the part that shows the actual HP), [2] = back
+	for (int i = 0; i < BAR_LEN; i++)
+	{
+		hpBar[i] = Sprite::create("images/HP_BAR_A.png"); // creates the sprite.
+		hpBar[i]->setTextureRect(Rect(0.0F, 0.0F + hpBarRect.getMaxY() * i, hpBarRect.getMaxX(), hpBarRect.getMaxY())); // sets what section of the image to use.
+		// test = hpBar[i]->getTextureRect();
+
+		hpBar[i]->setPosition(hpBarPos); // moves the bar to the proper place.
+		hpBar[i]->setLocalZOrder(3.0 - i); // sets the local z-order.
+		hpBar[i]->setGlobalZOrder(10.0F); // sets the global z-order.
+
+		hud->addChild(hpBar[i]);
+	}
+
+	this->addChild(hud);
+
+	// creating the grid
 	grid = new OOP::PrimitiveGrid(cocos2d::Vec2(0.0F, 0.0F), cocos2d::Vec2(director->getWinSizeInPixels().width, director->getWinSizeInPixels().height), 128.0F, Color4F::WHITE);
 	// grid->getPrimitive()->setGlobalZOrder(10.3F); // makes the grid be above everything else.
 	grid->getPrimitive()->setVisible(true); // makes the grid visible (or not visible)
 	this->addChild(grid->getPrimitive()); // adds grid to drawList
 
+
+	// setting the camera
 	//this->getDefaultCamera()->setAnchorPoint(Vec2(0.5F, 0.5F)); // setting the camera's anchour point
 	//this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the location of the camera
 
@@ -240,13 +269,8 @@ void MSQ_GameplayScene::collisions()
 {
 	
 	// std::cout << "PX: " << plyr->getAABBs().at(0)->getPosition().x << ", PY: " << plyr->getAABBs().at(0)->getPosition().y << std::endl;
-	playerCollisions();
-}
-
-// runs player collisions.
-void MSQ_GameplayScene::playerCollisions()
-{
 	playerTileCollisions(); // called for player-tile collisions.
+	playerEnemyCollisions(); // called for player collisions with enemies
 }
 
 // calculates player collision with tiles.
@@ -346,6 +370,34 @@ void MSQ_GameplayScene::playerTileCollisions()
 	}
 }
 
+// calculates player collision with enemies
+void MSQ_GameplayScene::playerEnemyCollisions()
+{
+	OOP::Primitive * colPrim1; // the primitive from the player that encountered a collision
+	OOP::Primitive * colPrim2; // the primitive from the other entity that encounted a collision
+
+	// entity::Enemy * enemy; // saves a pointer to the 
+	for each(entity::Enemy * enemy in *sceneArea->getAreaEnemies())
+	{
+		if (entity::Entity::collision(plyr, enemy)) // checks for collision
+		{
+			// gets the primitives that collided with one another.
+			// colPrim1 = plyr->collidedPrimitive;
+			// colPrim2 = enemy->collidedPrimitive;
+
+			
+			plyr->setHealth(plyr->getHealth() - 1); // replace with proper calculation.
+			hpBar[1]->setTextureRect(Rect(0.0F, hpBarRect.getMaxY(), hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()), hpBarRect.getMaxY()));
+			
+			// hpBar[1]->setTextureRect(Rect(0.0F, 0.0F, hpBar[1]->getTexture.size.width * (plyr->getHealth() / plyr->getMaxHealth()), hpBar[1]->getTextureRect().size.height));
+			// hpBar[1]->setTextureRect(Rect(0.0F, 0.0F, hpBar[1]->getTexture()->getContentSize().width * (plyr->getHealth() / plyr->getMaxHealth()), hpBar[1]->getTexture()->getContentSize().height));
+
+			break;
+
+		}
+	}
+}
+
 //// THESE ARE UNUSED FUNCTIONS THAT SHOULD BE REMOVED LATER. IGNORE FROM THIS LINE... ///
 // called to find the tile the player is colliding with, and handle what happens, based on the position(s).
 // this is used for physics bodies, which have not been turned on, and likely won't be used.
@@ -423,6 +475,7 @@ void MSQ_GameplayScene::enemyWeaponCollision(Vec2 enemyPos, Vec2 weaponPos)
 }
 //// TO THIS LINE ///
 
+
 // update loop
 void MSQ_GameplayScene::update(float deltaTime)
 {
@@ -458,6 +511,7 @@ void MSQ_GameplayScene::update(float deltaTime)
 	// std::cout << DrawNode::create()->getPosition().x << std::endl;
 	// updates the player
 	plyr->update(deltaTime);
+	
 	// updates the area the player is currently in. This update also updates the scene tiles, and enemies.
 	sceneArea->update(deltaTime);
 

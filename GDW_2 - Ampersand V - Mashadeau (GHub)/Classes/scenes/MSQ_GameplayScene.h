@@ -37,12 +37,10 @@ public:
 
 	// called to handle collisions between entities.
 	void collisions();
-
-	// all player collisions.
-	void playerCollisions();
 	
-	// player tile collisions; called by the playerCollisions();
-	void playerTileCollisions();
+	
+	void playerTileCollisions(); // player tile collisions
+	void playerEnemyCollisions(); // player enemy collisions
 
 	// These are leftovers from when we tried to use physics objects. These should be removed in the final product.
 	// These are meant to be used with physics bodies. These are NOT being used at this time.
@@ -92,6 +90,24 @@ private:
 	
 	std::vector<entity::Tile *> * sceneTiles; // the tiles in the scene, which are gotten from the Area class.
 	std::vector<entity::Enemy *> * sceneEnemies; // the enemies in the scene, which are gotten from the Area class.
+	
+	DrawNode * hud; // the drawNode used for making the hud.
+	const int BAR_LEN = 3;
+	// The items used for the health bar.
+	/*
+	 * [0]: the front of the hp bar, which is an overlay. 
+	 * [1]: the actual bar that decreases as part of the hp bar.
+	 * [2]: the back of the hp bar, which is what appears as the health bar goes down.
+	*/
+	Sprite * hpBar[3]; // an array used for holding sprite information on the hpbar
+	Rect hpBarRect; // used to recall how big each image for the hpBar is. This is set in the gameplay scene.
+
+	/*
+	 * [0]: the front of the hp bar, which is an overlay.
+	 * [1]: the actual bar that decreases as part of the magic bar.
+	 * [2]: the back of the magic bar, which is what appears as the health bar goes down.
+	*/
+	Sprite * mpBar[3];
 
 
 	bool moveUp = false;

@@ -9,6 +9,9 @@ namespace entity
 		Active(std::string texture = "");
 		~Active();
 		
+		// sets the entity's health
+		void setHealth(float health);
+
 		// gets the entity's health
 		float getHealth() const;
 
@@ -44,9 +47,6 @@ namespace entity
 		float attackPower; // the entity's attack power
 
 	protected:
-		// sets the entity's health
-		void setHealth(float health);
-
 		// sets the maximum health of the entity
 		void setMaxHealth(float maxHealth);
 

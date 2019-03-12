@@ -39,7 +39,8 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 	case 3: // exit 3
 	case 4: // exit 4
 		// a basic visual is used to represent the exit. In the final game, this should be turned off.
-		sprite->setTextureRect(Rect(0.0F, 0.0F, 128.0F, 128.0F)); // creates a texture rect, so that the default only has one tile
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		sprite->setTextureRect(frameSize); // creates a texture rect, so that the default only has one tile
 		sprite->setColor(Color3B::BLUE);
 		tempNode->drawRect(Vec2(sprite->getTextureRect().getMinX(), sprite->getTextureRect().getMinY()), Vec2(sprite->getTextureRect().getMaxX(), sprite->getTextureRect().getMaxY()), Color4F::GREEN);
 		sprite->addChild(tempNode);
@@ -47,23 +48,23 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		switch (this->LETTER) // places the hitbox in a different position based on where the tile exit hitbox i.s/
 		{
 		case 'a': // exit above
-			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 127.0F), Vec2(128.0f, 128.0F)));
+			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 127.0F), Vec2(128.0f, 128.0F), CLR_DEF));
 			break;
 
 		case 'b': // exit below
-			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 1.0F), Vec2(128.0f, 0.0F)));
+			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 1.0F), Vec2(128.0f, 0.0F), CLR_DEF));
 			break;
 		case 'c': // exit left
 			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 0.0F), Vec2(1.0F, 128.0F)));
 			break;
 
 		case 'd': // exit right
-			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(127.0F, 0.0F), Vec2(128.0f, 128.0F)));
+			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(127.0F, 0.0F), Vec2(128.0f, 128.0F), CLR_DEF));
 			break;
 
 		case 'e': // exit centre
 		default:
-			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F));
+			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F, CLR_DEF));
 			break;
 		}
 
@@ -78,7 +79,9 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 	case 7: // spawn 2
 	case 8: // spawn 3
 	case 9: // spawn 4
-		sprite->setTextureRect(Rect(0.0F, 0.0F, 128.0F, 128.0F)); // creates a texture rect, so that the default only has one tile
+		
+		frameSize = Rect(0.0F, 0.0F, 256.0F, 256.0F);
+		sprite->setTextureRect(frameSize); // creates a texture rect, so that the default only has one tile
 		sprite->setColor(Color3B::GREEN);
 		tempNode->drawRect(Vec2(sprite->getTextureRect().getMinX(), sprite->getTextureRect().getMinY()), Vec2(sprite->getTextureRect().getMaxX(), sprite->getTextureRect().getMaxY()), Color4F::BLUE);
 		sprite->addChild(tempNode);
@@ -91,6 +94,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		
 		// this->LETTER = 'a'; // there's only one block at the moment, so it's set as type a.
 		setTexture("images/tiles/TIN_010.png"); // sets the image for the sprite
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
 		switch (letter)
 		{
 		case 'a': // 'a' is also the default type.
@@ -99,9 +103,9 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 			name = "Stone Block";
 			description = "A block made of stone.";
 			
-			setTextureRect(0.0F, 0.0F, 128.0F, 128.0F);
+			setTextureRect(frameSize);
 
-			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 128.0F));
+			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 128.0F, CLR_DEF));
 			// collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(10.1F);
 			collisionShapes.at(0)->setVisible(false);
 			sprite->addChild(collisionShapes.at(0)->getPrimitive());
@@ -124,7 +128,8 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		description = "Unable to find data";
 
 		// a basic visual is used to represent the exit. In the final game, this should be turned off.
-		sprite->setTextureRect(Rect(0.0F, 0.0F, 128.0F, 128.0F)); // creates a texture rect, so that the default only has one tile
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		sprite->setTextureRect(frameSize); // creates a texture rect, so that the default only has one tile
 		sprite->setColor(Color3B::WHITE);
 		tempNode->drawRect(Vec2(sprite->getTextureRect().getMinX(), sprite->getTextureRect().getMinY()), Vec2(sprite->getTextureRect().getMaxX(), sprite->getTextureRect().getMaxY()), Color4F::BLACK);
 		sprite->addChild(tempNode);
@@ -135,6 +140,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		sprite->addChild(collisionShapes.at(0)->getPrimitive());
 		break;
 	}
+
 }
 
 // returns the tile identification number

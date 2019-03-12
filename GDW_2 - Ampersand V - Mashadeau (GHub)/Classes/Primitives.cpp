@@ -117,12 +117,6 @@ void OOP::PrimitiveSquare::setPosition(cocos2d::Vec2 position)
 // returns the rectangle object representing the primitive graphic.
 cocos2d::Rect OOP::PrimitiveSquare::getRect() const { return cocos2d::Rect(m_Node->getPositionX() - m_WIDTH / 2, m_Node->getPositionY() - m_HEIGHT / 2, m_WIDTH, m_HEIGHT); }
 
-// sets the visibility of the primitive.
-// void OOP::PrimitiveSquare::setVisible(bool visible) { m_Node->setVisible(visible); }
-
-// toggles the visibility of the primitive on/off.
-// void OOP::PrimitiveSquare::setVisible() { setVisible(!m_Node->isVisible()); }
-
 ///// ORIENTED SQUARE ////////////////////////////////////////////////////////////////////
 // bases on start and end position. This reuses a different function.
 OOP::PrimitiveOrientedSquare::PrimitiveOrientedSquare(const cocos2d::Vec2 & a_StartPosition, const cocos2d::Vec2 & a_EndPosition, float rotation, bool inDegrees, const cocos2d::Color4F colour)
@@ -143,6 +137,14 @@ OOP::PrimitiveOrientedSquare::PrimitiveOrientedSquare(const cocos2d::Vec2 & posi
 OOP::PrimitiveOrientedSquare::PrimitiveOrientedSquare(const cocos2d::Vec2 & position, const float & sideLength, float rotation, bool inDegrees, const cocos2d::Color4F colour)
 	: PrimitiveOrientedSquare(position, sideLength, sideLength, rotation, inDegrees, colour) {}
 
+// creates a primitive oriented square out of a regular primitive square.
+OOP::PrimitiveOrientedSquare::PrimitiveOrientedSquare(const OOP::PrimitiveSquare & sqrPrim)
+	: PrimitiveSquare(sqrPrim)
+{
+	ID = 2;
+	m_Node->setRotation(0.0F);
+}
+
 // gets the rotation factor in degrees. This is inherently how the rotation factor is stored.
 float OOP::PrimitiveOrientedSquare::getRotationInDegrees() const { return m_Node->getRotation(); }
 
@@ -154,8 +156,6 @@ float OOP::PrimitiveOrientedSquare::getRotationInRadians() const { return umath:
 
 // sets the rotation of the primitive in radians
 void OOP::PrimitiveOrientedSquare::setRotationInRadians(float rotation) { m_Node->setRotation(umath::radiansToDegrees(rotation)); }
-
-
 
 ///// CIRCLE /////////////////////////////////////////////////////////////////////////////
 // initalizes the drawNode
@@ -293,12 +293,12 @@ OOP::PrimitiveCapsule::PrimitiveCapsule(cocos2d::Vec2 startingPoint, cocos2d::Ve
 	m_theta = angle; // saves the angle in degrees
 }
 
-// creates a capsule with a different way, re-using the other constructor. The angle is in DEGREES.
-// This basically calculates where the ending points would be with the capsule the user is making.
+// creates a capsule. The endingPoints of the capsule are based on the position provided (which is treated as the centre of the capsule), and the length given (which is the total length of the capsule).
+		// the angle determines the rotation of the capsule, and is in DEGREES. The capsule is drawn 'horizontally', and must be rotated by 90 degrees to make it vertical.
 OOP::PrimitiveCapsule::PrimitiveCapsule(cocos2d::Vec2 position, float length, float radius, const float angle, const cocos2d::Color4F colour)
 	: PrimitiveCapsule(
-		position + umath::rotate(cocos2d::Vec2(position.x - (abs(length) - abs(radius) / 2) / 2, position.y) - position, umath::degreesToRadians(angle)), 
-		position + umath::rotate(cocos2d::Vec2(position.x + (abs(length) - abs(radius) / 2) / 2, position.y) - position, umath::degreesToRadians(angle)),
+		position - umath::rotate(cocos2d::Vec2(abs(length) / 2 - abs(radius), 0.0F), angle, true), 
+		position + umath::rotate(cocos2d::Vec2(abs(length) / 2 - abs(radius), 0.0F), angle, true),
 		radius, colour)
 {
 	// the code below is a more readiable way of how the calculation works.

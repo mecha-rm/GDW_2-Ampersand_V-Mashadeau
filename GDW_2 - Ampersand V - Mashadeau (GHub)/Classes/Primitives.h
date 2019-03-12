@@ -131,6 +131,7 @@ namespace OOP
 		void setPosition(cocos2d::Vec2 position);
 
 		// returns a rect representing the primitive.
+		// If it's an oriented primitive square, then it will return a rectangle representing the primitive at a rotation factor of 0.0F.
 		cocos2d::Rect getRect() const;
 
 		// the width of the rectangle primitive.
@@ -155,6 +156,9 @@ namespace OOP
 
 		// creates an oriented square draw primitive. This is based on the middle of the rect.
 		PrimitiveOrientedSquare(const cocos2d::Vec2 & position, const float  & sideLength, float rotation = 0.0F, bool inDegrees = false, const cocos2d::Color4F colour = cocos2d::Color4F::RED);
+
+		// turns a primitive square into an orented primitive square with a rotation factor of 0.
+		PrimitiveOrientedSquare(const OOP::PrimitiveSquare &);
 
 		// returns the rotation factor of the primitive in degrees.
 		float getRotationInDegrees() const;
@@ -192,7 +196,7 @@ namespace OOP
 
 	};
 
-	// Line Primiive Class
+	// Line Primitive Class
 	class PrimitiveLine : public Primitive
 	{
 	public:
@@ -233,8 +237,8 @@ namespace OOP
 		// creates a capsule. The start and end points are where the circles are drawn.
 		PrimitiveCapsule(cocos2d::Vec2 start, cocos2d::Vec2 end, float radius, const cocos2d::Color4F colour = cocos2d::Color4F::MAGENTA);
 
-		// creates a capsule. The endingPoints of the capsule are based on the position provided (which is treated as the centre of the capsule), and the length given.
-		// the angle determines the rotation of the capsule. The angle is in DEGREES.
+		// creates a capsule. The endingPoints of the capsule are based on the position provided (which is treated as the centre of the capsule), and the length given (which is the total length of the capsule).
+		// the angle determines the rotation of the capsule, and is in DEGREES. The capsule is drawn 'horizontally', and must be rotated by 90 degrees to make it vertical.
 		PrimitiveCapsule(cocos2d::Vec2 position, float length, float radius, const float angle, const cocos2d::Color4F colour = cocos2d::Color4F::MAGENTA);
 
 		// destructor for capsules

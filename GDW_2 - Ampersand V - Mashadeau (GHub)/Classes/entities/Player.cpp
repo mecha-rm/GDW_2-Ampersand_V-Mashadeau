@@ -2,37 +2,48 @@
 #include <iostream>
 
 
-entity::Player::Player(std::string texture, Vec2 moveForce, float jump) : Active(texture)
+entity::Player::Player() : Active("images/PLR_000.png")
 {
 	name = "Mashadeau"; // the player character's name
 	description = "The shadow mage, Mashadeau!";
+	frameSize = Rect(0.0F, 0.0F, 256.0F, 256.0F);
 
-	sprite->setTextureRect(Rect(0.0F, 0.0F, 256.0F, 256.0F)); // setting the area of the sprite that's used
+	sprite->setTextureRect(frameSize); // setting the area of the sprite that's used
 	sprite->setGlobalZOrder(2.0F); // sets the global Z order of the player.
 	sprite->setTag(player);
 	sprite->getPhysicsBody()->setTag(player); // setting the tag used for collision identification. This is currently not being used.
 
 	// collisionShapes.push_back(new OOP::PrimitiveCircle(Vec2(0.0f, 0.0f), 29.0f));
-	collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 53.0F, 185.0F));
-	// collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(10.1F); // the z-order is now set upon initalization.
+	collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 53.0F, 185.0F, CLR_DEF));
+	collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(10.1F); // the z-order is now set upon initalization.
 	collisionShapes.at(0)->setVisible(true);
 
 	sprite->addChild(collisionShapes.at(0)->getPrimitive());
 
 
-	collisionShapes.push_back(new OOP::PrimitiveCapsule(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 53.0F, 185.0F / 2, 90.0F));
-	// collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(10.1F); // the z-order is now set upon initalization.
-	collisionShapes.at(0)->setVisible(false);
+	// collisionShapes.push_back(new OOP::PrimitiveCapsule(Vec2(frameSize.getMidX(), frameSize.getMidY() + 185.0F / 2), Vec2(frameSize.getMidX(), frameSize.getMidY() - 185.0F / 2), 53.0F / 2, CLR_DEF));
+	collisionShapes.push_back(new OOP::PrimitiveCapsule(Vec2(frameSize.getMidX(), frameSize.getMidY()), 185.0F, 53.0F / 2, 90.0F, CLR_DEF));
+	collisionShapes.at(1)->getPrimitive()->setGlobalZOrder(10.1F); // the z-order is now set upon initalization.
+	collisionShapes.at(1)->setVisible(true);
 
 	sprite->addChild(collisionShapes.at(1)->getPrimitive());
 	// sprite->addChild(circles.at(0)->getPrimitive());
 	
 
-	this->moveForce = moveForce; // sets the amount of force that gets applied for
-	this->jump = jump;
+	this->moveForce = Vec2(200.0F, 200.0F); // sets the amount of force that gets applied for
+	this->jump = 14000.0F;
 	setDecelerate(Vec2(getDecelerate().x, 0.99F));
 	setMass(1.0F);
 
+	setMaxHealth(20.0F);
+	setHealth(getMaxHealth());
+	// setHealth(19.0F);
+	
+	// Animation().
+	for (int i = 0; i < 6; i++)
+	{
+
+	}
 
 	/* // Not being used currently.
 	//sprite->getPhysicsBody()->createBox(Size(37.0F, 91.0F)); // adding a physics box to the entity.
@@ -46,9 +57,7 @@ entity::Player::Player(std::string texture, Vec2 moveForce, float jump) : Active
 }
 
 
-entity::Player::~Player()
-{
-}
+entity::Player::~Player() {}
 
 void entity::Player::update(float deltaTime)
 {

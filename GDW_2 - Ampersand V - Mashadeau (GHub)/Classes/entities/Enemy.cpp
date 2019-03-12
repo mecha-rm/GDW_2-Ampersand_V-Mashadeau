@@ -39,10 +39,27 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 		name = "Dummy";
 		description = "If you're reading this description, it means the desired enemy couldn't be found, so you'll fight to 'Dummy' instead. Dummy likes hovering and staring contests.";
 
+		setMaxHealth(10.0F);
+		setHealth(getMaxHealth());
+		setAttackPower(10.0F);
+
 		sprite->setTexture("images/enemies/EIN_000.png"); // sets the enemy's image
 		setTextureRect(0.0F, 0.0F, 40.0F, 40.0F); // sets the rectangle texture
 
-		moveForce = Vec2(10.0F, 0.0F);
+		collisionShapes.push_back(new OOP::PrimitiveCircle(Vec2(20.0F, 20.0F), 20.0F, CLR_DEF));
+		collisionShapes.at(0)->setVisible(true);
+		collisionShapes.push_back(new OOP::PrimitiveCircle(Vec2(20.0F, 20.0F), 20.0F, CLR_ATK));
+		collisionShapes.at(1)->setVisible(true);
+
+		
+		// moveForce = Vec2(10.0F, 0.0F);
+	}
+
+	for (int i = 0; i < collisionShapes.size(); i++) // adds all of the collision shapes to the sprite.
+	{
+		collisionShapes.at(i)->getPrimitive()->setGlobalZOrder(10.1F);
+		// collisionShapes.at(i)->getPrimitive()->setVisible(true);
+		sprite->addChild(collisionShapes.at(i)->getPrimitive());
 	}
 
 }

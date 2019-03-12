@@ -9,10 +9,15 @@ namespace entity
 	public:
 		// default player image, default position of (0.0F, 0.0F), and the amount of force that's applied when a button is pressed.
 		// for the player, moveForce.x will be applied when horizontal movement is activated, and moveForce.y will be applied when vertical movement is requested.
-		Player(std::string texture = "images/PLR_000.png", Vec2 moveForce = Vec2(200.0F, 200.0F), float jump = 14000.0F);
+		Player();
 		~Player();
 
 		void update(float deltaTime);
+
+		bool cancelUp = false;
+		bool cancelDown = false;
+		bool cancelLeft = false;
+		bool cancelRight = false;
 
 	private:
 

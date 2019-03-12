@@ -161,10 +161,9 @@ namespace entity
 		// the primitive that has recently encountered a collison. The location of this primitive is where it is overall, NOT where it is relevant to the player.
 		OOP::Primitive * collidedPrimitive;
 
-		bool cancelUp = false;
-		bool cancelDown = false;
-		bool cancelLeft = false;
-		bool cancelRight = false;
+		static const cocos2d::Color4F CLR_ATK; // colour used for attacking collision shapes (i.e. these deal damage)
+		static const cocos2d::Color4F CLR_DEF; // colour used for defensive collision shapes (i.e. these take damage)
+		static const cocos2d::Color4F CLR_NEU; // colour used for a neutral object that can be interacted with, but does not take or deal damage.
 
 	private:
 		float mass = 1.0; // the mass of the entity
@@ -228,6 +227,7 @@ namespace entity
 		magic::MagicTypes * magicType = new magic::MagicTypes(magic::null);
 
 		Sprite * sprite; // the entity's sprite
+		Rect frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F); // the size of an individual frame of the sprite.
 
 		Vec2 force = Vec2(0.0f, 0.0f); // the force of the entity
 
@@ -235,8 +235,11 @@ namespace entity
 		// This is currently not being used.
 		PhysicsBody * collisionBody;
 
-		// the collision shapes for the program. There is an 'ID' that tells you what type is stored there so you can downcast.
+		// holds all physical body collisions. There is an 'ID' that tells you what type is stored there so you can downcast.
 		std::vector<OOP::Primitive * > collisionShapes;
+		std::vector<OOP::Primitive *> attackShapes; // used for attack collisions.
+		// holds all animation frames.
+		std::vector<std::vector<AnimationFrame *>> animationFrames;
 
 		// used to turn on and off the gravity. If 'antiGravity' is false, then the entity IS affected by gravity. If it's false, then the entity ISN'T effected by gravity.
 		bool antiGravity = false;

@@ -2,6 +2,10 @@
 #include "Utilities.h"
 
 float * entity::Entity::areaGravity = new float(1.0F); // the default level of gravity for all entities.
+const Color4F entity::Entity::CLR_ATK = Color4F::RED; // colour used for attacking collision shapes (i.e. these deal damage)
+const Color4F entity::Entity::CLR_DEF = Color4F::BLUE; // colour used for defensive collision shapes (i.e. these take damage)
+const Color4F entity::Entity::CLR_NEU = Color4F::GREEN; // colour used when two objects collides (i.e. collision has happened)
+
 
 entity::Entity::Entity(std::string texture, float globalZOrder) : sprite(Sprite::create())
 {
@@ -364,9 +368,9 @@ bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
 				{
 					e1->collidedPrimitive = tempCirc1;
 					e2->collidedPrimitive = tempCirc2;
+					return true;
 				}
 			}
-
 
 			// sets all of these to nullptr for the following check.
 			tempRect2 = nullptr;

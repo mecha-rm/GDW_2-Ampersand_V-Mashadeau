@@ -20,6 +20,13 @@ const char entity::Enemy::getLetter() const { return LETTER; }
 // creates the enemy by using inital values
 void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 {
+	Animate * tempAnimate; // used for saving the animation.
+	Animation  * tempAnimation = Animation::create(); // a temporary pointer used to create an animtion.
+	AnimationFrame * tempAnimationFrame; // a temporay pointer used for a frame of animation.
+	SpriteFrame * tempSpriteFrame;
+
+	std::string filePath = ""; // the name of the file for hte sprite image.
+
 	sprite->setGlobalZOrder(3.0F); // the global z order of enemies
 	sprite->setTag(enemy);
 
@@ -33,35 +40,72 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 	case 2:
 		break;
 
+	// Kraw-fly
+	case 101:
+		this->LETTER = 'a';
+
+		setName("Kraw-Fly");
+		setDescription("a banana fly creature.");
+
+		setMaxHealth(1.0F);
+		setHealth(getMaxHealth());
+		setAttackPower(1.0F);
+
+		filePath = "images/enemies/EIN_101.png"; // sets the file path for the enemy.
+		frameSize = Rect(0.0F, 0.0F, 228.0F, 128.0F);
+		sprite->setTexture(filePath);
+		setTextureRect(frameSize);
+
+		for (int i = 0; i < 11; i++) // creates the animation for the krawFly
+		{
+			// tempSpriteFrame = SpriteFrame::create(filePath, Rect(0.0F + frameSize.getMaxX() * i, 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			tempSpriteFrame = SpriteFrame::create(filePath, Rect(frameSize), false, Vec2(frameSize.getMaxX() * i, 0.0F), Size(2508.0f, 128.0F));
+			// tempAnimationFrame = AnimationFrame::create()
+			// tempAnimationFrame = AnimationFrame::create(tempSpriteFrame, 10.0F, cocos2d::ValueMap());
+			tempAnimation->addSpriteFrame(tempSpriteFrame);
+		}
+
+		// int size = tempAnimation->getFrames().size();
+		tempAnimation->setLoops(-1);
+		tempAnimate = Animate::create(tempAnimation->clone());
+		tempAnimate->setDuration(1.0F);
+		addAnimation(tempAnimate);
+		sprite->runAction(tempAnimate);
+
+		collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(114.0F, 16.0F), Vec2(186.0F, 103.0F), CLR_DEF));
+		collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(114.0F, 16.0F), Vec2(186.0F, 103.0F), CLR_ATK));
+
+		break;
+
 	default: // default "DUMMY" enemy
 		this->EIN = 0;
 		this->LETTER = 'a';
-		name = "Dummy";
-		description = "If you're reading this description, it means the desired enemy couldn't be found, so you'll fight to 'Dummy' instead. Dummy likes hovering and staring contests.";
+
+		setName("Dummy");
+		setDescription("If you're reading this description, it means the desired enemy couldn't be found, so you'll fight to 'Dummy' instead. Dummy likes hovering and staring contests.");
 
 		setMaxHealth(10.0F);
 		setHealth(getMaxHealth());
 		setAttackPower(10.0F);
 
-		sprite->setTexture("images/enemies/EIN_000.png"); // sets the enemy's image
-		setTextureRect(0.0F, 0.0F, 40.0F, 40.0F); // sets the rectangle texture
+		filePath = "images/enemies/EIN_000.png";
+		frameSize = Rect(0.0F, 0.0F, 40.0F, 40.0F);
+		sprite->setTexture(filePath); // sets the enemy's image
+		setTextureRect(frameSize); // sets the rectangle texture
 
 		collisionShapes.push_back(new OOP::PrimitiveCircle(Vec2(20.0F, 20.0F), 20.0F, CLR_DEF));
-		collisionShapes.at(0)->setVisible(true);
 		collisionShapes.push_back(new OOP::PrimitiveCircle(Vec2(20.0F, 20.0F), 20.0F, CLR_ATK));
-		collisionShapes.at(1)->setVisible(true);
 
 		
 		// moveForce = Vec2(10.0F, 0.0F);
 	}
 
-	for (int i = 0; i < collisionShapes.size(); i++) // adds all of the collision shapes to the sprite.
+	for (OOP::Primitive * colShape : collisionShapes) // adds all of the collision shapes to the sprite.
 	{
-		collisionShapes.at(i)->getPrimitive()->setGlobalZOrder(10.1F);
-		// collisionShapes.at(i)->getPrimitive()->setVisible(true);
-		sprite->addChild(collisionShapes.at(i)->getPrimitive());
+		colShape->getPrimitive()->setGlobalZOrder(10.1F);
+		colShape->getPrimitive()->setVisible(shapesVisible);
+		sprite->addChild(colShape->getPrimitive());
 	}
-
 }
 
 // update loop

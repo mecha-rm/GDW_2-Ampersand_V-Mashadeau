@@ -70,7 +70,6 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 
 		collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
 		collisionShapes.at(0)->setVisible(true);
-		sprite->addChild(collisionShapes.at(0)->getPrimitive());	
 
 		// sprite->setVisible(false); // uncomment to hide all graphics
 		break;
@@ -100,15 +99,12 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		case 'a': // 'a' is also the default type.
 		default:
 			this->LETTER = 'a'; // since 'a' is also the default, this is set to 'a', just to be sure.
-			name = "Stone Block";
-			description = "A block made of stone.";
+			setName("Stone Block");
+			setDescription("A block made of stone.");
 			
 			setTextureRect(frameSize);
 
 			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 128.0F, CLR_DEF));
-			// collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(10.1F);
-			collisionShapes.at(0)->setVisible(false);
-			sprite->addChild(collisionShapes.at(0)->getPrimitive());
 			break;
 		}
 
@@ -121,11 +117,53 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		// setTexture()
 		break;
 
+	case 600: // stone castle block
+		setName("Castle Stone Block");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_600.png");
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+
+		switch (this->LETTER)
+		{
+		case 'a':
+		default:
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+
+		case 'b':
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'c':
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'd':
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'e':
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'f':
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'g':
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'h':
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'i':
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		}
+
+		collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+
 	default:
 		this->TIN = 0; // a tile of type 0 is invalid. This number is taken up by something else, but said thing does not actually make a tile.
 		this->LETTER = 'a'; // default letter of 'a'.
-		name = "NON_EXISTENT_TILE";
-		description = "Unable to find data";
+		setName("NON_EXISTENT_TILE");
+		setDescription("Unable to find data");
 
 		// a basic visual is used to represent the exit. In the final game, this should be turned off.
 		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
@@ -135,10 +173,14 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		sprite->addChild(tempNode);
 
 		collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F));
-		// collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
-		collisionShapes.at(0)->setVisible(true);
-		sprite->addChild(collisionShapes.at(0)->getPrimitive());
 		break;
+	}
+
+	for (OOP::Primitive * colShape : collisionShapes) // adds all of the collision shapes to the sprite.
+	{
+		colShape->getPrimitive()->setGlobalZOrder(10.1F);
+		colShape->getPrimitive()->setVisible(shapesVisible);
+		sprite->addChild(colShape->getPrimitive());
 	}
 
 }

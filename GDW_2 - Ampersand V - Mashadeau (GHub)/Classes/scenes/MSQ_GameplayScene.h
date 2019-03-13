@@ -80,6 +80,9 @@ private:
 	bool gridVisible = false; // turns on the grid.
 	OOP::PrimitiveGrid * grid; // stores the grid information
 
+	// gets a reference to the 'shapesVisible' so that the collision spaces can be turned on/off from the scene file.
+	bool * shapesVisible = &entity::Entity::shapesVisible;
+
 	// bool collisionVisible; // turns on collision boxes and circles
 	// DrawNode * collisions; // will store primitives that show hitboxes of everything.
 

@@ -140,8 +140,8 @@ void MSQ_GameplayScene::initSprites()
 
 
 	// setting the camera
-	//this->getDefaultCamera()->setAnchorPoint(Vec2(0.5F, 0.5F)); // setting the camera's anchour point
-	//this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the location of the camera
+	// this->getDefaultCamera()->setAnchorPoint(Vec2(0.5F, 0.5F)); // setting the camera's anchour point
+	// this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the location of the camera
 
 	
 	/* 
@@ -479,8 +479,8 @@ void MSQ_GameplayScene::enemyWeaponCollision(Vec2 enemyPos, Vec2 weaponPos)
 // update loop
 void MSQ_GameplayScene::update(float deltaTime)
 {
-	//this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the position of the camera so that it follows hte player
-	//sceneArea->setAllLayerPositions(this->getDefaultCamera()->getPosition()); // makes the backgrounds be directly behind the player. This needs to be changed later so that it scrolls.
+	// this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the position of the camera so that it follows hte player
+	// sceneArea->setAllLayerPositions(this->getDefaultCamera()->getPosition()); // makes the backgrounds be directly behind the player. This needs to be changed later so that it scrolls.
 
 	// These movement parameters will need to be changed later.
 	// if the cancels are true, then the player can't move that given direction.

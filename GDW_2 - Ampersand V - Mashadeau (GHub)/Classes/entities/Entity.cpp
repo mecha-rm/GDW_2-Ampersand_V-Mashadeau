@@ -2,6 +2,8 @@
 #include "Utilities.h"
 
 float * entity::Entity::areaGravity = new float(1.0F); // the default level of gravity for all entities.
+bool entity::Entity::shapesVisible = true; // change this to 'false' to hide all collision shapes from view.
+
 const Color4F entity::Entity::CLR_ATK = Color4F::RED; // colour used for attacking collision shapes (i.e. these deal damage)
 const Color4F entity::Entity::CLR_DEF = Color4F::BLUE; // colour used for defensive collision shapes (i.e. these take damage)
 const Color4F entity::Entity::CLR_NEU = Color4F::GREEN; // colour used when two objects collides (i.e. collision has happened)
@@ -29,10 +31,20 @@ entity::Entity::~Entity() { sprite->release(); }
 float entity::Entity::getAge() { return age; }
 
 // returns the entity's name.
-std::string entity::Entity::getName() { return name; }
+const std::string entity::Entity::getName() const { return name; }
+
+// sets the entity's name in the sprite.
+void entity::Entity::setName(std::string name)
+{
+	this->name = name;
+	sprite->setName(name);
+}
 
 // Returns the entity's description.
-std::string entity::Entity::getDescription() { return description; }
+const std::string entity::Entity::getDescription() const { return description; }
+
+// sets the description of the entity.
+void entity::Entity::setDescription(std::string description) { this->description = description; }
 
 // returns the entity's sprite
 Sprite * entity::Entity::getSprite() const { return sprite; }
@@ -382,108 +394,36 @@ bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
 		tempCirc1 = nullptr;
 	}
 
-	// handles circle collisions for e1
-	//for each(OOP::PrimitiveCircle * e1Circle in e1->getCollisionCircles())
-	//{
-	//	tempCirc1 = Vec3(e1Bl.x + e1Circle->getPosition().x, e1Bl.y + e1Circle->getPosition().y, e1Circle->m_RADIUS); // creates a temporary version of e1 in its overall location.
-
-	//	// circle circle collision
-	//	for each(OOP::PrimitiveCircle* e2Circle in e2->getCollisionCircles())
-	//	{
-	//		tempCirc2 = Vec3(e2Bl.x + e2Circle->getPosition().x, e2Bl.y + e2Circle->getPosition().y, e2Circle->m_RADIUS); // recreates the e2 circle with the proper position.
-
-	//		// if true, the primitives that collided are saved in their resepctive entities.
-	//		if (e1Circle->isActive() && e2Circle->isActive() && umath::circleCollision(Vec2(tempCirc1.x, tempCirc1.y), tempCirc1.z, Vec2(tempCirc2.x, tempCirc2.y), tempCirc2.z))
-	//		{
-	//			e1->collidedPrimitive = e1Circle;
-	//			e2->collidedPrimitive = e2Circle;
-	//			return true;
-	//		}
-	//			
-	//	}
-
-	//	// circle square collision
-	//	for each(OOP::PrimitiveSquare * e2Box in e2->getAABBs())
-	//	{
-	//		tempRect2 = OOP::PrimitiveSquare(e2Bl + e2Box->getPosition(), e2Box->m_WIDTH, e2Box->m_HEIGHT).getRect(); // creates a new rectangle at the proper position of the collection rect.
-
-	//		// if true, the primitives that collided are saved in their resepctive entities.
-	//		if (e1Circle->isActive() && e2Box->isActive() && umath::aabbCircleCollision(&tempRect2, Vec2(tempCirc1.x, tempCirc1.y), tempCirc1.z))
-	//		{
-	//			e1->collidedPrimitive = e1Circle;
-	//			e2->collidedPrimitive = e2Box;
-	//			return true;
-	//		}
-	//			
-	//	}
-
-	//	// circle capsule collision
-	//	// there is currently no function for circle capsule collision...
-	//}
-
-	/*
-	for each(OOP::PrimitiveCapsule * e1Capsule in *e1->getCapsules())
-	{
-		// there's currently no capsule collisions...
-	}
-	*/
-
-	//if (e1 == nullptr || e2 == nullptr) // if either one is null, then a 'false' is returned.
-	//	return false;
-
-	//// handles AABB collisions for e1
-	//for each(OOP::PrimitiveSquare * e1Box in e1->getAABBs())
-	//{
-	//	// square square collision
-	//	for each(OOP::PrimitiveSquare * e2Box in e2->getAABBs())
-	//	{
-	//		if (umath::aabbCollision(&e1Box->getRect(), &e2Box->getRect()))
-	//			return true;
-	//	}
-
-	//	// square circle collision
-	//	for each(OOP::PrimitiveCircle * e2Circle in e2->getCollisionCircles())
-	//	{
-	//		if (umath::aabbCircleCollision(&e1Box->getRect(), e2Circle->getPosition(), e2Circle->m_RADIUS))
-	//			return true;
-	//	}
-
-	//	// sqaure capsule collision
-	//	// there is currently no function for square capsule collision...
-	//}
-
-	//// handles circle collisions for e1
-	//for each(OOP::PrimitiveCircle * e1Circle in e1->getCollisionCircles())
-	//{
-	//	// circle circle collision
-	//	for each(OOP::PrimitiveCircle* e2Circle in e2->getCollisionCircles())
-	//	{
-	//		if (umath::circleCollision(e1Circle->getPosition(), e1Circle->m_RADIUS, e2Circle->getPosition(), e2Circle->m_RADIUS))
-	//			return true;
-	//	}
-
-	//	// circle square collision
-	//	for each(OOP::PrimitiveSquare * e2Box in e2->getAABBs())
-	//	{
-
-	//		if (umath::aabbCircleCollision(&e2Box->getRect(), e1Circle->getPosition(), e1Circle->m_RADIUS))
-	//			return true;
-	//	}
-
-	//	// circle capsule collision
-	//	// there is currently no function for circle capsule collision...
-	//}
-
-	///*
-	//for each(OOP::PrimitiveCapsule * e1Capsule in *e1->getCapsules())
-	//{
-	//	// there's currently no capsule collisions...
-	//}
-	//*/
-	//
-	// return false;
-
 	return false;
+}
+
+// gets the animations for the entity.
+std::vector<Animate*> entity::Entity::getAnimations() const { return animations; }
+
+// returns the animation at the provided index.
+Animate * entity::Entity::getAnimation(unsigned int index) const
+{
+	// if the index is outside of the size of 'animations', then a nullptr is immediately returned.
+	return (index < animations.size()) ? animations.at(index) : nullptr;
+}
+
+// returns the index of the passed animation. If the animation does not exist in the vector, a '-1' is returned.
+int entity::Entity::getAnimationIndex(Animate * ani) const
+{
+	for (int i = 0; i < animations.size(); i++) // checks all indexes
+	{
+		if (animations.at(i) == ani)
+			return i;
+	}
+
+	return -1;
+}
+
+// adds an animation to the entity, and returns the index of said animation.
+unsigned int entity::Entity::addAnimation(Animate * newAnimation)
+{
+	animations.push_back(newAnimation);
+	return animations.size() - 1;
 }
 
 // sets whether the entity has a constant velocity (i.e. the velocity is either '0', or some value) or not.

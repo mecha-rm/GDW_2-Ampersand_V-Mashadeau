@@ -30,7 +30,7 @@ namespace OOP
 	// creates the draw node
 			Primitive(const short int ID);
 			// releases the drawNode
-			~Primitive();
+			virtual ~Primitive();
 
 			// returns square primitive
 			cocos2d::DrawNode * getPrimitive() const;

@@ -29,16 +29,22 @@ namespace entity
 	{
 	public:
 		Entity(std::string texture = "", float globalZOrder = 0.0F);
-		~Entity();
+		virtual ~Entity();
 
 		// gets how long the entity has existed for.
 		float getAge();
 
-		// returns the name of the entity
-		std::string getName();
+		// returns the name of the entity.
+		const std::string getName() const;
 
-		// returns the 
-		std::string getDescription();
+		// sets the name of the entity.  This also gets stored as the sprite name.
+		void setName(std::string name);
+
+		// returns the description of the entity.
+		const std::string getDescription() const;
+
+		// sets the description of the entity.
+		void setDescription(std::string description);
 
 		// returns the entity's sprite
 		Sprite * getSprite() const;
@@ -151,6 +157,18 @@ namespace entity
 		// checks for collision between two entities.
 		static bool collision(entity::Entity * e1, entity::Entity * e2);
 
+		// returns the vector of animations.
+		std::vector<Animate * > getAnimations() const;
+
+		// returns an animation at the provided index. If no animation exists at this index, a 'nullptr' is returned.
+		Animate * getAnimation(unsigned int index) const;
+
+		// returns the index of the animation. If the animation does not exist in the animation vector, then a '-1' is returned.
+		int getAnimationIndex(Animate *) const;
+
+		// adds an animation to the entity. It also returns the index get the animation that has been added.
+		unsigned int addAnimation(Animate *);
+
 		// update loop
 		virtual void update(float deltaTime);
 
@@ -161,10 +179,14 @@ namespace entity
 		// the primitive that has recently encountered a collison. The location of this primitive is where it is overall, NOT where it is relevant to the player.
 		OOP::Primitive * collidedPrimitive;
 
+		// a boolean that toggles on/off hitbox visibility.
+		// If you don't want to have some collision shapes visible, set this to 'false', and set specific entities to 'true' or 'false' after initialization.
+		static bool shapesVisible;
+
 		static const cocos2d::Color4F CLR_ATK; // colour used for attacking collision shapes (i.e. these deal damage)
 		static const cocos2d::Color4F CLR_DEF; // colour used for defensive collision shapes (i.e. these take damage)
 		static const cocos2d::Color4F CLR_NEU; // colour used for a neutral object that can be interacted with, but does not take or deal damage.
-
+		
 	private:
 		float mass = 1.0; // the mass of the entity
 		
@@ -181,8 +203,12 @@ namespace entity
 		// makes it so that the entity goes right to its maximum speed, instead of steadily approaching its max speed.
 		bool constVelocity = false;
 
-		// gets the length of time the entity has existed for, in milliseconds (delta time)
-		float age;
+		
+		float age; // gets the length of time the entity has existed for, in milliseconds (delta time)
+
+		std::string name = ""; // the entity's name
+		// int NAME_LEN; // maximum name lenth
+		std::string description = ""; // the entity's description
 
 	protected:
 		// sets the sprite for the entity
@@ -219,10 +245,6 @@ namespace entity
 		//  toggles constant velocity ON/OFF. If true, the entity will either have a speed of 0, or some other value. 
 		void setConstVelocity();
 
-		std::string name = ""; // the entity's name
-		// int NAME_LEN; // maximum name lenth
-		std::string description = ""; // the entity's description
-
 		// the magic type of the entity
 		magic::MagicTypes * magicType = new magic::MagicTypes(magic::null);
 
@@ -237,9 +259,7 @@ namespace entity
 
 		// holds all physical body collisions. There is an 'ID' that tells you what type is stored there so you can downcast.
 		std::vector<OOP::Primitive * > collisionShapes;
-		std::vector<OOP::Primitive *> attackShapes; // used for attack collisions.
-		// holds all animation frames.
-		std::vector<std::vector<AnimationFrame *>> animationFrames;
+		std::vector<Animate *> animations; // holds all animation frames.
 
 		// used to turn on and off the gravity. If 'antiGravity' is false, then the entity IS affected by gravity. If it's false, then the entity ISN'T effected by gravity.
 		bool antiGravity = false;

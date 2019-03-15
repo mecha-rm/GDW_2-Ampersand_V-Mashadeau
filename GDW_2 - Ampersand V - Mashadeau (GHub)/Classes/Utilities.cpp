@@ -236,7 +236,7 @@ int umath::randInt(int lBound, int uBound, bool includeUBound)
 	randInt = (uBound > 0) ? rand() % (uBound - lBound + includeUBound) + lBound : (abs(uBound) - abs(lBound) + includeUBound) + abs(lBound);
 
 	// If the number must be negative, it is multiplied by -1 to make it so.
-	if (lBound < 0 & uBound < 0)
+	if (lBound < 0 && uBound < 0)
 		randInt *= -1;
 	randInt = rand() % (uBound - lBound + includeUBound) + lBound;
 

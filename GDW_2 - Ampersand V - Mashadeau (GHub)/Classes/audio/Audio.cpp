@@ -1,4 +1,27 @@
+/*************************
+HOW TO USE THIS ABOMINATION I CREATED
+
+Wherever everything starts from, very top, throw in "#include "Audio.h"" (of course) and where the running code is, throw in a muhfuckin "profileSetup();" (maybe) then a "preload();"
+
+
+
+*************************/
+
 #include "Audio.h"
+
+const cocos2d::experimental::AudioProfile * effectsProfile;
+const cocos2d::experimental::AudioProfile * musicProfile;
+
+void profileSetup() {
+	//Audio Profiles (allows multiple audio tracks playing simultaneously)
+	//effectsProfile.name = "Audio - Effects";
+	//effectsProfile.maxInstances = 8;
+	//effectsProfile.minDelay = 0.1f;
+	//
+	//musicProfile.name = "Audio - Music";
+	//musicProfile.maxInstances = 1;
+	//musicProfile.minDelay = 0.1f;
+}
 
 Sound::Sound(std::string _effect) {
 	effect = _effect + ".mp3";
@@ -11,10 +34,19 @@ Sound::~Sound() {
 }
 
 void Sound::play() { //This thing plays the sound effect
-	cocos2d::experimental::AudioEngine::play2d(effect, false, 1.0f);
+	id = cocos2d::experimental::AudioEngine::play2d(effect, false, 1.0f, effectsProfile);
 }
 
+void Sound::resume() {
+	cocos2d::experimental::AudioEngine::resume(id);
+}
+void Sound::pause() {
+	cocos2d::experimental::AudioEngine::pause(id);
+}
 void Sound::stop() {
+	cocos2d::experimental::AudioEngine::stop(id);
+}
+void Sound::end() {
 	cocos2d::experimental::AudioEngine::end();
 }
 
@@ -29,25 +61,23 @@ Music::~Music() {
 }
 
 void Music::play() { //This will play music
-	cocos2d::experimental::AudioEngine::play2d(AIN, true, 0.8f);
+	id = cocos2d::experimental::AudioEngine::play2d(AIN, true, 0.8f, musicProfile);
 }
 
+void Music::resume() {
+	cocos2d::experimental::AudioEngine::resume(id);
+}
+void Music::pause() {
+	cocos2d::experimental::AudioEngine::pause(id);
+}
 void Music::stop() {
+	cocos2d::experimental::AudioEngine::stop(id);
+}
+void Music::end() {
 	cocos2d::experimental::AudioEngine::end();
 }
 
-void Preload() { //Preloading things
-	//Audio Profiles (allows multiple audio tracks playing simultaneously
-	cocos2d::experimental::AudioProfile effectsProfile;
-	effectsProfile.name = "Audio - Effects";
-	effectsProfile.maxInstances = 8;
-	effectsProfile.minDelay = 0.1f;
-
-	cocos2d::experimental::AudioProfile musicProfile;
-	musicProfile.name = "Audio - Music";
-	musicProfile.maxInstances = 1;
-	musicProfile.minDelay = 0.1f;
-
+void preload() { //Preloading things
 	//General Sounds
 	Sound ui_confirm("ui_confirm"); //Sound played when you confirm something on UI
 	Sound ui_select("ui_select"); //Selecting different options on UI

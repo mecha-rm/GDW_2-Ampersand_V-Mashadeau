@@ -22,6 +22,8 @@ entity::Entity::Entity(std::string texture, float globalZOrder) : sprite(Sprite:
 	collisionBody->setDynamic(false);
 	sprite->setPhysicsBody(collisionBody);
 
+
+
 }
 
 // releases the sprite 
@@ -429,32 +431,33 @@ bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
 }
 
 // gets the animations for the entity.
-std::vector<Animate*> entity::Entity::getAnimations() const { return animations; }
+std::vector<OOP::SpriteSheetAnimation *> entity::Entity::getAnimations() const { return animations; }
 
 // returns the animation at the provided index.
-Animate * entity::Entity::getAnimation(unsigned int index) const
+OOP::SpriteSheetAnimation * entity::Entity::getAnimation(unsigned int index) const
 {
 	// if the index is outside of the size of 'animations', then a nullptr is immediately returned.
 	return (index < animations.size()) ? animations.at(index) : nullptr;
 }
 
 // returns the index of the passed animation. If the animation does not exist in the vector, a '-1' is returned.
-int entity::Entity::getAnimationIndex(Animate * ani) const
+int entity::Entity::getAnimationIndex(const OOP::SpriteSheetAnimation * anime) const
 {
 	for (int i = 0; i < animations.size(); i++) // checks all indexes
 	{
-		if (animations.at(i) == ani)
+		if (animations.at(i) == anime)
 			return i;
 	}
-
 	return -1;
 }
 
+// returns the current animation. If there is no current animation, a nullptr is returned.
+OOP::SpriteSheetAnimation * entity::Entity::getCurrentAnimation() { return currentAnimation; }
+
 // adds an animation to the entity, and returns the index of said animation.
-unsigned int entity::Entity::addAnimation(Animate * newAnimation)
+void entity::Entity::addAnimation(OOP::SpriteSheetAnimation * newAnimation)
 {
 	animations.push_back(newAnimation);
-	return animations.size() - 1;
 }
 
 // sets whether the entity has a constant velocity (i.e. the velocity is either '0', or some value) or not.
@@ -512,6 +515,10 @@ void entity::Entity::update(float deltaTime)
 
 	if (constVelocity) // if the entity has a constant velocity, the velocity is reset to '0', so values don't carry over.
 		velocity = Vec2(0.0F, 0.0F);
+
+	// if there is an animation being run, then the update loop is called.
+	if (currentAnimation != nullptr)
+		currentAnimation->update(deltaTime);
 
 	age += deltaTime; // counts how long an entity has existed for.
 }

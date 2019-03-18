@@ -7,6 +7,7 @@
 #include "magics/MagicTypes.h"
 #include "Primitives.h"
 #include "Utilities.h"
+#include "SpriteAnimation.h"
 #include <iostream>
 using namespace cocos2d;
 
@@ -168,16 +169,19 @@ namespace entity
 		static bool collision(entity::Entity * e1, entity::Entity * e2);
 
 		// returns the vector of animations.
-		std::vector<Animate * > getAnimations() const;
+		std::vector<OOP::SpriteSheetAnimation *> getAnimations() const;
 
 		// returns an animation at the provided index. If no animation exists at this index, a 'nullptr' is returned.
-		Animate * getAnimation(unsigned int index) const;
+		OOP::SpriteSheetAnimation * getAnimation(unsigned int index) const;
 
 		// returns the index of the animation. If the animation does not exist in the animation vector, then a '-1' is returned.
-		int getAnimationIndex(Animate *) const;
+		int getAnimationIndex(const OOP::SpriteSheetAnimation *) const;
+
+		// gets the current animation being used. If there is no current animation, a nullptr is returned.
+		OOP::SpriteSheetAnimation * getCurrentAnimation();
 
 		// adds an animation to the entity. It also returns the index get the animation that has been added.
-		unsigned int addAnimation(Animate *);
+		void addAnimation(OOP::SpriteSheetAnimation *);
 
 		// update loop
 		virtual void update(float deltaTime);
@@ -196,7 +200,8 @@ namespace entity
 		static const cocos2d::Color4F CLR_ATK; // colour used for attacking collision shapes (i.e. these deal damage)
 		static const cocos2d::Color4F CLR_DEF; // colour used for defensive collision shapes (i.e. these take damage)
 		static const cocos2d::Color4F CLR_NEU; // colour used for a neutral object that can be interacted with, but does not take or deal damage.
-		
+	
+
 	private:
 		float mass = 1.0; // the mass of the entity
 		
@@ -261,6 +266,10 @@ namespace entity
 		Sprite * sprite; // the entity's sprite
 		Rect frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F); // the size of an individual frame of the sprite.
 
+		std::vector<OOP::SpriteSheetAnimation *> animations; // a vector of animations.
+
+		OOP::SpriteSheetAnimation * currentAnimation = nullptr; // saves a pointer to the current animation being run.
+
 		Vec2 force = Vec2(0.0f, 0.0f); // the force of the entity
 
 		// a body used for collisions with the sprite. This is currently not being used in favour of manual collisions.
@@ -269,10 +278,10 @@ namespace entity
 
 		// holds all physical body collisions. There is an 'ID' that tells you what type is stored there so you can downcast.
 		std::vector<OOP::Primitive * > collisionBodies;
-		std::vector<Animate *> animations; // holds all animation frames.
 
 		// used to turn on and off the gravity. If 'antiGravity' is false, then the entity IS affected by gravity. If it's false, then the entity ISN'T effected by gravity.
 		bool antiGravity = false;
+
 	};
 }
 

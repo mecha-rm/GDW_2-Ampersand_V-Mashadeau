@@ -34,10 +34,10 @@ void OOP::Primitive::setVisible(bool visible) { m_Node->setVisible(visible); }
 void OOP::Primitive::setVisible() { setVisible(!m_Node->isVisible()); }
 
 // gets the tag for the primitive.
-unsigned int OOP::Primitive::getTag() const { return tag; }
+int OOP::Primitive::getTag() const { return tag; }
 
 // sets the tag of the primitive.
-void OOP::Primitive::setTag(unsigned int tag) { this->tag = tag; }
+void OOP::Primitive::setTag(int tag) { this->tag = tag; }
 
 // if true, the primitive is active or collisions. If false, it is not active for collisions.
 // this does not apply to lines and grid primitives.

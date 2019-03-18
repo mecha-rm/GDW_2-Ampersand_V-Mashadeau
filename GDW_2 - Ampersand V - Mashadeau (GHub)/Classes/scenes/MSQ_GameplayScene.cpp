@@ -31,6 +31,8 @@ bool MSQ_GameplayScene::init()
 		return false;
 
 	director = Director::getInstance();
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images/backgrounds/AIN_X00a.png");
+
 
 	// Initialize the event handlers
 	initListeners();
@@ -479,6 +481,7 @@ void MSQ_GameplayScene::enemyWeaponCollision(Vec2 enemyPos, Vec2 weaponPos)
 // update loop
 void MSQ_GameplayScene::update(float deltaTime)
 {
+	// entity::Enemy * eme = sceneEnemies->at(0);
 	// this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the position of the camera so that it follows hte player
 	// sceneArea->setAllLayerPositions(this->getDefaultCamera()->getPosition()); // makes the backgrounds be directly behind the player. This needs to be changed later so that it scrolls.
 

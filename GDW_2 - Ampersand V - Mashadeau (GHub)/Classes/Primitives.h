@@ -52,10 +52,10 @@ namespace OOP
 			void setVisible();
 
 			// gets the tag of the primitive.
-			unsigned int getTag() const;
+			int getTag() const;
 
 			// sets the tag of the primitive. This is 0 by default.
-			void setTag(unsigned int tag);
+			void setTag(int tag);
 			
 			// if 'true', then that means this shape is being used for collisions. If false, then this shape is NOT being used for collisions.
 			// Note that this parameter is essentially meaningless for grid and line primitives.
@@ -87,7 +87,7 @@ namespace OOP
 			short int getId();
 
 	private:
-		unsigned int tag = 0; // an identification tag
+		int tag = 0; // an identification tag
 
 		bool active = true; // used so that this collision shape can be turned on and off.
 

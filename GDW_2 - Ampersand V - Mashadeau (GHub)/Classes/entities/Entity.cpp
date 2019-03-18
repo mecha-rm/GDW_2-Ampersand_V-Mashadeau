@@ -275,7 +275,38 @@ void entity::Entity::setAntiGravity(float antiGravity) { this->antiGravity = ant
 void entity::Entity::setAntiGravity() { antiGravity = !antiGravity; }
 
 // returns the collision shapes for the entity.
-const std::vector<OOP::Primitive*> const entity::Entity::getCollisionShapes() const { return collisionShapes; }
+const std::vector<OOP::Primitive*> const entity::Entity::getCollisionBodies() const { return collisionBodies; }
+
+// sets a vector of collision bodies
+void entity::Entity::setCollisionBodies(std::vector<OOP::Primitive*>& colBodies) { collisionBodies = colBodies; }
+
+// checks collision between two primitives. If a collision check for this combination doesn't exist, a false is returned.
+bool entity::Entity::collision(OOP::Primitive & prim1, OOP::Primitive & prim2)
+{
+	// temporary vectors used for collision checks.
+	std::vector<OOP::Primitive *> vec1;
+	std::vector<OOP::Primitive *> vec2;
+
+	// pushes the only available primitives to the vectors.
+	vec1.push_back(&prim1);
+	vec2.push_back(&prim2);
+
+	return collision(vec1, vec2);
+}
+
+// checks for collisions between a vector of primitives.
+bool entity::Entity::collision(std::vector<OOP::Primitive*>& cols1, std::vector<OOP::Primitive*>& cols2)
+{
+	// creates two entites to give the primitives to.
+	entity::Entity * e1 = new entity::Entity();
+	entity::Entity * e2 = new entity::Entity();
+
+	// sets the two collision vectors to the respective entities.
+	e1->setCollisionBodies(cols1);
+	e2->setCollisionBodies(cols2);
+
+	return collision(e1, e2);
+}
 
 // checks for collision.
 bool entity::Entity::collision(entity::Entity * e2) { return collision(this, e2); }
@@ -300,7 +331,7 @@ bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
 	OOP::PrimitiveCircle * tempCirc2 = nullptr; // a temporary object that stores a circle from e2, in the position it is in overall. The 'z' variable holds the radius.
 
 	// handles all possible collsions. If 'Active' is turned off for either collision shape, then a no collision is checked.
-	for each(OOP::Primitive * e1Prim in e1->getCollisionShapes())
+	for each(OOP::Primitive * e1Prim in e1->getCollisionBodies())
 	{
 		if (!e1Prim->isActive()) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
 			continue;
@@ -323,7 +354,7 @@ bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
 		if (tempRect1 == nullptr && tempCirc1 == nullptr) // if all of these are nullptrs, then an unusable primitive was found.
 			continue;
 		
-		for each(OOP::Primitive * e2Prim in e2->getCollisionShapes())
+		for each(OOP::Primitive * e2Prim in e2->getCollisionBodies())
 		{
 			if (!e2Prim->isActive()) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
 				continue;

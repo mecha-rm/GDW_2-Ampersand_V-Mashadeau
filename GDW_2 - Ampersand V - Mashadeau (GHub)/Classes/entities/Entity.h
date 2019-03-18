@@ -149,9 +149,19 @@ namespace entity
 		void setAntiGravity();
 
 		// returns a vector of all collision shapes for the entity.
-		const std::vector<OOP::Primitive *> getCollisionShapes() const;
+		const std::vector<OOP::Primitive *> getCollisionBodies() const;
 
-		// checks for collision between the entity object and the one passed.
+		// sets a vector for collision bodies for the entity.
+		void setCollisionBodies(std::vector<OOP::Primitive *>& colBodies);
+		
+		// checks collision between two primitives. Do note that if the primitives don't have a collision algorithim setup, this will return false.
+		static bool collision(OOP::Primitive & prim1, OOP::Primitive & prim2);
+
+		// runs collisions between two primitive vectors. This should be used to check if a body collision collides with an attack collision.
+		// this cannot save what two primitives collided with one another.
+		static bool collision(std::vector<OOP::Primitive *>& cols1, std::vector<OOP::Primitive *>& cols2);
+
+		// checks for collision between the entity object and the one passed. This uses the getCollisionBodies
 		bool collision(entity::Entity * e2);
 
 		// checks for collision between two entities.
@@ -258,7 +268,7 @@ namespace entity
 		PhysicsBody * collisionBody;
 
 		// holds all physical body collisions. There is an 'ID' that tells you what type is stored there so you can downcast.
-		std::vector<OOP::Primitive * > collisionShapes;
+		std::vector<OOP::Primitive * > collisionBodies;
 		std::vector<Animate *> animations; // holds all animation frames.
 
 		// used to turn on and off the gravity. If 'antiGravity' is false, then the entity IS affected by gravity. If it's false, then the entity ISN'T effected by gravity.

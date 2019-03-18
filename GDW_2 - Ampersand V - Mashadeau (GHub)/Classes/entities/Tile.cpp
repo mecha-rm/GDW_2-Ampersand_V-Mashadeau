@@ -48,28 +48,28 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		switch (this->LETTER) // places the hitbox in a different position based on where the tile exit hitbox i.s/
 		{
 		case 'a': // exit above
-			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 127.0F), Vec2(128.0f, 128.0F), CLR_DEF));
+			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 127.0F), Vec2(128.0f, 128.0F), CLR_DEF));
 			break;
 
 		case 'b': // exit below
-			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 1.0F), Vec2(128.0f, 0.0F), CLR_DEF));
+			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 1.0F), Vec2(128.0f, 0.0F), CLR_DEF));
 			break;
 		case 'c': // exit left
-			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 0.0F), Vec2(1.0F, 128.0F)));
+			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 0.0F), Vec2(1.0F, 128.0F)));
 			break;
 
 		case 'd': // exit right
-			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(127.0F, 0.0F), Vec2(128.0f, 128.0F), CLR_DEF));
+			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(127.0F, 0.0F), Vec2(128.0f, 128.0F), CLR_DEF));
 			break;
 
 		case 'e': // exit centre
 		default:
-			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F, CLR_DEF));
+			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F, CLR_DEF));
 			break;
 		}
 
-		collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
-		collisionShapes.at(0)->setVisible(true);
+		collisionBodies.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
+		collisionBodies.at(0)->setVisible(true);
 
 		// sprite->setVisible(false); // uncomment to hide all graphics
 		break;
@@ -104,7 +104,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 			
 			setTextureRect(frameSize);
 
-			collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 128.0F, CLR_DEF));
+			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 128.0F, CLR_DEF));
 			break;
 		}
 
@@ -156,7 +156,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 			break;
 		}
 
-		collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
 
 	default:
@@ -172,11 +172,11 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		tempNode->drawRect(Vec2(sprite->getTextureRect().getMinX(), sprite->getTextureRect().getMinY()), Vec2(sprite->getTextureRect().getMaxX(), sprite->getTextureRect().getMaxY()), Color4F::BLACK);
 		sprite->addChild(tempNode);
 
-		collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F));
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(64.0F, 64.0F), 128.0F));
 		break;
 	}
 
-	for (OOP::Primitive * colShape : collisionShapes) // adds all of the collision shapes to the sprite.
+	for (OOP::Primitive * colShape : collisionBodies) // adds all of the collision shapes to the sprite.
 	{
 		colShape->getPrimitive()->setGlobalZOrder(10.1F);
 		colShape->getPrimitive()->setVisible(shapesVisible);

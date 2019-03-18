@@ -22,6 +22,9 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 {
 	Animate * tempAnimate; // used for saving the animation.
 	Animation  * tempAnimation = Animation::create(); // a temporary pointer used to create an animtion.
+	
+	Vector<SpriteFrame *> spriteFrames;
+	
 	AnimationFrame * tempAnimationFrame; // a temporay pointer used for a frame of animation.
 	SpriteFrame * tempSpriteFrame;
 
@@ -62,18 +65,22 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 			tempSpriteFrame = SpriteFrame::create(filePath, Rect(frameSize), false, Vec2(frameSize.getMaxX() * i, 0.0F), Size(2508.0f, 128.0F));
 			// tempAnimationFrame = AnimationFrame::create()
 			// tempAnimationFrame = AnimationFrame::create(tempSpriteFrame, 10.0F, cocos2d::ValueMap());
-			tempAnimation->addSpriteFrame(tempSpriteFrame);
+			// tempAnimation->addSpriteFrame(tempSpriteFrame);
+			spriteFrames.pushBack(tempSpriteFrame);
 		}
 
-		// int size = tempAnimation->getFrames().size();
-		tempAnimation->setLoops(-1);
-		tempAnimate = Animate::create(tempAnimation->clone());
-		tempAnimate->setDuration(1.0F);
-		addAnimation(tempAnimate);
-		sprite->runAction(tempAnimate);
+		tempAnimation = Animation::createWithSpriteFrames(spriteFrames);
+		sprite->runAction(RepeatForever::create(Animate::create(tempAnimation)));
 
-		collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(114.0F, 16.0F), Vec2(186.0F, 103.0F), CLR_DEF));
-		collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(114.0F, 16.0F), Vec2(186.0F, 103.0F), CLR_ATK));
+		// int size = tempAnimation->getFrames().size();
+		// tempAnimation->setLoops(-1);
+		// tempAnimate = Animate::create(tempAnimation->clone());
+		// tempAnimate->setDuration(1.0F);
+		// addAnimation(tempAnimate);
+		// sprite->runAction(RepeatForever::create(tempAnimate));
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(114.0F, 16.0F), Vec2(186.0F, 103.0F), CLR_DEF));
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(114.0F, 16.0F), Vec2(186.0F, 103.0F), CLR_ATK));
 
 		break;
 
@@ -93,14 +100,14 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 		sprite->setTexture(filePath); // sets the enemy's image
 		setTextureRect(frameSize); // sets the rectangle texture
 
-		collisionShapes.push_back(new OOP::PrimitiveCircle(Vec2(20.0F, 20.0F), 20.0F, CLR_DEF));
-		collisionShapes.push_back(new OOP::PrimitiveCircle(Vec2(20.0F, 20.0F), 20.0F, CLR_ATK));
+		collisionBodies.push_back(new OOP::PrimitiveCircle(Vec2(20.0F, 20.0F), 20.0F, CLR_DEF));
+		collisionBodies.push_back(new OOP::PrimitiveCircle(Vec2(20.0F, 20.0F), 20.0F, CLR_ATK));
 
 		
 		// moveForce = Vec2(10.0F, 0.0F);
 	}
 
-	for (OOP::Primitive * colShape : collisionShapes) // adds all of the collision shapes to the sprite.
+	for (OOP::Primitive * colShape : collisionBodies) // adds all of the collision shapes to the sprite.
 	{
 		colShape->getPrimitive()->setGlobalZOrder(10.1F);
 		colShape->getPrimitive()->setVisible(shapesVisible);

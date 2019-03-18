@@ -33,14 +33,16 @@ namespace entity
 		const bool OFFSET_BY_SPRITE_SIZE = false;
 
 	private:
+		// called to create an Enemy and give it initial values.
+		void createEnemy(unsigned int EIN, char letter);
+
 		// setting the EIN value of the enemy
 		unsigned int EIN;
 		// setting the letter for the enemy
 		char LETTER;
 
 	protected:
-		// called to create an Enemy and give it initial values.
-		void createEnemy(unsigned int EIN, char letter);
+		
 	};
 }
 

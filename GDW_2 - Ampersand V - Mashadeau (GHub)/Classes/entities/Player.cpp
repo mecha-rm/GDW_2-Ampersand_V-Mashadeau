@@ -14,19 +14,19 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	sprite->getPhysicsBody()->setTag(player); // setting the tag used for collision identification. This is currently not being used.
 
 	// collisionShapes.push_back(new OOP::PrimitiveCircle(Vec2(0.0f, 0.0f), 29.0f));
-	collisionShapes.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 53.0F, 185.0F, CLR_DEF));
-	collisionShapes.at(0)->getPrimitive()->setGlobalZOrder(10.1F); // the z-order is now set upon initalization.
-	collisionShapes.at(0)->setVisible(shapesVisible);
+	collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 53.0F, 185.0F, CLR_DEF));
+	collisionBodies.at(0)->getPrimitive()->setGlobalZOrder(10.1F); // the z-order is now set upon initalization.
+	collisionBodies.at(0)->setVisible(shapesVisible);
 
-	sprite->addChild(collisionShapes.at(0)->getPrimitive());
+	sprite->addChild(collisionBodies.at(0)->getPrimitive());
 
 
 	// collisionShapes.push_back(new OOP::PrimitiveCapsule(Vec2(frameSize.getMidX(), frameSize.getMidY() + 185.0F / 2), Vec2(frameSize.getMidX(), frameSize.getMidY() - 185.0F / 2), 53.0F / 2, CLR_DEF));
-	collisionShapes.push_back(new OOP::PrimitiveCapsule(Vec2(frameSize.getMidX(), frameSize.getMidY()), 185.0F, 53.0F / 2, 90.0F, CLR_DEF));
-	collisionShapes.at(1)->getPrimitive()->setGlobalZOrder(10.1F); // the z-order is now set upon initalization.
-	collisionShapes.at(1)->setVisible(shapesVisible);
+	collisionBodies.push_back(new OOP::PrimitiveCapsule(Vec2(frameSize.getMidX(), frameSize.getMidY()), 185.0F, 53.0F / 2, 90.0F, CLR_DEF));
+	collisionBodies.at(1)->getPrimitive()->setGlobalZOrder(10.1F); // the z-order is now set upon initalization.
+	collisionBodies.at(1)->setVisible(shapesVisible);
 
-	sprite->addChild(collisionShapes.at(1)->getPrimitive());
+	sprite->addChild(collisionBodies.at(1)->getPrimitive());
 	// sprite->addChild(circles.at(0)->getPrimitive());
 
 	

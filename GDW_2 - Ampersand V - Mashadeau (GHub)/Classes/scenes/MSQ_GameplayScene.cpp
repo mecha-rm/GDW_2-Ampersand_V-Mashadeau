@@ -2,14 +2,31 @@
 
 #include <iostream>
 
+//New Line
+#include "audio/Audio.h"
+
 // constructor; initalizes the mouse listener
 MSQ_GameplayScene::MSQ_GameplayScene() : mouse(OOP::MouseListener(this)), keyboard(OOP::KeyboardListener(this)) {}
 
 // destructor
 MSQ_GameplayScene::~MSQ_GameplayScene() {}
 
+//Creating the audio objects
+Music testTrack("Mashadeau_1");
+Sound sample("h", false);
+
+void MSQ_GameplayScene::preloadAudio() { //This thing is called to preload all the audio needed
+	//Music
+	testTrack.preload();
+	//Effects
+	sample.preload();
+}
+
 Scene * MSQ_GameplayScene::createScene()
 {
+	//Preloads the audio
+	preloadAudio();
+
 	// 'scene' is an autorelease object
 	// Scene * scene = Scene::create(); // create without physics
 	Scene * scene = Scene::createWithPhysics(); // create with physics
@@ -33,6 +50,10 @@ bool MSQ_GameplayScene::init()
 	director = Director::getInstance();
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images/backgrounds/AIN_X00a.png");
 
+
+	//New lines/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	testTrack.play();
+	//End of new lines//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Initialize the event handlers
 	initListeners();
@@ -185,6 +206,21 @@ void MSQ_GameplayScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event * eve
 	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 		moveRight = true;
 		break;
+	case EventKeyboard::KeyCode::KEY_W:
+		moveUp = true;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_S:
+		moveDown = true;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_A:
+		moveLeft = true;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_D:
+		moveRight = true;
+		break;
 	}
 
 	// change last parameter to check for key codes
@@ -215,6 +251,21 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 
 	case EventKeyboard::KeyCode::KEY_SPACE:
 		jump = true;
+		break;
+	case EventKeyboard::KeyCode::KEY_W:
+		moveUp = false;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_S:
+		moveDown = false;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_A:
+		moveLeft = false;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_D:
+		moveRight = false;
 		break;
 	}
 }

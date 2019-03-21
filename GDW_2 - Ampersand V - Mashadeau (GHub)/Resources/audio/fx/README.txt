@@ -1,0 +1,2 @@
+NOTE: All of the sound effects featured in this folder were purchased with licence from Imphenzi's Universal Sound Effects from the Unity asset store. The effects used have altered names to make the implementations a little easier, but below I have listed each file with the name from the asset pack, then the name used for Mashadeau. 
+	

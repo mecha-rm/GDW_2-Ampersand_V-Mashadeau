@@ -8,6 +8,7 @@
 #include "MouseListener.h"
 #include "KeyboardListener.h"
 #include "cocos2d.h"
+#include "audio/Audio.h"
 #include <vector>
 
 using namespace cocos2d;
@@ -17,6 +18,8 @@ typedef class MSQ_GameplayScene : public Scene
 public:
 	MSQ_GameplayScene();
 	~MSQ_GameplayScene();
+
+	static void preloadAudio();
 
 	// Creates a gameplay scene.
 	static Scene* createScene();

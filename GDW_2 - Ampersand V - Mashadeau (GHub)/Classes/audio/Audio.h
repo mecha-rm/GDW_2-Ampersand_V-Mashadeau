@@ -5,9 +5,11 @@ void profileSetup();
 
 class Sound {
 public: 
-	Sound(std::string _effect);
+	Sound(std::string _effect, bool _loop);
 	~Sound();
 
+	void preload();
+	void uncache();
 	void play();
 	void resume();
 	void pause();
@@ -17,13 +19,16 @@ public:
 private:
 	std::string effect;
 	int id;
+	bool loop;
 };
 
 class Music {
 public: 
 	Music(std::string _AIN);
 	~Music();
-
+	
+	void preload();
+	void uncache();
 	void play();
 	void resume();
 	void pause();

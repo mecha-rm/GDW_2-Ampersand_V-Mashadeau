@@ -184,7 +184,35 @@ void MSQ_GameplayScene::initSprites()
 // initializes pause menu; currently does nothing.
 void MSQ_GameplayScene::initPauseMenu() {}
 
+
 //// CALLBACKS /////////////////////////////////////////////////////////////
+void MSQ_GameplayScene::onMousePressed(EventMouse::MouseButton mouseButt, Event * event)
+{
+	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event); //casting as a mouse event
+	
+	switch (mouseButt) {
+	case EventMouse::MouseButton::BUTTON_LEFT:
+		//attack = true(make this the same code as found in F)
+		break;
+	case EventMouse::MouseButton::BUTTON_RIGHT:
+		//if needed
+		break;
+	}
+}
+
+void MSQ_GameplayScene::onMouseReleased(EventMouse::MouseButton mouseButt, Event * event)
+{
+	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event); //casting as a mouse event
+
+	switch (mouseButt) {
+	case EventMouse::MouseButton::BUTTON_LEFT:
+		//attack = false(make this the same code as found in F)
+		break;
+	case EventMouse::MouseButton::BUTTON_RIGHT:
+		//if needed
+		break;
+	}
+}
 void MSQ_GameplayScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event * event)
 {
 	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event); // casting as a keyboard event
@@ -235,6 +263,7 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 	{
 	case EventKeyboard::KeyCode::KEY_UP_ARROW:
 		moveUp = false;
+		jump = true;
 		break;
 
 	case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
@@ -266,6 +295,21 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 
 	case EventKeyboard::KeyCode::KEY_D:
 		moveRight = false;
+		break;
+	case EventKeyboard::KeyCode::KEY_F:
+		//attack
+		break;
+	case EventKeyboard::KeyCode::KEY_1:
+		//item 1
+		break;
+	case EventKeyboard::KeyCode::KEY_2:
+		//item 2
+		break;
+	case EventKeyboard::KeyCode::KEY_3:
+		//item 3
+		break;
+	case EventKeyboard::KeyCode::KEY_ESCAPE:
+		//menu
 		break;
 	}
 }

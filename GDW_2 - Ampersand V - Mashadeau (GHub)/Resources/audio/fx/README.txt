@@ -1,2 +1,26 @@
 NOTE: All of the sound effects featured in this folder were purchased with licence from Imphenzi's Universal Sound Effects from the Unity asset store. The effects used have altered names to make the implementations a little easier, but below I have listed each file with the name from the asset pack, then the name used for Mashadeau. 
-	
+	AMBIENCE_Forest_Wind_14sec_loop_stereo.wav - MSQ_forest.mp3
+	AMBIENCE_SciFi_Lava_Molten_Deep_loop_stereo.wav - MSQ_lava.mp3
+	AMBIENCE_Under_Water_Deep_Dark_loop_stereo.wav - MSQ_underwater.mp3
+	ARROW_Hit_Wood_Shield_stereo.wav - MSQ_arrow.mp3
+	EXPLOSION_Distorted_01_Medium_stereo.wav - MSQ_explosion.mp3
+	FOOTSTEP_Trainers_Asphalt_Run_RR5_mono.wav - MSQ_footstep0.mp3
+	FOOTSTEP_Trainers_Asphalt_Run_RR8_mono.wav - MSQ_footstep1.mp3
+	GORE_Splat_Hit_Short_mono.wav - MSQ_splat.mp3
+	HAMMER_Hit_Wood_Shield_stereo.wav - MSQ_hammer.mp3
+	MAGIC_SPELL_Dark_Pulse_Echo_stereo.wav - MSQ_magic0.mp3
+	MAGIC_SPELL_Distinct_Thrust_Bright_Pad_Subtle_stereo.wav - MSQ_magic1.mp3
+	MAGIC_SPELL_Flame_04_mono.wav - MSQ_magic2.mp3
+	MAGIC_SPELL_Flyby_Whoosh_Airy_Pad_stereo.wav - MSQ_magic3.mp3
+	MAGIC_SPELL_Gather_Blast_mono.wav - MSQ_magic4.mp3
+	MAGIC_SPELL_Power_mono.wav - MSQ_magic5.mp3
+	MAGIC_SPELL_Shield_mono.wav - MSQ_magic6.mp3
+	MAGIC_SPELL_Short_Fast_Burst_Quick_Fade_stereo.wav - MSQ_magic7.mp3
+	MAGIC_SPELL_Spawn_mono.wav - MSQ_magic8.mp3
+	MONSTER_Hurt_mono.wav - MSQ_monster0.mp3
+	MONSTER_Ugh_02_mono.wav - MSQ_monster1.mp3
+	SWORD_Swing_Hit_Wood_Shield_stereo.wav - MSQ_sword.mp3
+	UI_Click_Cut_mono.wav - MSQ_ui.mp3
+	WATERFALL_Close_loop_stereo.wav - MSQ_waterfall.mp3
+	WHOOSH_Miss_mono.wav - MSQ_whoosh0.mp3
+	WHOOSH_Short_03_mono.wav - MSQ_whoosh1.mp3

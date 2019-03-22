@@ -11,15 +11,40 @@ MSQ_GameplayScene::MSQ_GameplayScene() : mouse(OOP::MouseListener(this)), keyboa
 // destructor
 MSQ_GameplayScene::~MSQ_GameplayScene() {}
 
-//Creating the audio objects
+//Creating music tracks
 Music testTrack("Mashadeau_1");
-Sound sample("h", false);
+//Creating sound effects 
+Sound MSQ_arrow("MSQ_arrow", false);
+Sound MSQ_explosion("MSQ_explosion", false);
+Sound MSQ_footstep0("MSQ_footstep0", false);
+Sound MSQ_footstep1("MSQ_footstep1", false);
+Sound MSQ_forest("MSQ_forest", true);
+Sound MSQ_hammer("MSQ_hammer", false);
+Sound MSQ_lava("MSQ_lava", true);
+Sound MSQ_magic0("MSQ_magic0", false);
+Sound MSQ_magic1("MSQ_magic1", false);
+Sound MSQ_magic2("MSQ_magic2", false);
+Sound MSQ_magic3("MSQ_magic3", false);
+Sound MSQ_magic4("MSQ_magic4", false);
+Sound MSQ_magic5("MSQ_magic5", false);
+Sound MSQ_magic6("MSQ_magic6", false);
+Sound MSQ_magic7("MSQ_magic7", false);
+Sound MSQ_magic8("MSQ_magic8", false);
+Sound MSQ_monster0("MSQ_monster0", false);
+Sound MSQ_monster1("MSQ_monster1", false);
+Sound MSQ_splat("MSQ_splat", false);
+Sound MSQ_sword("MSQ_sword", false);
+Sound MSQ_ui("MSQ_ui", false);
+Sound MSQ_underwater("MSQ_underwater", true);
+Sound MSQ_waterfall("MSQ_waterfall", true);
+Sound MSQ_whoosh0("MSQ_whoosh0", false);
+Sound MSQ_whoosh1("MSQ_whoosh1", false);
 
 void MSQ_GameplayScene::preloadAudio() { //This thing is called to preload all the audio needed
 	//Music
 	testTrack.preload();
 	//Effects
-	sample.preload();
+	//sample.preload();
 }
 
 Scene * MSQ_GameplayScene::createScene()
@@ -193,6 +218,7 @@ void MSQ_GameplayScene::onMousePressed(EventMouse::MouseButton mouseButt, Event 
 	switch (mouseButt) {
 	case EventMouse::MouseButton::BUTTON_LEFT:
 		//attack = true(make this the same code as found in F)
+		MSQ_sword.play();
 		break;
 	case EventMouse::MouseButton::BUTTON_RIGHT:
 		//if needed

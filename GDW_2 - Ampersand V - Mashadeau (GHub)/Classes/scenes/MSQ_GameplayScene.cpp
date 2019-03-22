@@ -12,7 +12,13 @@ MSQ_GameplayScene::MSQ_GameplayScene() : mouse(OOP::MouseListener(this)), keyboa
 MSQ_GameplayScene::~MSQ_GameplayScene() {}
 
 //Creating music tracks
-Music testTrack("Mashadeau_1");
+Music MSQ_Shadow("Mashadeau_1_Shadow");
+Music MSQ_Castle("Mashadeau_2_Castle");
+Music MSQ_Water("Mashadeau_3_Water");
+Music MSQ_Earth("Mashadeau_4_Earth");
+Music MSQ_Fire("Mashadeau_5_Fire");
+Music MSQ_Air("Mashadeau_6_");
+Music MSQ_Boss("Mashadeau_7_Boss");
 //Creating sound effects 
 Sound MSQ_arrow("MSQ_arrow", false);
 Sound MSQ_explosion("MSQ_explosion", false);
@@ -42,9 +48,9 @@ Sound MSQ_whoosh1("MSQ_whoosh1", false);
 
 void MSQ_GameplayScene::preloadAudio() { //This thing is called to preload all the audio needed
 	//Music
-	testTrack.preload();
+	
 	//Effects
-	//sample.preload();
+	MSQ_sword.preload();
 }
 
 Scene * MSQ_GameplayScene::createScene()
@@ -74,11 +80,6 @@ bool MSQ_GameplayScene::init()
 
 	director = Director::getInstance();
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images/backgrounds/AIN_X00a.png");
-
-
-	//New lines/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	testTrack.play();
-	//End of new lines//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Initialize the event handlers
 	initListeners();
@@ -218,7 +219,6 @@ void MSQ_GameplayScene::onMousePressed(EventMouse::MouseButton mouseButt, Event 
 	switch (mouseButt) {
 	case EventMouse::MouseButton::BUTTON_LEFT:
 		//attack = true(make this the same code as found in F)
-		MSQ_sword.play();
 		break;
 	case EventMouse::MouseButton::BUTTON_RIGHT:
 		//if needed
@@ -324,6 +324,7 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 		break;
 	case EventKeyboard::KeyCode::KEY_F:
 		//attack
+		MSQ_sword.play();
 		break;
 	case EventKeyboard::KeyCode::KEY_1:
 		//item 1

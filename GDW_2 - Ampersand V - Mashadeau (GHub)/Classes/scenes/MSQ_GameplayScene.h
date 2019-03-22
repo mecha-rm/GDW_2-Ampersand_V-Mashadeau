@@ -34,8 +34,8 @@ public:
 	void initPauseMenu();
 
 	// callbacks
-	void onMousePressed(EventMouse::MouseButton mouseButt, Event* event);
-	void onMouseReleased(EventMouse::MouseButton mouseButt, Event* event);
+	void onMousePressed(EventMouse::MouseButton mouseButt, Event* event); //if a mouse button is pressed
+	void onMouseReleased(EventMouse::MouseButton mouseButt, Event* event); //if a mouse button is released
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event); // if a key is held down
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event); // if a key is let go
 	bool OnContactBeginCallback(PhysicsContact& contact); // listening for hit detection (which we're not supposed to use)

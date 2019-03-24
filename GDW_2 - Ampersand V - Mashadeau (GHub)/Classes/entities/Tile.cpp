@@ -15,15 +15,8 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 {
 	DrawNode * tempNode = DrawNode::create(); // used to create an enemy square if no tile of the provided TIN exists.
 	
-	//sprite->getPhysicsBody()->createBox(Size(128.0F, 128.0F));
-	
 	sprite->setGlobalZOrder(1.0F); // all tiles should be on the same global z-order.
 	sprite->setTag(tile);
-	sprite->getPhysicsBody()->setTag(tile); // This is currently not being used.
-	/*
-	sprite->getPhysicsBody()->addShape(PhysicsShapeBox::create(Size(128.0F, 128.0F)));
-	sprite->getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
-	*/
 
 	tempNode->setGlobalZOrder(3.0F);
 	setAntiGravity(true); // tiles shouldn't be moved by gravity, so their anti gravity gets turned on by default.
@@ -31,7 +24,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 	this->TIN = TIN; // setting the TIN; this will be changed later if a platform does not exist of this number.
 	this->LETTER = letter; // setting the letter identifier; this will be changed later if it is invalid.
 
-	switch (TIN)
+	switch (this->TIN)
 	{
 	case 0: // exit 0
 	case 1: // exit 1
@@ -45,7 +38,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		tempNode->drawRect(Vec2(sprite->getTextureRect().getMinX(), sprite->getTextureRect().getMinY()), Vec2(sprite->getTextureRect().getMaxX(), sprite->getTextureRect().getMaxY()), Color4F::GREEN);
 		sprite->addChild(tempNode);
 
-		switch (this->LETTER) // places the hitbox in a different position based on where the tile exit hitbox i.s/
+		switch (this->LETTER) // places the hitbox in a different position based on where the tile exit hitbox i.s
 		{
 		case 'a': // exit above
 			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 127.0F), Vec2(128.0f, 128.0F), CLR_DEF));
@@ -55,7 +48,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 1.0F), Vec2(128.0f, 0.0F), CLR_DEF));
 			break;
 		case 'c': // exit left
-			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 0.0F), Vec2(1.0F, 128.0F)));
+			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(0.0F, 0.0F), Vec2(1.0F, 128.0F), CLR_DEF));
 			break;
 
 		case 'd': // exit right
@@ -108,8 +101,6 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 			break;
 		}
 
-		// sprite->getPhysicsBody()->createBox(Size(128.0F, 128.0F));
-		// sprite->getPhysicsBody()->getShapes();
 		break;
 
 	case 11: // semi-solid stone platform

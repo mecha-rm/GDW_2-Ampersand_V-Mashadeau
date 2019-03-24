@@ -1,9 +1,9 @@
 #include "areas/World.h"
 #include "Utilities.h"
 
-world::Area * world::World::getArea(std::string AIN)
+world::Area * world::World::getArea(std::string & AIN)
 {
-	world::Area * newArea; // the new area to be made.
+	world::Area * newArea = nullptr; // the new area to be made.
 	AIN = ustd::toUpper(AIN); // makes the area name uppercase, just to make sure that it's in the right format.
 	std::string tempStr = AIN; // a temporary string that holds the AIN value.
 
@@ -23,6 +23,10 @@ world::Area * world::World::getArea(std::string AIN)
 	if (AIN == "AIN_X00")
 	{
 		newArea = new AIN_X00();
+	}
+	else if (AIN == "AIN_X01")
+	{
+		newArea = new AIN_X01();
 	}
 
 	return newArea;

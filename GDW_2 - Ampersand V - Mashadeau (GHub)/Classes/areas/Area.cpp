@@ -39,6 +39,9 @@ world::Area::~Area()
 	bg2->release();
 	bg3->release();
 	fg->release();
+
+	areaEnemies.clear();
+	areaTiles.clear();
 }
 
 // Returns the first background layer
@@ -183,6 +186,35 @@ std::string world::Area::getExit3() const { return exit3; }
 // returns the location exit 4 leads to.
 std::string world::Area::getExit4() const { return exit4; }
 
+// gets an exit based on a passed number.
+std::string world::Area::getExit(unsigned int exit) const
+{
+	switch (exit) // returns an exit if a valid number was given.
+	{
+	case 0:
+		return getExit0();
+		break;
+
+	case 1:
+		return getExit1();
+		break;
+
+	case 2:
+		return getExit2();
+		break;
+
+	case 3:
+		return getExit3();
+		break;
+
+	case 4:
+		return getExit4();
+		break;
+	}
+
+	return std::string("");
+}
+
 // returns spawn point #0
 Vec2 world::Area::getSpawn0() const { return spawn0; }
 
@@ -197,6 +229,35 @@ Vec2 world::Area::getSpawn3() const { return spawn3; }
 
 // returns spawn point #4
 Vec2 world::Area::getSpawn4() const { return spawn4; }
+
+// returns a spawn point based on a passed value.
+Vec2 world::Area::getSpawn(unsigned short int spawn) const
+{
+	switch (spawn) // returns a specific spawn point.
+	{
+	case 0:
+		return getSpawn0();
+		break;
+
+	case 1:
+		return getSpawn1();
+		break;
+
+	case 2:
+		return getSpawn2();
+		break;
+
+	case 3:
+		return getSpawn3();
+		break;
+
+	case 4:
+		return getSpawn4();
+		break;
+	}
+
+	return Vec2(0.0F, 0.0F); // returns a vector of (0, 0) if no spawn point was found.
+}
 
 // gets the strength of the gravity in the area.
 float world::Area::getGravity() const { return gravity; }

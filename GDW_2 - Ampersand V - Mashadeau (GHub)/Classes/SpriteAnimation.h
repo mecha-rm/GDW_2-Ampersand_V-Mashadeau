@@ -110,7 +110,36 @@ namespace OOP
 
 		// sets the speed of the animation. If this is less than 0, then the speed is set to '1'.
 		void setSpeed(float speed);
-	
+		
+		// sets the opacity of the animation as a decimal percentage (cocos does it as a fraction of 255, but this function handles it based on a decimal number)
+		// If given a number less than 0.0, the opacity is set to 0.0. IF given an opacity greater than 1.0 (i.e. 100%), the opacity is set to 1.0.
+		// void setOpacity(float opacity);
+
+		// returns the opacity of the whole animation out of 1.0 (i.e. 100%). If a srite frame has had its opacity changed individually, then that sprite frame's opacity should be checked instead.
+		// float getOpacity();
+
+
+		// flips the animation on the x-axis if a 'true' is passed.
+		// unflips the animation if a 'false' is passed.
+		void setFlippedAnimationX(bool flipX);
+
+		// flips the animation on the x-axis. This uses setFlippedAnimaitonX() and makes it the opposite of getFlippedAnimationX().
+		void setFlippedAnimationX();
+
+		// checks to see if the animation is flipped on the x-axis.
+		bool getFlippedAnimationX();
+
+		// flips the animation on the y-axis if a 'true' is passed.
+		// unflips the animation if a 'false' is passed.
+		void setFlippedAnimationY(bool flipY);
+
+		// flips the animation on the y-axis. This uses setFlippedAnimaitonY() and makes it the opposite of getFlippedAnimationY().
+		void setFlippedAnimationY();
+
+		// checks to see if the animation is flipped on the y-axis.
+		bool getFlippedAnimationY();
+
+
 
 		// sets the shared delay units between all frames. If you want to use the delay units in the sprite frame.
 		void setDelayUnits(float & delayUnits);
@@ -151,7 +180,6 @@ namespace OOP
 		void operator-=(OOP::SpriteSheetAnimationFrame * newFrame); // (-) operator - removes passed object
 
 		OOP::SpriteSheetAnimationFrame * operator[](const unsigned int index); // ([]) operator - gets platform stored at provided index
-
 
 
 		// gets the name of the sprite sheet animation.
@@ -205,7 +233,9 @@ namespace OOP
 		float speed = 1.0F; // the speed of the animation. It cannot be below or equal to zero.
 		bool sharedDelay = false; // deterimes whether all sprites share a delay.
 		bool restoreOriginalFrame = true; // determines whether to restore the first frame of animation or not.
-		
+		bool flipX = false; // saves whether to flip the animation on the x-axis.
+		bool flipY = false; // saves whether to flip the animation on the y-axis.
+
 		std::string name = ""; // a name for the animation.
 		std::string description = ""; // a description for the animation.
 		int tag; // a tag that can identify the animation.

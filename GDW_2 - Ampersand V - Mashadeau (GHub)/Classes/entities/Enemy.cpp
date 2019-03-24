@@ -9,7 +9,7 @@ entity::Enemy::Enemy(unsigned int EIN, char letter, const unsigned int COPY_UP, 
 }
 
 
-entity::Enemy::~Enemy() {}
+entity::Enemy::~Enemy() { }
 
 // returns the EIN number of the enemy
 const unsigned int entity::Enemy::getEIN() const { return EIN; }
@@ -47,7 +47,7 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 		setAttackPower(1.0F);
 
 		filePath = "images/enemies/EIN_101.png"; // sets the file path for the enemy.
-		frameSize = Rect(0.0F, 0.0F, 228.0F, 128.0F);
+		frameSize = Rect(0.0F, 0.0F, 192.0F, 192.0F);
 		sprite->setTexture(filePath);
 		setTextureRect(frameSize);
 		
@@ -56,14 +56,14 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 		for (int i = 0; i < 11; i++) // creates the animation for the krawFly
 		{
 			// adds a frame to the animation.
-			animations.at(0)->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * i, 0.0F, frameSize.getMaxX(), frameSize.getMaxY())));
+			animations.at(0)->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * i, 0.0F + frameSize.getMaxY(), frameSize.getMaxX(), frameSize.getMaxY())));
 		}
 
 		currentAnimation = animations.at(0);
 		currentAnimation->runAnimation();
 
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(114.0F, 16.0F), Vec2(186.0F, 103.0F), CLR_DEF));
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(114.0F, 16.0F), Vec2(186.0F, 103.0F), CLR_ATK));
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMaxX() / 2, frameSize.getMaxY() / 2), 68.0F, 82.0F, CLR_DEF));
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMaxX() / 2, frameSize.getMaxY() / 2), 68.0F, 82.0F, CLR_ATK));
 
 		break;
 

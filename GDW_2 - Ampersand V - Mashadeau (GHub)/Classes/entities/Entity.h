@@ -272,10 +272,6 @@ namespace entity
 
 		Vec2 force = Vec2(0.0f, 0.0f); // the force of the entity
 
-		// a body used for collisions with the sprite. This is currently not being used in favour of manual collisions.
-		// This is currently not being used.
-		PhysicsBody * collisionBody;
-
 		// holds all physical body collisions. There is an 'ID' that tells you what type is stored there so you can downcast.
 		std::vector<OOP::Primitive * > collisionBodies;
 

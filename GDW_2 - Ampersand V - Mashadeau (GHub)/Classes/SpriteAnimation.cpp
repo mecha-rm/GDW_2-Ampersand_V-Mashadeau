@@ -82,6 +82,25 @@ float OOP::SpriteSheetAnimation::getSpeed() const { return speed; }
 // sets the speed of the animation. If less than 0, then the speed is set to 1.
 void OOP::SpriteSheetAnimation::setSpeed(float speed) { this->speed = (speed > 0.0F) ? speed : 1.0F; }
 
+// flips the animation on the x-axis if a 'true' is passed.
+void OOP::SpriteSheetAnimation::setFlippedAnimationX(bool flipX) { this->flipX = flipX; }
+
+// flips the animation on the x-axis
+void OOP::SpriteSheetAnimation::setFlippedAnimationX() { setFlippedAnimationX(!flipX); }
+
+// checks if the animation is flipped on the x-axis
+bool OOP::SpriteSheetAnimation::getFlippedAnimationX() { return flipX; }
+
+// flips the animation on the y-axis 
+void OOP::SpriteSheetAnimation::setFlippedAnimationY(bool flipY) { this->flipY = flipY; }
+
+// flips the animation on the y-axis
+void OOP::SpriteSheetAnimation::setFlippedAnimationY() { setFlippedAnimationY(!flipY); }
+
+// checks if the animation is flipped on the y-axis
+bool OOP::SpriteSheetAnimation::getFlippedAnimationY() { return flipY; }
+
+
 void OOP::SpriteSheetAnimation::setDelayUnits(float & delayUnits)
 {
 	// if the delay units passed are less than 0, then the amount of delay units is set to 0.

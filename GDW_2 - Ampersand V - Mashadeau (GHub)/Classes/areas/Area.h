@@ -70,6 +70,10 @@ namespace world
 		// gets exit 4, being an exit point in the scene; this holds where the area exits to.
 		std::string getExit4() const;
 
+		// returns an exit based on a passed number. If the exit does not exist, a "" string is returned.
+		// only numbers from 0 through 4 are allowed.
+		std::string getExit(unsigned int exit) const;
+
 		// returns spawn point 0.
 		Vec2 getSpawn0() const;
 
@@ -84,6 +88,9 @@ namespace world
 
 		// returns spawn point 4.
 		Vec2 getSpawn4() const;
+
+		// returns a spawn point based on a passed number. If a number greater than 4 is passed, a vector of (0, 0) is returned.
+		Vec2 getSpawn(unsigned short int spawn) const;
 
 		// gets the strength of the gravity in the area.
 		float getGravity() const;
@@ -181,9 +188,9 @@ namespace world
 		// the name of the area.
 		std::string name = "";
 
-		// saves what area file to switch to when the player leaves the area they're currently in.
+		// saves what area file to switch to when the player leaves the area they're currently in. This just has to be the name of the file.
 		// format: AIN_###_#
-		// * the last digital (after the second underscore) determines what spawn point to use.
+		// - the last digit (after the second underscore) determines what spawn point to use.
 		std::string exit0 = "";
 		std::string exit1 = "";
 		std::string exit2 = "";

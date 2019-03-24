@@ -2,55 +2,20 @@
 
 #include <iostream>
 
-//New Line
-#include "audio/Audio.h"
+
 
 // constructor; initalizes the mouse listener
 MSQ_GameplayScene::MSQ_GameplayScene() : mouse(OOP::MouseListener(this)), keyboard(OOP::KeyboardListener(this)) {}
 
-// destructor
-MSQ_GameplayScene::~MSQ_GameplayScene() {}
-
-//Creating music tracks
-Music MSQ_Shadow("Mashadeau_1_Shadow");
-Music MSQ_Castle("Mashadeau_2_Castle");
-Music MSQ_Water("Mashadeau_3_Water");
-Music MSQ_Earth("Mashadeau_4_Earth");
-Music MSQ_Fire("Mashadeau_5_Fire");
-Music MSQ_Air("Mashadeau_6_");
-Music MSQ_Boss("Mashadeau_7_Boss");
-//Creating sound effects 
-Sound MSQ_arrow("MSQ_arrow", false);
-Sound MSQ_explosion("MSQ_explosion", false);
-Sound MSQ_footstep0("MSQ_footstep0", false);
-Sound MSQ_footstep1("MSQ_footstep1", false);
-Sound MSQ_forest("MSQ_forest", true);
-Sound MSQ_hammer("MSQ_hammer", false);
-Sound MSQ_lava("MSQ_lava", true);
-Sound MSQ_magic0("MSQ_magic0", false);
-Sound MSQ_magic1("MSQ_magic1", false);
-Sound MSQ_magic2("MSQ_magic2", false);
-Sound MSQ_magic3("MSQ_magic3", false);
-Sound MSQ_magic4("MSQ_magic4", false);
-Sound MSQ_magic5("MSQ_magic5", false);
-Sound MSQ_magic6("MSQ_magic6", false);
-Sound MSQ_magic7("MSQ_magic7", false);
-Sound MSQ_magic8("MSQ_magic8", false);
-Sound MSQ_monster0("MSQ_monster0", false);
-Sound MSQ_monster1("MSQ_monster1", false);
-Sound MSQ_splat("MSQ_splat", false);
-Sound MSQ_sword("MSQ_sword", false);
-Sound MSQ_ui("MSQ_ui", false);
-Sound MSQ_underwater("MSQ_underwater", true);
-Sound MSQ_waterfall("MSQ_waterfall", true);
-Sound MSQ_whoosh0("MSQ_whoosh0", false);
-Sound MSQ_whoosh1("MSQ_whoosh1", false);
+// initalizing static variables
+std::string MSQ_GameplayScene::areaName = "AIN_X00"; // debug area
+int MSQ_GameplayScene::spawnPoint = 0; // spawn point 0
 
 void MSQ_GameplayScene::preloadAudio() { //This thing is called to preload all the audio needed
 	//Music
 	
 	//Effects
-	MSQ_sword.preload();
+	AudioLibrary::MSQ_sword.preload();
 }
 
 Scene * MSQ_GameplayScene::createScene()
@@ -59,10 +24,7 @@ Scene * MSQ_GameplayScene::createScene()
 	preloadAudio();
 
 	// 'scene' is an autorelease object
-	// Scene * scene = Scene::create(); // create without physics
-	Scene * scene = Scene::createWithPhysics(); // create with physics
-	scene->getPhysicsWorld()->setGravity(Vec2(0.0F, 0.0F));
-	// scene->getPhysicsWorld()->set
+	Scene * scene = Scene::create(); // created without physics since we use our own.
 	GameplayScene * layer = MSQ_GameplayScene::create();
 
 	scene->addChild(layer);
@@ -74,12 +36,12 @@ void MSQ_GameplayScene::onEnter() { Scene::onEnter(); }
 
 bool MSQ_GameplayScene::init()
 {
-	// Ensure the parent init function was called first. If it wasn't, exit this one.
+	// Ensures the parent init function was called first. If it wasn't, this one is exited.
 	if (!Scene::init())
 		return false;
 
 	director = Director::getInstance();
-	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images/backgrounds/AIN_X00a.png");
+	// SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images/backgrounds/AIN_X00a.png");
 
 	// Initialize the event handlers
 	initListeners();
@@ -93,7 +55,7 @@ bool MSQ_GameplayScene::init()
 	// Allows for the update() function to be called by cocos
 	this->scheduleUpdate();
 
-	//Let cocos know that the init function was successful
+	// Let cocos know that the init function was successful
 	return true;
 }
 
@@ -124,30 +86,21 @@ void MSQ_GameplayScene::initListeners()
 	keyboard.getListener()->onKeyPressed = CC_CALLBACK_2(MSQ_GameplayScene::onKeyPressed, this);
 	keyboard.getListener()->onKeyReleased = CC_CALLBACK_2(MSQ_GameplayScene::onKeyReleased, this);
 	keyboard.getListener()->setEnabled(ENABLE_KEYBOARD); // enables (or disables) keyboard
-	
-
-
-	/*
-	// CONTACT LISTENER SETUP
-	// adds the contact listener to the scene
-	contactListener = EventListenerPhysicsContact::create();
-	contactListener->onContactBegin = CC_CALLBACK_1(MSQ_GameplayScene::OnContactBeginCallback, this);
-	// contactListener->onContactBegin = std::bind(&MSQ_GameplayScene::OnContactBeginCallback, this, std::placeholders::_1); // creates the callback
-	getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this); // adding the contact listener to the scene
-	contactListener->setEnabled(ENABLE_CONTACT); // determines whether the contact listener is on or not.
-	*/
 }
 
 // initalizes all sprites
 void MSQ_GameplayScene::initSprites() 
 {
+	if (areaName == "AIN_X01")
+		std::cout << "let's do this thing." << std::endl;
+
 	// the hp bar's position
 	Vec2 hpBarPos{ director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.96F };
 	// the magic bar's position
 	Vec2 mpBarPos;
 
 	// creating the scene
-	sceneArea = world::World::getArea("AIN_X00"); // makes the area. Remember, all the anchour points are the middle of the sprite layers (0.5, 0.5).
+	sceneArea = world::World::getArea(areaName); // makes the area. Remember, all the anchour points are the middle of the sprite layers (0.5, 0.5).
 	sceneArea->setAllLayerPositions(Vec2(director->getWinSizeInPixels().width / 2, director->getWinSizeInPixels().height / 2)); // makes all the layers be at the middle of the screen.
 	
 	this->addChild(sceneArea->getAsSingleNode()); // gets the scene graphic elements (hitboxes not withstanding) as a single node.
@@ -157,7 +110,7 @@ void MSQ_GameplayScene::initSprites()
 	
 	// creating the player; the default values handle the creation process.
 	plyr = new entity::Player(); // creates the player
-	plyr->setPosition(sceneArea->getSpawn0()); // sets the player using spawn point 0.
+	plyr->setPosition(sceneArea->getSpawn(spawnPoint)); // sets the player using spawn point 0.
 	this->addChild(plyr->getSprite());
 
 	// creating the hud
@@ -289,7 +242,7 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 	{
 	case EventKeyboard::KeyCode::KEY_UP_ARROW:
 		moveUp = false;
-		jump = true;
+		// jump = true; // commented out while testing.
 		break;
 
 	case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
@@ -324,7 +277,7 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 		break;
 	case EventKeyboard::KeyCode::KEY_F:
 		//attack
-		MSQ_sword.play();
+		AudioLibrary::MSQ_sword.play();
 		break;
 	case EventKeyboard::KeyCode::KEY_1:
 		//item 1
@@ -342,50 +295,61 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 }
 
 
-bool MSQ_GameplayScene::OnContactBeginCallback(PhysicsContact & contact)
+// switches the area based on the passed file name.
+// the last digit is needed to know what spawn point to use. It must be greater than or equal to 0, and not exceed 4 (it can be 4 though).
+void MSQ_GameplayScene::switchArea(std::string & fileName)
 {
-	// gets the two nodes thar are being checked for collision.
-	Node * nodeA = contact.getShapeA()->getBody()->getNode();
-	Node * nodeB = contact.getShapeB()->getBody()->getNode();
-	
-	// sets the tags for both nodeA and nodeB, getting them from the two shapes being compared.
-	nodeA->setTag(contact.getShapeA()->getBody()->getTag());
-	nodeB->setTag(contact.getShapeB()->getBody()->getTag());
-	
+	std::string spawn = ""; // the spawn point of the player in the new area
+	Scene * newScene = nullptr; // a new gameplay scene that will load up a new area.
+	TransitionerScene * pathScene = nullptr; // the scene transferred to for transitions.
 
-	if (!(nodeA && nodeB)) // if one of these nodes do not exist, then a 'false' is returned.
-		return false;
-
-	
-	if (nodeA->getTag() == entity::player) // if the node A has a 'player' tag
+	try // handles invalid uses of this function.
 	{
-		switch (nodeB->getTag()) // depending on the tag of the second node, different functions are called.
-		{
-		case entity::tile:
-			playerTileCollision(nodeB->getPosition());
-			break;
-		case entity::enemy:
-			playerEnemyCollision(nodeB->getPosition());
-			break;
-		case entity::item:
-			playerItemCollision(nodeB->getPosition());
-			break;
-		}
+		if (switchingScenes)
+			throw "Scene switch is progress. Function not available.\n";
+
+		if (fileName.length() != 9)
+			throw "The string was not the appropriate length, or did not contain the right characters.\n";
+
+		spawn = fileName.substr(fileName.length() - 1, 1); // gets the ending number.
+		fileName.erase(fileName.length() - 2, 2); // erases the spawn point in the file name, since it's already in the string.
+
+		if (!ustd::isInt(spawn)) // if spawn point isn't an integer.
+			throw "Inadequate character used for spawn point. Requires integer from 0 to 4\n";
+		
+		if (std::stoi(spawn) < 0 || std::stoi(spawn) > 4) // if the spawn point is out of range.
+			throw "Spawn point does not exist\n";
+
+		if (world::World::getArea(fileName) == nullptr) // if the area doesn't exist.
+			throw "This area does not exist.\n";
 	}
-	else if (nodeA->getTag() == entity::enemy) // if node A has an enemy tag
+	catch (const char * ex) // catches the thrown message exception.
 	{
-		switch (nodeB->getTag()) // depending on the tag of the second node, different functions are called.
-		{
-		case entity::tile:
-			enemyTileCollision(nodeA->getPosition(), nodeB->getPosition());
-			break;
-		case entity::weapon:
-			enemyWeaponCollision(nodeA->getPosition(), nodeB->getPosition());
-			break;
-		}
+		std::cout << ex;
+		return;
+	}
+	catch (...) // this shouldn't be reached, but exists just in case.
+	{
+		std::cout << "Scene switch failed.\n";
+		return;
 	}
 
-	return false;
+	areaName = fileName; // saves the new area so that it's set upon initalization.
+	spawnPoint = std::stoi(spawn); // saves the spawn point of the player for when they get in the new area.
+
+	// pathScene = new TransitionerScene();
+	// pathScene->switchScene(GameplayScene::createScene(), TransitionFadeTR::create(1.0F, MSQ_GameplayScene::createScene()), 1.0F);
+	// newScene = pathScene->createScene();
+	// Director::getInstance()->replaceScene(TransitionFadeBL::create(1.0F, newScene));
+
+	newScene = TransitionerScene::createScene(); // creates the gameplay scene.
+	Director::getInstance()->replaceScene(TransitionCrossFade::create(1.0F, newScene));
+
+	// newScene = GameplayScene::createScene(); // creates the gameplay scene.
+	
+	// newScene = GameplayScene::createScene(); // creates the gameplay scene.
+	// Director::getInstance()->replaceScene(TransitionFadeBL::create(1.0F, newScene)); // replaces the scene for the director, and does a transition.
+	switchingScenes = true; // becomes 'true' so that scene switches don't overlay one another.
 }
 
 // runs collision tests.
@@ -415,8 +379,6 @@ void MSQ_GameplayScene::playerTileCollisions()
 	plyr->cancelDown = false;
 	plyr->cancelLeft = false;
 	plyr->cancelRight = false;
-	
-
 
 	for (int i = 0; i < sceneArea->getAreaTiles()->size(); i++)
 	{
@@ -424,6 +386,13 @@ void MSQ_GameplayScene::playerTileCollisions()
 		{
 			tile = sceneArea->getAreaTiles()->at(i); // saves the tile the player has collided with.
 			
+			if (!switchingScenes && tile->getTIN() >= 0 && tile->getTIN() <= 4) // if it's a scene exit, then no ohter checks need to be done.
+			{
+				switchArea(sceneArea->getExit(tile->getTIN())); // gets the tile identification number, and gets the exit attached to it.
+				break;
+			}
+			
+
 			// gets what primitives collided with the player.
 			colPrim1 = plyr->collidedPrimitive;
 			colPrim2 = tile->collidedPrimitive;
@@ -500,6 +469,9 @@ void MSQ_GameplayScene::playerEnemyCollisions()
 	OOP::Primitive * colPrim1; // the primitive from the player that encountered a collision
 	OOP::Primitive * colPrim2; // the primitive from the other entity that encounted a collision
 
+	// if (sceneEnemies->size() > 0)
+		// sceneEnemies->clear();
+
 	// entity::Enemy * enemy; // saves a pointer to the 
 	for each(entity::Enemy * enemy in *sceneArea->getAreaEnemies())
 	{
@@ -522,87 +494,24 @@ void MSQ_GameplayScene::playerEnemyCollisions()
 	}
 }
 
-//// THESE ARE UNUSED FUNCTIONS THAT SHOULD BE REMOVED LATER. IGNORE FROM THIS LINE... ///
-// called to find the tile the player is colliding with, and handle what happens, based on the position(s).
-// this is used for physics bodies, which have not been turned on, and likely won't be used.
-void MSQ_GameplayScene::playerTileCollision(Vec2 tilePos)
-{
-	std::cout << "collision detected" << std::endl;
-	entity::Tile * sceneTile; // saves the tile that the player has collided with
-
-	for each (entity::Tile * tile in *sceneTiles)
-	{
-		if (tile->getPosition() == tilePos) // if the tile has been found.
-		{
-			sceneTile = tile;
-			break;
-		}
-	}
-}
-
-// called to find the enemy the player is colliding with, and handle what happens, based on the position(s).
-// this is used for physics bodies, which have not been turned on, and likely won't be used.
-void MSQ_GameplayScene::playerEnemyCollision(Vec2 enemyPos)
-{
-	entity::Enemy * sceneEnemy; // saves the tile that the player has collided with
-
-	for each (entity::Enemy * enemy in *sceneEnemies)
-	{
-		if (enemy->getPosition() == enemyPos) // if the enemy has been found.
-		{
-			sceneEnemy = enemy;
-			break;
-		}
-	}
-}
-
-// called to find the item the player is colliding with, and handle what happens, based on the position(s).
-// this is used for physics bodies, which have not been turned on, and likely won't be used.
-void MSQ_GameplayScene::playerItemCollision(Vec2 itemPos)
-{
-	// TODO: add an item vector and get the item
-}
-
-// called to find what tile the enemy is colliding with, based on the position(s).
-// this is used for physics bodies, which have not been turned on, and likely won't be used.
-void MSQ_GameplayScene::enemyTileCollision(Vec2 enemyPos, Vec2 tilePos)
-{
-	
-	entity::Enemy * sceneEnemy;
-	entity::Tile * sceneTile;
-
-	for each (entity::Enemy * enemy in *sceneEnemies) // finds the enemy
-	{
-		if (enemy->getPosition() == enemyPos) // if the enemy has been found.
-		{
-			sceneEnemy = enemy;
-			break;
-		}
-	}
-
-	for each (entity::Tile * tile in *sceneTiles) // finds the tile
-	{
-		if (tile->getPosition() == tilePos) // if the tile has been found.
-		{
-			sceneTile = tile;
-			break;
-		}
-	}
-
-}
-
-// called to find what enemy the weapon is colliding with, based on the position(s).
-// this is used for physics bodies, which have not been turned on, and likely won't be used.
-void MSQ_GameplayScene::enemyWeaponCollision(Vec2 enemyPos, Vec2 weaponPos)
-{
-	// TODO: check enemy collison with player weapons
-}
-//// TO THIS LINE ///
-
 
 // update loop
 void MSQ_GameplayScene::update(float deltaTime)
 {
+	if (switchingScenes)
+	{
+		if (this->getChildrenCount() > 0)
+			this->removeAllChildren();
+		return;
+	}
+	else if (!switchingScenes && areaName == "AIN_X01")
+	{
+		std::cout << "test?" << std::endl;
+	}
+
+	// if (switchingScenes) // if the program is currently switching scenes, the update loop isn't started.
+		// return;
+	
 	// entity::Enemy * eme = sceneEnemies->at(0);
 	// this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the position of the camera so that it follows hte player
 	// sceneArea->setAllLayerPositions(this->getDefaultCamera()->getPosition()); // makes the backgrounds be directly behind the player. This needs to be changed later so that it scrolls.

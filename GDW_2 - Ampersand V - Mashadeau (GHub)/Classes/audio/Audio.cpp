@@ -4,7 +4,7 @@ HOW TO USE THIS ABOMINATION I CREATED
 
 *************************/
 
-#include "Audio.h"
+#include "audio/Audio.h"
 
 const cocos2d::experimental::AudioProfile * effectsProfile;
 const cocos2d::experimental::AudioProfile * musicProfile;

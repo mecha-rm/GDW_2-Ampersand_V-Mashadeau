@@ -1,12 +1,12 @@
-#include "areas/AIN_X/AIN_X00.h"
+#include "areas/AIN_X/AIN_X01.h"
 
 
 // using an initalizer list with the variables, caused problems, so a test background is loaded in. These are replaced later.
-world::AIN_X00::AIN_X00() : Area("")
+world::AIN_X01::AIN_X01() : Area("")
 {
 	bool flipY = false; // flip the tiles and enemies positions on the y-axis
 
-	name = "X00";
+	name = "X01";
 	Area::setBackgroundLayer1(bg_img1);
 	Area::setBackgroundLayer2(bg_img2);
 	Area::setBackgroundLayer3(bg_img3);
@@ -17,7 +17,7 @@ world::AIN_X00::AIN_X00() : Area("")
 
 	// setting all of the exits. Format: AIN_###_#
 	// - the last digit (after the second underscore) determines what spawn point to use.
-	exit0 = "AIN_X01_0";
+	exit0 = "";
 	exit1 = "";
 	exit2 = "";
 	exit3 = "";

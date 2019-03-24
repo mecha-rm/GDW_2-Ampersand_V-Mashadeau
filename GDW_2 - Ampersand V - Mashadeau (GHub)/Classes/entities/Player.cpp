@@ -11,7 +11,6 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	sprite->setTextureRect(frameSize); // setting the area of the sprite that's used
 	sprite->setGlobalZOrder(2.0F); // sets the global Z order of the player.
 	sprite->setTag(player);
-	sprite->getPhysicsBody()->setTag(player); // setting the tag used for collision identification. This is currently not being used.
 
 	// collisionShapes.push_back(new OOP::PrimitiveCircle(Vec2(0.0f, 0.0f), 29.0f));
 	collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 53.0F, 185.0F, CLR_DEF));
@@ -41,17 +40,6 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	// setHealth(19.0F);
 	
 	// Animation().
-
-
-	/* // Not being used currently.
-	//sprite->getPhysicsBody()->createBox(Size(37.0F, 91.0F)); // adding a physics box to the entity.
-	sprite->getPhysicsBody()->addShape(PhysicsShapeBox::create(Size(37.0F, 91.0F)));
-	sprite->getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
-	sprite->getPhysicsBody()->setDynamic(false);
-	// sprite->getPhysicsBody()->addShape(PhysicsShape::set)
-	*/
-
-	
 }
 
 

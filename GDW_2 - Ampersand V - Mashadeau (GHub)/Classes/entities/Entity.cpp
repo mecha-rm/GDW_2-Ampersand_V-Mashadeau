@@ -15,19 +15,15 @@ entity::Entity::Entity(std::string texture, float globalZOrder) : sprite(Sprite:
 	sprite->setAnchorPoint(Vec2(0.5, 0.5)); // anchour point is the middle of the sprite
 	sprite->setGlobalZOrder(globalZOrder); // setting the global z order
 	sprite->setTag(entity);
-	
-	// PhysicsBody * collisionBody = PhysicsBody::create(); // adds a physics body so that it can check for collision
-	collisionBody = PhysicsBody::create();
-	collisionBody->setContactTestBitmask(0xFFFFFFFF);
-	collisionBody->setDynamic(false);
-	sprite->setPhysicsBody(collisionBody);
-
-
 
 }
 
 // releases the sprite 
-entity::Entity::~Entity() { sprite->release(); }
+entity::Entity::~Entity() 
+{
+	sprite->release(); 
+	collisionBodies.clear();
+}
 
 // returns the length of time the entity has existed for.
 float entity::Entity::getAge() { return age; }

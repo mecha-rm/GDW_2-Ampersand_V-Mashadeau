@@ -1,9 +1,9 @@
 #pragma once
-#include "entities/Entity.h"
+#include "entities/Inactive.h"
 
 namespace entity
 {
-	class Item : public Entity
+	class Item : public Inactive
 	{
 	public:
 		// class for making items.
@@ -12,6 +12,8 @@ namespace entity
 
 		// returns the item identification number.
 		unsigned int getIIN();
+
+		void update(float deltaTime);
 
 	private:
 

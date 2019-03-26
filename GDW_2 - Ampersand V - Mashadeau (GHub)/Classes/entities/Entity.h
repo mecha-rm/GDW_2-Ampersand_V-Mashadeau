@@ -243,8 +243,6 @@ namespace entity
 		// int NAME_LEN; // maximum name lenth
 		std::string description = ""; // the entity's description
 
-		magic::magic_t magic = magic::magic_t(0); // the magic type of the entity.
-
 	protected:
 		// sets the sprite for the entity
 		void setSprite(Sprite * sprite);

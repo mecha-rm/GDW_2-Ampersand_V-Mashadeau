@@ -59,8 +59,82 @@ void OOP::Primitive::setActive(bool active)
 // primitives will have have their opacity cut put at 50% when they are not active.
 void OOP::Primitive::setActive() { setActive(!active); }
 
-// returns an id that identifies what type the primitive is.
+/*
+	* The type of the primitive. Use this for reference when you need to know what to downcast to.
+	* 1 = sqaure (AABB)
+	* 2 = square (OBB)
+	* 3 = circle
+	* 4 = line
+	* 5 = capsule
+	* 6 = grid
+
+	// returns an id that identifies what type the primitive is.
+*/
 short int OOP::Primitive::getId() { return ID; }
+
+// collision between two primitives.
+bool OOP::Primitive::collision(OOP::Primitive * p1, OOP::Primitive * p2)
+{
+
+	bool col = false;
+
+	if (p1->getId() == 1 && p2->getId() == 1) // AABB and AABB
+	{
+		return umath::aabbCollision(&(((OOP::PrimitiveSquare *)p1)->getRect()), &(((OOP::PrimitiveSquare *)p2)->getRect()));
+	}
+	else if (p1->getId() == 2 && p2->getId() == 2) // OBB-OBB
+	{
+		return umath::obbCollision(((OOP::PrimitiveOrientedSquare *)p1)->getRect(), ((OOP::PrimitiveOrientedSquare *)p1)->getRotationInRadians(),
+								  ((OOP::PrimitiveOrientedSquare *)p2)->getRect(), ((OOP::PrimitiveOrientedSquare *)p2)->getRotationInRadians(),
+								  false);
+	}
+	else if (p1->getId() == 3 && p2->getId() == 3) // circle-circle
+	{
+		return umath::circleCollision(p1->getPosition(), ((OOP::PrimitiveCircle *)p1)->m_RADIUS, p2->getPosition(), ((OOP::PrimitiveCircle *)p2)->m_RADIUS);
+	}
+	else if (p1->getId() == 5 && p2->getId() == 5) // capsule-capsule
+	{
+	
+		col = collision(((OOP::PrimitiveCapsule *)p1)->getCircle1(), ((OOP::PrimitiveCapsule *)p2)->getCircle1()); // p1 circ1 and p2 circ1
+		if (col == true)
+			return col;
+
+		col = collision(((OOP::PrimitiveCapsule *)p1)->getCircle1(), ((OOP::PrimitiveCapsule *)p2)->getCircle2());// p1 circ1 and p2 circ2
+		if (col == true)
+			return col;
+
+		col = collision(((OOP::PrimitiveCapsule *)p1)->getCircle2(), ((OOP::PrimitiveCapsule *)p2)->getCircle1()); // p1 circ2 and p2 circ1
+		if (col == true)
+			return col;
+
+		col = collision(((OOP::PrimitiveCapsule *)p1)->getCircle2(), ((OOP::PrimitiveCapsule *)p2)->getCircle2());// p1 circ2 and p2 circ2
+		if (col == true)
+			return col;
+
+		col = collision(((OOP::PrimitiveCapsule *)p1)->getOrientedRect(), ((OOP::PrimitiveCapsule *)p2)->getOrientedRect()); // p1 oriented rect and p2 oriented rect
+
+		// unfortuantely I do not know how to do circle-obb
+	}
+	else if ((p1->getId() == 1 && p2->getId() == 2) || (p1->getId() == 2 || p2->getId() == 1)) // AABB and OBB (or OBB and AABB)
+	{
+		if (p1->getId() == 2 || p2->getId() == 1) // flips the two primitives aorund so that the collision check can be done.
+			return collision(p2, p1);
+
+		return umath::obbCollision(((OOP::PrimitiveSquare *)p1)->getRect(), 0.0F, ((OOP::PrimitiveOrientedSquare *)p2)->getRect(), ((OOP::PrimitiveOrientedSquare *)p2)->getRotationInRadians(), false);
+	}
+	else if ((p1->getId() == 1 && p2->getId() == 3) || (p1->getId() == 3 || p2->getId() == 1)) // AABB and circle
+	{
+		if (p1->getId() == 3 || p2->getId() == 1) // flips the two shapes around so that they acn use this check
+			return collision(p2, p1);
+
+		return umath::aabbCircleCollision(((OOP::PrimitiveSquare *)p1)->getRect(), p2->getPosition(), ((OOP::PrimitiveCircle *)p2)->m_RADIUS);
+
+	}
+
+	return false;
+}
+
+
 
 ///// SQUARE /////////////////////////////////////////////////////////////////////////////
 // Question 3: initalization of the DrawNode (Square)
@@ -343,8 +417,14 @@ void OOP::PrimitiveCapsule::setPosition(cocos2d::Vec2 position)
 // gets the starting circle of the capsule
 cocos2d::Vec2 OOP::PrimitiveCapsule::getCirclePosition1() const { return m_Circle1; }
 
+// gets the first circle as a primitive.
+OOP::PrimitiveCircle * OOP::PrimitiveCapsule::getCircle1() const { return new OOP::PrimitiveCircle(m_Circle1, m_RADIUS); }
+
 // gets the ending circle of the capsule
 cocos2d::Vec2 OOP::PrimitiveCapsule::getCirclePosition2() const { return m_Circle2; }
+
+// gets circle 2 as a primitive.
+OOP::PrimitiveCircle * OOP::PrimitiveCapsule::getCircle2() const { return new OOP::PrimitiveCircle(m_Circle2, m_RADIUS); }
 
 // gets an oriented rectangle from the capsule.
 OOP::PrimitiveOrientedSquare * OOP::PrimitiveCapsule::getOrientedRect() const { return new OOP::PrimitiveOrientedSquare(getPosition(), m_RECT_WIDTH, m_RECT_HEIGHT); }

@@ -5,12 +5,10 @@
 entity::Weapon::Weapon(unsigned int WIN) : Inactive() {}
 
 
-// entity::Weapon::~Weapon() {}
+entity::Weapon::~Weapon() {}
 
 // returns the weapon identification number
-unsigned int entity::Weapon::getWIN() { return WIN; }
-
-
+unsigned int entity::Weapon::getWIN() const { return WIN; }
 
 // creates a weapon based on preset values.
 void entity::Weapon::createWeapon(unsigned int WIN)
@@ -29,7 +27,9 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 
 		setName("Lite Dagger");
 		setDescription("A weak dagger that the player starts with");
-		magic = new magic::MagicTypes(magic::magic_t(0));
+		sprite->setTexture("weapons/WIN_000.png");
+
+		setMagicType(magic::null);
 		damage = 3.0F;
 	
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(152.0F, 63.0F), 63, 68, CLR_ATK));
@@ -40,8 +40,15 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 	}
 }
 
+// sets the damage done by the wepaon
+void entity::Weapon::setDamage(float damage) { this->damage = (damage <= 0.0F) ? 1.0F : damage; }
+
+// gets the damage done by the weapon
+float entity::Weapon::getDamage() const { return damage; }
+
 // the update loop
 void entity::Weapon::update(float deltaTime)
 {
+	Inactive::update(deltaTime);
 }
 

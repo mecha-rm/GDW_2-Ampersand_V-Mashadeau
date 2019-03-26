@@ -63,6 +63,7 @@ entity::Player::Player() : Active("images/PLR_000.png")
 		sprite->addChild(prim->getPrimitive());
 
 	weapon1 = new Weapon(0);
+	currentWeapon = weapon1;
 	weapons.push_back(weapon1);
 }
 

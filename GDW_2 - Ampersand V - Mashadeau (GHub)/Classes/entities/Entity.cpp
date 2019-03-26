@@ -21,12 +21,10 @@ entity::Entity::Entity(std::string texture, float globalZOrder) : sprite(Sprite:
 // releases the sprite 
 entity::Entity::~Entity() 
 {
-	sprite->release(); 
+	sprite->release(); // this is apparently a bad idea.
 
 	// for (int i = 0; i < collisionBodies.size(); i++)
-		// delete collisionBodies.at(i);
-
-	collisionBodies.clear();
+		// collisionBodies[i]->getPrimitive()->release
 }
 
 // returns the length of time the entity has existed for.

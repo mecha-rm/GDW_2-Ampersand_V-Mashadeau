@@ -30,7 +30,7 @@ namespace OOP
 	// creates the draw node
 			Primitive(const short int ID);
 			// releases the drawNode
-			~Primitive();
+			virtual ~Primitive();
 
 			// returns square primitive
 			cocos2d::DrawNode * getPrimitive() const;
@@ -85,6 +85,16 @@ namespace OOP
 			 // returns an id that identifies what type the primitive is.
 			*/
 			short int getId();
+
+			/*
+			// collision between two primitives. Returns false if there is no check.
+			* AABB - AABB
+			* Circle - Circle
+			* Capsule - Capsule (cannot do OBB and Circle)
+			* AABB - OBB
+			* AABB - Circle
+			*/
+			static bool collision(OOP::Primitive * p1, OOP::Primitive * p2);
 
 	private:
 		int tag = 0; // an identification tag
@@ -247,8 +257,14 @@ namespace OOP
 		// gets the position of the circle at one of the endings of the capsule. This should be at the beginning of the capsule.
 		cocos2d::Vec2 getCirclePosition1() const;
 
+		// gets circle 1 as a circle primitive.
+		OOP::PrimitiveCircle * getCircle1() const;
+
 		// gets the position of the circle at one of the endings of the capsule. This should be at the ending of the capsule.
 		cocos2d::Vec2 getCirclePosition2() const;
+
+		// gets circle 2 as a circle primitive.
+		OOP::PrimitiveCircle * getCircle2() const;
 
 		// gets the rectangle for the capsule as an oriented square.
 		OOP::PrimitiveOrientedSquare * getOrientedRect() const;

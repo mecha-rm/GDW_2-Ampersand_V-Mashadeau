@@ -9,6 +9,16 @@ namespace entity
 	public:
 		Inactive();
 		~Inactive();
+
+		// update loop
+		void update(float deltaTime);
+
+	private:
+
+		// if this entity is restored, this determines whether it should be returned to its original form or not.
+		bool reset = false;
+
+	protected:
 	};
 }
 

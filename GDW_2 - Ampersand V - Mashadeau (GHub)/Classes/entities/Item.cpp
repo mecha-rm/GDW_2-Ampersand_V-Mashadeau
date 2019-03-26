@@ -2,13 +2,19 @@
 
 
 // class for making items.
-entity::Item::Item(unsigned int IIN) : Entity() { createItem(IIN); }
+entity::Item::Item(unsigned int IIN) : Inactive() { createItem(IIN); }
 
 
 entity::Item::~Item() {}
 
 // returns the item identification number
 unsigned int entity::Item::getIIN() { return IIN; }
+
+// updates the item
+void entity::Item::update(float deltaTime)
+{
+	entity::Inactive::update(deltaTime);
+}
 
 // creates the item based on a passed IIN
 void entity::Item::createItem(unsigned int IIN)

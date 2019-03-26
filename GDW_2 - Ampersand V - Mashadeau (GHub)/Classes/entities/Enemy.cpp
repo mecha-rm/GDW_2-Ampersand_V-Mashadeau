@@ -101,7 +101,7 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 // update loop
 void entity::Enemy::update(float deltaTime)
 {
-	setHealth(getHealth() - 1);
+	// setHealth(getHealth() - 1);
 	addForce(moveForce); // adds to the force of the entity
 	Active::update(deltaTime); // calls the 'Active' update loop
 

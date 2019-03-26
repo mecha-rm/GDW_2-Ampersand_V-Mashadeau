@@ -367,7 +367,10 @@ void MSQ_GameplayScene::collisions()
 	
 	// std::cout << "PX: " << plyr->getAABBs().at(0)->getPosition().x << ", PY: " << plyr->getAABBs().at(0)->getPosition().y << std::endl;
 	playerTileCollisions(); // called for player-tile collisions.
+	enemyTileCollisions(); // collision between the enemies and the tiles.
+	
 	playerEnemyCollisions(); // called for player collisions with enemies
+	weaponEnemyCollisions();
 }
 
 // calculates player collision with tiles.
@@ -473,6 +476,11 @@ void MSQ_GameplayScene::playerTileCollisions()
 	}
 }
 
+// collisions between enemies and tiles
+void MSQ_GameplayScene::enemyTileCollisions()
+{
+}
+
 // calculates player collision with enemies
 void MSQ_GameplayScene::playerEnemyCollisions()
 {
@@ -503,6 +511,24 @@ void MSQ_GameplayScene::playerEnemyCollisions()
 
 		}
 	}
+}
+
+// collision between the player's current weapon and the enemy.
+void MSQ_GameplayScene::weaponEnemyCollisions()
+{
+	entity::Weapon * weapon = plyr->getCurrentWeapon(); // this won't work because the weapons have no sprite.
+	
+	if (weapon == nullptr)
+		return;
+
+	for (entity::Enemy * emy : *sceneEnemies) // checks collision between the weapon and the enenmy.
+	{
+		if (entity::Entity::collision(weapon, emy)) // if there is collision.
+		{
+			emy->setHealth(emy->getHealth() - weapon->getDamage());
+		}
+	}
+	
 }
 
 

@@ -54,8 +54,9 @@ public:
 	
 	
 	void playerTileCollisions(); // player tile collisions
+	void enemyTileCollisions(); // enemy-tile collisions
 	void playerEnemyCollisions(); // player enemy collisions
-	// void weaponEnemyCollisions();
+	void weaponEnemyCollisions(); // collisions between the player's weapon and the enemies.
 
 
 	// update function for the scene

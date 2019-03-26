@@ -1,6 +1,7 @@
 // a scene used for transitioning to another scene, since scene transitions were causing problems.
 #pragma once
 
+#include "scenes/MSQ_GameplayScene.h"
 #include "cocos2d.h"
 
 using namespace cocos2d;
@@ -15,6 +16,8 @@ public:
 
 	// called when the scene is entered
 	void onEnter();
+
+	void onExit();
 
 	// initialization functions
 	bool init(); // what's called when the Cocos2D-X scene is created.

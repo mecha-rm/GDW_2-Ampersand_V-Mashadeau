@@ -27,6 +27,19 @@ int OOP::SpriteSheetAnimationFrame::getTag() const { return tag; }
 // sets the tag attached to the sprite frame.
 void OOP::SpriteSheetAnimationFrame::setTag(int & tag) { this->tag = tag; }
 
+// sets the primitives tied to the animation frame.
+void OOP::SpriteSheetAnimationFrame::setPrimitives(std::vector<OOP::Primitive*>& newPrims) { prims = newPrims; }
+
+// gets the primitives tied to the animation frame.
+std::vector<OOP::Primitive*>& OOP::SpriteSheetAnimationFrame::getPrimitives() { return prims; }
+
+// sets whether all of the primitives are active or not.
+void OOP::SpriteSheetAnimationFrame::setActivePrimitives(bool active)
+{
+	for (OOP::Primitive * p : prims)
+		p->setActive(active);
+}
+
 
 
 //// SPRITE SHEET ANIMATION CLASS ////
@@ -150,6 +163,10 @@ void OOP::SpriteSheetAnimation::operator+=(OOP::SpriteSheetAnimationFrame * newF
 			return;
 	}
 
+	newFrame->setActivePrimitives(false);
+	// for (int i = 0; i < newFrame->getPrimitives().size(); i++)
+		// spriteSheet->addChild(newFrame->getPrimitives().at(i)->getPrimitive());
+		
 	frames.push_back(newFrame); // adds the frame into the vector.
 }
 
@@ -184,19 +201,19 @@ OOP::SpriteSheetAnimationFrame * OOP::SpriteSheetAnimation::operator[](const uns
 std::string OOP::SpriteSheetAnimation::getName() const { return name; }
 
 // gets the name of the sprite sheet.
-void OOP::SpriteSheetAnimation::setName(std::string & name) { this->name = name; }
+void OOP::SpriteSheetAnimation::setName(std::string name) { this->name = name; }
 
 // gets the description for the sprite sheet.
 std::string OOP::SpriteSheetAnimation::getDescription() const { return description; }
 
 // sets the description for the sprite sheet.
-void OOP::SpriteSheetAnimation::setDescription(std::string & desc) { this->description = desc; }
+void OOP::SpriteSheetAnimation::setDescription(std::string desc) { this->description = desc; }
 
 // returns a tag for the sprite animation.
 int OOP::SpriteSheetAnimation::getTag() const { return tag; }
 
 // sets a tag for the sprite animation.
-void OOP::SpriteSheetAnimation::setTag(int & tag) { this->tag = tag; }
+void OOP::SpriteSheetAnimation::setTag(int tag) { this->tag = tag; }
 
 // gets whether the animation is running or not.
 bool OOP::SpriteSheetAnimation::isRunning() { return running; }
@@ -213,6 +230,9 @@ void OOP::SpriteSheetAnimation::stopAnimation()
 	index = 0;
 	finishedLoops = 0;
 
+	for (int i = 0; i < frames.size(); i++)
+		frames.at(i)->setActivePrimitives(false);
+
 	spriteSheet->setTextureRect(frames.at(0)->getRect()); // returns the sprite to its first frame.
 }
 
@@ -226,6 +246,10 @@ void OOP::SpriteSheetAnimation::unpauseAnimation() { paused = false; }
 void OOP::SpriteSheetAnimation::update(float deltaTime)
 {
 	float frameDuration = 0.0F; // the amount of time the frame should be on screen for.
+
+	unsigned int oldIndex = index; // the index upon entering the update loop
+	unsigned int newIndex = 0; // the new index when leaving the update loop, which should be one greater than the old index (unless the animation is finished).
+	
 
 	if (frames.size() == 0 || spriteSheet == nullptr || paused || !running) // if the animation is paused or isn't running, then the update loop isn't done.
 		return;
@@ -258,12 +282,19 @@ void OOP::SpriteSheetAnimation::update(float deltaTime)
 			}
 			else
 			{
-				spriteSheet->setTextureRect(frames.at(index)->getRect()); // returns to the start of the animation.
+				spriteSheet->setTextureRect(frames.at(index)->getRect()); // moves onto the next frame.
 			}
-
 		}
+
+		newIndex = index;
 		
+		for (int i = 0; i < frames.at(oldIndex)->getPrimitives().size(); i++) // turns off the primitives for the previous animation.
+			frames.at(index - 1)->getPrimitives().at(i)->setActive(false);
+
 		spriteSheet->setTextureRect(frames.at(index)->getRect()); // moves onto the next frame.
+
+		for (int i = 0; i < frames.at(newIndex)->getPrimitives().size(); i++) // turns on the primitives for the now current animation.
+			frames.at(index - 1)->getPrimitives().at(i)->setActive(true);
 
 	}
 }

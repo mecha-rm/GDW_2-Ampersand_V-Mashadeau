@@ -28,12 +28,15 @@ public:
 
 	// called when the scene is entered
 	void onEnter();
+	// called when leaving the scene
+	void onExit();
 
 	// initialization functions
 	bool init(); // what's called when the Cocos2D-X scene is created.
 	void initListeners(); // initalizes event handlers
 	void initSprites();
 	void initPauseMenu();
+
 
 	// callbacks
 	void onMousePressed(EventMouse::MouseButton mouseButt, Event* event); //if a mouse button is pressed
@@ -52,6 +55,7 @@ public:
 	
 	void playerTileCollisions(); // player tile collisions
 	void playerEnemyCollisions(); // player enemy collisions
+	// void weaponEnemyCollisions();
 
 
 	// update function for the scene
@@ -88,6 +92,8 @@ private:
 	static int spawnPoint; // the spawn point used upon entering the area. This is only used upon scene initialization.
 
 	entity::Player * plyr; // the object used for the player
+	bool plyrAction = false; // becomes 'true' when a new animation should be played.
+	int pAction = 0; // saves the action the player is taking.
 
 	// static std::vector<world::Area *> areas; // this will save the areas gone to, and will be used to switch screens if scenes are not stored. These will be stored in dat files later on.
 	

@@ -536,13 +536,31 @@ void world::Area::loadFromFile()
 // updates the area
 void world::Area::update(float deltaTime)
 {
+	entity::Entity * tempEntity = nullptr;
+
 	// updates the scene tiles
 	for (int i = 0; i < areaTiles.size(); i++)
+	{
 		areaTiles.at(i)->update(deltaTime);
+	}
+		
 
 	// updates the enemies
 	for (int i = 0; i < areaEnemies.size(); i++)
+	{
 		areaEnemies[i]->update(deltaTime);
+		
+		if (areaEnemies[i]->getHealth() <= 0.0F)
+		{
+			tempEntity = areaEnemies[i];
+			// tempEntity = areaEnemies.at(i);
+			areaEnemies.erase(areaEnemies.begin() + i); // erases the pointer.
+			// tempEntity->~Entity();
+			// delete tempEntity;
+
+			
+		}
+	}
 }
 
 

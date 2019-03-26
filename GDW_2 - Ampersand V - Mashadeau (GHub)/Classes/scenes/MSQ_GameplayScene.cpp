@@ -34,6 +34,8 @@ Scene * MSQ_GameplayScene::createScene()
 
 void MSQ_GameplayScene::onEnter() { Scene::onEnter(); }
 
+void MSQ_GameplayScene::onExit() { Scene::onExit(); }
+
 bool MSQ_GameplayScene::init()
 {
 	// Ensures the parent init function was called first. If it wasn't, this one is exited.
@@ -50,7 +52,7 @@ bool MSQ_GameplayScene::init()
 	initSprites();
 
 	// Initialize the pause menu
-	initPauseMenu();
+	// initPauseMenu();
 
 	// Allows for the update() function to be called by cocos
 	this->scheduleUpdate();
@@ -137,14 +139,13 @@ void MSQ_GameplayScene::initSprites()
 	// creating the grid
 	grid = new OOP::PrimitiveGrid(cocos2d::Vec2(0.0F, 0.0F), cocos2d::Vec2(director->getWinSizeInPixels().width, director->getWinSizeInPixels().height), 128.0F, Color4F::WHITE);
 	// grid->getPrimitive()->setGlobalZOrder(10.3F); // makes the grid be above everything else.
-	grid->getPrimitive()->setVisible(true); // makes the grid visible (or not visible)
+	grid->getPrimitive()->setVisible(false); // makes the grid visible (or not visible)
 	this->addChild(grid->getPrimitive()); // adds grid to drawList
 
 
 	// setting the camera
 	// this->getDefaultCamera()->setAnchorPoint(Vec2(0.5F, 0.5F)); // setting the camera's anchour point
 	// this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the location of the camera
-
 	
 	/* 
 	// Tester things; ignore this.
@@ -158,6 +159,9 @@ void MSQ_GameplayScene::initSprites()
 	drawNode->setGlobalZOrder(20.0F);
 	this->addChild(drawNode);
 	*/
+
+	shapesVisible = false;
+	mouse.setLabelVisible(false);
 }
 
 // initializes pause menu; currently does nothing.
@@ -278,6 +282,9 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 	case EventKeyboard::KeyCode::KEY_F:
 		//attack
 		AudioLibrary::MSQ_sword.play();
+		pAction = 6;
+		plyrAction = true;
+
 		break;
 	case EventKeyboard::KeyCode::KEY_1:
 		//item 1
@@ -338,17 +345,19 @@ void MSQ_GameplayScene::switchArea(std::string & fileName)
 	spawnPoint = std::stoi(spawn); // saves the spawn point of the player for when they get in the new area.
 
 	// pathScene = new TransitionerScene();
-	// pathScene->switchScene(GameplayScene::createScene(), TransitionFadeTR::create(1.0F, MSQ_GameplayScene::createScene()), 1.0F);
+	// pathScene->switchScene(GameplayScene::createScene());
 	// newScene = pathScene->createScene();
 	// Director::getInstance()->replaceScene(TransitionFadeBL::create(1.0F, newScene));
 
-	newScene = TransitionerScene::createScene(); // creates the gameplay scene.
-	Director::getInstance()->replaceScene(TransitionCrossFade::create(1.0F, newScene));
+	// newScene = pathScene->createScene(); // creates the gameplay scene.
+	// pathScene = nullptr;
+	// director->replaceScene(newScene);
+	// Director::getInstance()->replaceScene(TransitionCrossFade::create(1.0F, newScene));
 
-	// newScene = GameplayScene::createScene(); // creates the gameplay scene.
+	newScene = GameplayScene::createScene(); // creates the gameplay scene.
 	
 	// newScene = GameplayScene::createScene(); // creates the gameplay scene.
-	// Director::getInstance()->replaceScene(TransitionFadeBL::create(1.0F, newScene)); // replaces the scene for the director, and does a transition.
+	Director::getInstance()->replaceScene(TransitionFadeBL::create(1.0F, newScene)); // replaces the scene for the director, and does a transition.
 	switchingScenes = true; // becomes 'true' so that scene switches don't overlay one another.
 }
 
@@ -389,6 +398,7 @@ void MSQ_GameplayScene::playerTileCollisions()
 			if (!switchingScenes && tile->getTIN() >= 0 && tile->getTIN() <= 4) // if it's a scene exit, then no ohter checks need to be done.
 			{
 				switchArea(sceneArea->getExit(tile->getTIN())); // gets the tile identification number, and gets the exit attached to it.
+				// delete plyr;
 				break;
 			}
 			
@@ -469,8 +479,8 @@ void MSQ_GameplayScene::playerEnemyCollisions()
 	OOP::Primitive * colPrim1; // the primitive from the player that encountered a collision
 	OOP::Primitive * colPrim2; // the primitive from the other entity that encounted a collision
 
-	// if (sceneEnemies->size() > 0)
-		// sceneEnemies->clear();
+	if (plyr->getInvincible()) // if the player currently has invincibility frames, then the enemy collisions are ignored.
+		return;
 
 	// entity::Enemy * enemy; // saves a pointer to the 
 	for each(entity::Enemy * enemy in *sceneArea->getAreaEnemies())
@@ -482,7 +492,8 @@ void MSQ_GameplayScene::playerEnemyCollisions()
 			// colPrim2 = enemy->collidedPrimitive;
 
 			
-			plyr->setHealth(plyr->getHealth() - 1); // replace with proper calculation.
+			plyr->setHealth(plyr->getHealth() - enemy->getAttackPower()); // replace with proper calculation.
+			plyr->gotHit();
 			hpBar[1]->setTextureRect(Rect(0.0F, hpBarRect.getMaxY(), hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()), hpBarRect.getMaxY()));
 			
 			// hpBar[1]->setTextureRect(Rect(0.0F, 0.0F, hpBar[1]->getTexture.size.width * (plyr->getHealth() / plyr->getMaxHealth()), hpBar[1]->getTextureRect().size.height));
@@ -506,7 +517,7 @@ void MSQ_GameplayScene::update(float deltaTime)
 	}
 	else if (!switchingScenes && areaName == "AIN_X01")
 	{
-		std::cout << "test?" << std::endl;
+		// std::cout << "test?" << std::endl;
 	}
 
 	// if (switchingScenes) // if the program is currently switching scenes, the update loop isn't started.
@@ -535,12 +546,24 @@ void MSQ_GameplayScene::update(float deltaTime)
 	{
 		plyr->addForce(plyr->getMoveForceX(), 0.0F);
 	}
-
+	
 	if (jump)
 	{
 		plyr->addJumpForce();
 		jump = false;
 	}
+	if (plyrAction) // animation should be played
+	{
+		switch (pAction)
+		{
+		case 6: // attack 1 animation.
+			plyr->runAction(pAction);
+			// pAction = 0;
+		}
+
+		plyrAction = false;
+	}
+	
 
 	// std::cout << DrawNode::create()->getPosition().x << std::endl;
 	// updates the player

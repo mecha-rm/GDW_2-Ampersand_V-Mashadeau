@@ -22,6 +22,10 @@ entity::Entity::Entity(std::string texture, float globalZOrder) : sprite(Sprite:
 entity::Entity::~Entity() 
 {
 	sprite->release(); 
+
+	// for (int i = 0; i < collisionBodies.size(); i++)
+		// delete collisionBodies.at(i);
+
 	collisionBodies.clear();
 }
 
@@ -272,6 +276,9 @@ void entity::Entity::setAntiGravity(float antiGravity) { this->antiGravity = ant
 // toggles anti gravity on/off.
 void entity::Entity::setAntiGravity() { antiGravity = !antiGravity; }
 
+
+
+
 // returns the collision shapes for the entity.
 const std::vector<OOP::Primitive*> const entity::Entity::getCollisionBodies() const { return collisionBodies; }
 
@@ -279,17 +286,53 @@ const std::vector<OOP::Primitive*> const entity::Entity::getCollisionBodies() co
 void entity::Entity::setCollisionBodies(std::vector<OOP::Primitive*>& colBodies) { collisionBodies = colBodies; }
 
 // checks collision between two primitives. If a collision check for this combination doesn't exist, a false is returned.
-bool entity::Entity::collision(OOP::Primitive & prim1, OOP::Primitive & prim2)
+bool entity::Entity::collision(OOP::Primitive * prim1, OOP::Primitive * prim2)
 {
+	
 	// temporary vectors used for collision checks.
 	std::vector<OOP::Primitive *> vec1;
 	std::vector<OOP::Primitive *> vec2;
 
 	// pushes the only available primitives to the vectors.
-	vec1.push_back(&prim1);
-	vec2.push_back(&prim2);
+	vec1.push_back(prim1);
+	vec2.push_back(prim2);
 
 	return collision(vec1, vec2);
+	
+
+	/*
+	OOP::PrimitiveSquare * tempRect1 = nullptr; // a temporary object that stores a rect from e1, in the position it is in overall.
+	OOP::PrimitiveSquare * tempRect2 = nullptr; // a temporary object that stores a rect from e2, in the position it is in overall.
+
+	OOP::PrimitiveOrientedSquare * tempObb1 = nullptr; // tempory oriented bounding box for e1
+	OOP::PrimitiveOrientedSquare * tempObb2 = nullptr; // temporary oriented bounding box for e2
+
+	OOP::PrimitiveCircle * tempCirc1 = nullptr; // a temporary object that stores a circle from e1
+	OOP::PrimitiveCircle * tempCirc2 = nullptr; // a temporary object that stores a circle from e2
+
+	OOP::PrimitiveCapsule * tempCap1 = nullptr; // temporary capsule pointer for e1
+	OOP::PrimitiveCapsule * tempCap2 = nullptr; // temporary capsule pointer for e2
+
+
+
+	OOP::Primitive * tempPrim; // a tempory primitive
+	
+	switch (prim1->getId())
+	{
+	case 1: // rectangle.
+
+		break;
+	case 2: // oriented rectangle.
+		break;
+	case 3: // circle
+		break;
+	case 5: // capsule
+		break;
+	}
+	*/
+	/*
+	
+	*/
 }
 
 // checks for collisions between a vector of primitives.
@@ -306,14 +349,17 @@ bool entity::Entity::collision(std::vector<OOP::Primitive*>& cols1, std::vector<
 	return collision(e1, e2);
 }
 
-// checks for collision.
+// checks for collision with the current entity and a passed entity.
 bool entity::Entity::collision(entity::Entity * e2) { return collision(this, e2); }
 
-// checks for collisions
-bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
+// checks for collisions using collision bodies
+bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2) { return collision(e1, e1->getCollisionBodies(), e2, e2->getCollisionBodies()); }
+
+// checks for collisions using two entites and passed collision vectors
+bool entity::Entity::collision(entity::Entity * e1, const std::vector<OOP::Primitive *> & e1Bodies, entity::Entity * e2, const std::vector<OOP::Primitive *> & e2Bodies)
 {
 	// the positions of the collision shapes are relative to where the sprite is when they become childs of the sprite. Their positions are actually offsets of the sprite's position.
-	// basically, the location of the drawNode for the shape stays the same regardless of where the sprite is due to it being relative to the bottom left-corner of the sprite.
+		// basically, the location of the drawNode for the shape stays the same regardless of where the sprite is due to it being relative to the bottom left-corner of the sprite.
 
 	if (e1 == nullptr || e2 == nullptr) // if either one is null, then a 'false' is returned.
 		return false;
@@ -325,34 +371,51 @@ bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
 	OOP::PrimitiveSquare * tempRect1 = nullptr; // a temporary object that stores a rect from e1, in the position it is in overall.
 	OOP::PrimitiveSquare * tempRect2 = nullptr; // a temporary object that stores a rect from e2, in the position it is in overall.
 
-	OOP::PrimitiveCircle * tempCirc1 = nullptr; // a temporary object that stores a circle from e1, in the position it is in overall. The 'z' variable holds the radius.
-	OOP::PrimitiveCircle * tempCirc2 = nullptr; // a temporary object that stores a circle from e2, in the position it is in overall. The 'z' variable holds the radius.
+	OOP::PrimitiveOrientedSquare * tempObb1 = nullptr; // tempory oriented bounding box for e1
+	OOP::PrimitiveOrientedSquare * tempObb2 = nullptr; // temporary oriented bounding box for e2
+
+	OOP::PrimitiveCircle * tempCirc1 = nullptr; // a temporary object that stores a circle from e1
+	OOP::PrimitiveCircle * tempCirc2 = nullptr; // a temporary object that stores a circle from e2
+
+	OOP::PrimitiveCapsule * tempCap1 = nullptr; // temporary capsule pointer for e1
+	OOP::PrimitiveCapsule * tempCap2 = nullptr; // temporary capsule pointer for e2
+
+	// OOP::PrimitiveCircle * tempCirc1x;
 
 	// handles all possible collsions. If 'Active' is turned off for either collision shape, then a no collision is checked.
-	for each(OOP::Primitive * e1Prim in e1->getCollisionBodies())
+	for each(OOP::Primitive * e1Prim in e1Bodies)
 	{
 		if (!e1Prim->isActive()) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
 			continue;
-		
+
 		// downcasts the first primitive to know which one it is.
-		// 
-		switch (e1Prim->getId()) 
+		switch (e1Prim->getId())
 		{
 		case 1: // Square (AABB)
 			tempRect1 = new OOP::PrimitiveSquare(e1Bl + ((OOP::PrimitiveSquare *)e1Prim)->getPosition(), ((OOP::PrimitiveSquare *)e1Prim)->m_WIDTH, ((OOP::PrimitiveSquare *)e1Prim)->m_HEIGHT);
 			break;
 
+		case 2: // Square (OBB)
+			tempObb1 = new OOP::PrimitiveOrientedSquare(e1Bl + ((OOP::PrimitiveOrientedSquare *)e1Prim)->getPosition(), ((OOP::PrimitiveOrientedSquare *) e1Prim)->m_WIDTH, ((OOP::PrimitiveOrientedSquare *) e1Prim)->m_HEIGHT);
+			break;
+
 		case 3: // Circle
 			tempCirc1 = new OOP::PrimitiveCircle(Vec2(e1Bl.x + ((OOP::PrimitiveCircle *)e1Prim)->getPosition().x, e1Bl.y + ((OOP::PrimitiveCircle *)e1Prim)->getPosition().y), ((OOP::PrimitiveCircle *)e1Prim)->m_RADIUS);
 			break;
-		case 5: // Capsule
+
+		case 5: // Capsule; this splits the capsule up into two circles and an oriented rectangle.
+			tempCap1 = new OOP::PrimitiveCapsule(e1Bl + ((OOP::PrimitiveCapsule *) e1Prim)->getPosition(), ((OOP::PrimitiveCapsule *) e1Prim)->m_RECT_WIDTH, ((OOP::PrimitiveCapsule *) e1Prim)->m_RECT_HEIGHT / 2, ((OOP::PrimitiveCapsule *) e1Prim)->getRotationInDegrees());
+			// tempCirc1 = new OOP::PrimitiveCircle(tempCap1->getCirclePosition1(), tempCap1->m_RADIUS); // gets the circle of
+			// tempObb1 = tempCap1->getOrientedRect();
+
+			// tempCap1 = new OOP::PrimitiveCapsule(Vec2)
 			break;
 		}
 
-		if (tempRect1 == nullptr && tempCirc1 == nullptr) // if all of these are nullptrs, then an unusable primitive was found.
+		if (tempRect1 == nullptr && tempCirc1 == nullptr && tempObb1 == nullptr) // if all of these are nullptrs, then an unusable primitive was found.
 			continue;
-		
-		for each(OOP::Primitive * e2Prim in e2->getCollisionBodies())
+
+		for each(OOP::Primitive * e2Prim in e2Bodies)
 		{
 			if (!e2Prim->isActive()) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
 				continue;
@@ -363,17 +426,22 @@ bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
 				tempRect2 = new OOP::PrimitiveSquare(e2Bl + ((OOP::PrimitiveSquare *)e2Prim)->getPosition(), ((OOP::PrimitiveSquare *)e2Prim)->m_WIDTH, ((OOP::PrimitiveSquare *)e2Prim)->m_HEIGHT);
 				break;
 
+			case 2: // Square (OBB)
+				tempObb2 = new OOP::PrimitiveOrientedSquare(e2Bl + ((OOP::PrimitiveOrientedSquare *)e2Prim)->getPosition(), ((OOP::PrimitiveOrientedSquare *) e2Prim)->m_WIDTH, ((OOP::PrimitiveOrientedSquare *) e2Prim)->m_HEIGHT);
+				break;
+
 			case 3: // Circle
 				tempCirc2 = new OOP::PrimitiveCircle(Vec2(e2Bl.x + ((OOP::PrimitiveCircle *)e2Prim)->getPosition().x, e2Bl.y + ((OOP::PrimitiveCircle *)e2Prim)->getPosition().y), ((OOP::PrimitiveCircle *)e2Prim)->m_RADIUS);
 				break;
-			case 5: // Capsule
-				break;
+
+			case 5: // Capsule; this splits the capsule up into two circles and an oriented rectangle.
+				tempCap2 = new OOP::PrimitiveCapsule(e2Bl + ((OOP::PrimitiveCapsule *) e2Prim)->getPosition(), ((OOP::PrimitiveCapsule *) e2Prim)->m_RECT_WIDTH, ((OOP::PrimitiveCapsule *) e2Prim)->m_RECT_HEIGHT / 2, ((OOP::PrimitiveCapsule *) e2Prim)->getRotationInDegrees());
 			}
 
-			if (tempRect2 == nullptr && tempCirc2 == nullptr) // if all of these are nullptrs, then an unusable primitive was found.
+			if (tempRect2 == nullptr && tempCirc2 == nullptr && tempObb2 == nullptr) // if all of these are nullptrs, then an unusable primitive was found.
 				continue;
 
-			// goes in the order of AABB - circle - capsule
+			// goes in the order of AABB - circle - OBB - capsule
 			// capsule hasn't been implemented as of yet.
 			if (tempRect1 != nullptr && tempRect2 != nullptr) // AABB check (rectangle and rectangle)
 			{
@@ -393,7 +461,32 @@ bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
 					return true;
 				}
 			}
-			else if (tempCirc1 != nullptr && tempRect2 != nullptr) // circle-rectangle check
+			else if (tempRect1 != nullptr && tempObb2 != nullptr) // rectangle and oriented rectangle
+			{
+				if (umath::obbCollision(tempRect1->getRect(), 0.0F, tempObb2->getRect(), tempObb2->getRotationInRadians(), false)) // if true, the collided primitives at their proper location are saved.
+				{
+					e1->collidedPrimitive = tempRect1;
+					e2->collidedPrimitive = tempObb2;
+					return true;
+				}
+			}
+			else if (tempRect1 != nullptr && tempCap2 != nullptr) // rectangle and capsule
+			{
+				// collision between the rect and the capsule
+				if (umath::obbCollision(tempRect1->getRect(), 0.0F, tempCap2->getOrientedRect()->getRect(), tempCap2->getOrientedRect()->getRotationInRadians(), false) ||
+					umath::aabbCircleCollision(tempRect1->getRect(), tempCap2->getCirclePosition1(), tempCap2->m_RADIUS) ||
+					umath::aabbCircleCollision(tempRect1->getRect(), tempCap2->getCirclePosition2(), tempCap2->m_RADIUS)
+					)
+				{
+					e1->collidedPrimitive = tempRect1;
+					e2->collidedPrimitive = tempCap2;
+					return true;
+				}
+			}
+			
+			
+			// tempCircle1
+			if (tempCirc1 != nullptr && tempRect2 != nullptr) // circle-rectangle check
 			{
 				if (umath::aabbCircleCollision(tempRect2->getRect(), tempCirc1->getPosition(), tempCirc1->m_RADIUS)) // if true, the collided primitives at their proper location are saved.
 				{
@@ -412,28 +505,71 @@ bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2)
 					return true;
 				}
 			}
+			else if (tempCirc1 != nullptr && tempObb2 != nullptr) // circle-OBB check. Unfortunately, this is just a disguised square-OBB check, since I don't actually understand the algorithm for it.
+			{
+				if (umath::obbCollision(
+					Rect(tempCirc1->getPosition().x - tempCirc1->m_RADIUS, tempCirc1->getPosition().y - tempCirc1->m_RADIUS, tempCirc1->m_RADIUS * 2, tempCirc1->m_RADIUS * 2),
+					0.0F, tempObb2->getRect(), tempObb2->getRotationInRadians(), false))
+				{
+					e1->collidedPrimitive = tempCirc1;
+					e2->collidedPrimitive = tempObb2;
+					return true;
+				}
+			}
+			else if (tempCirc1 != nullptr && tempCap2 != nullptr) // circle and capsule
+			{
+				if (umath::circleCollision(tempCirc1->getPosition(), tempCirc1->m_RADIUS, tempCap2->getCirclePosition1(), tempCap2->m_RADIUS) ||
+					umath::circleCollision(tempCirc1->getPosition(), tempCirc1->m_RADIUS, tempCap2->getCirclePosition2(), tempCap2->m_RADIUS) ||
+					umath::obbCollision(
+						Rect(tempCirc1->getPosition().x - tempCirc1->m_RADIUS, tempCirc1->getPosition().y - tempCirc1->m_RADIUS, tempCirc1->m_RADIUS * 2, tempCirc1->m_RADIUS * 2), 0.0F,
+						tempCap2->getOrientedRect()->getRect(), tempCap2->getOrientedRect()->getRotationInRadians(), false)
+					)
+				{
+					e1->collidedPrimitive = tempCirc1;
+					e2->collidedPrimitive = tempCap2;
+					return true;
+				}
+			}
+
 
 			// sets all of these to nullptr for the following check.
 			tempRect2 = nullptr;
 			tempCirc2 = nullptr;
+			tempObb2 = nullptr;
+			tempCap2= nullptr;
 		}
 
 		// sets all of these to nullptr for the following check.
 		tempRect1 = nullptr;
 		tempCirc1 = nullptr;
+		tempObb1 = nullptr;
+		tempCap2 = nullptr;
 	}
-
-	return false;
 }
+
+
+
 
 // gets the animations for the entity.
 std::vector<OOP::SpriteSheetAnimation *> entity::Entity::getAnimations() const { return animations; }
 
 // returns the animation at the provided index.
-OOP::SpriteSheetAnimation * entity::Entity::getAnimation(unsigned int index) const
+OOP::SpriteSheetAnimation * entity::Entity::getAnimationByIndex(unsigned int index) const
 {
 	// if the index is outside of the size of 'animations', then a nullptr is immediately returned.
 	return (index < animations.size()) ? animations.at(index) : nullptr;
+}
+
+// gets an animation by a tag. The first animation with this tag will be returned. If an animation with this tag is not found, a nullptr is returned.
+OOP::SpriteSheetAnimation * entity::Entity::getAnimationByTag(int tag)
+{
+	for (OOP::SSAnimation * ani : animations)
+	{
+		if (ani->getTag() == tag)
+			return ani;
+	}
+
+	return nullptr;
 }
 
 // returns the index of the passed animation. If the animation does not exist in the vector, a '-1' is returned.
@@ -456,11 +592,48 @@ void entity::Entity::addAnimation(OOP::SpriteSheetAnimation * newAnimation)
 	animations.push_back(newAnimation);
 }
 
+// runs an animation based on a provided index. If no animation has this index, then no animation is run.
+void entity::Entity::runAnimationByIndex(unsigned int index)
+{
+	if (index >= animations.size()) // index out of bounds
+		return;
+
+	if (currentAnimation != nullptr) // stops the current animation if there is one.
+		currentAnimation->stopAnimation();
+
+	currentAnimation = animations.at(index);
+	currentAnimation->runAnimation(); // runs the new animation.
+}
+
+// runs the animation by the provided tag.
+void entity::Entity::runAnimationByTag(int tag)
+{
+	int index = -1;
+
+	for (int i = 0; i < animations.size(); i++)
+	{
+		if (animations.at(i)->getTag() == tag) // an animation has been found.
+		{
+			index = i;
+			break;
+		}
+	}
+
+	if (index >= 0) // if an animation has been found.
+		runAnimationByIndex(index);
+}
+
+// returns 'true' if an animation is running, false otherwise.
+bool entity::Entity::runningAnimation() { return currentAnimation->isRunning(); }
+
 // sets whether the entity has a constant velocity (i.e. the velocity is either '0', or some value) or not.
 void entity::Entity::setConstVelocity(bool constVelocity) { this->constVelocity = constVelocity; }
 
 // toggles the 'constVelocity' variable.
 void entity::Entity::setConstVelocity() { setConstVelocity(!constVelocity); }
+
+
+
 
 // Update Loop
 void entity::Entity::update(float deltaTime)

@@ -4,7 +4,7 @@
 
 
 // constructor
-MSQ_TransitionerScene::MSQ_TransitionerScene() {}
+MSQ_TransitionerScene::MSQ_TransitionerScene() { nextScene = MSQ_GameplayScene::createScene(); }
 
 Scene * MSQ_TransitionerScene::createScene()
 {
@@ -18,6 +18,8 @@ Scene * MSQ_TransitionerScene::createScene()
 }
 
 void MSQ_TransitionerScene::onEnter() { Scene::onEnter(); }
+
+void MSQ_TransitionerScene::onExit() { Scene::onExit(); }
 
 bool MSQ_TransitionerScene::init()
 {
@@ -43,9 +45,11 @@ Scene * MSQ_TransitionerScene::getScene() const { return nextScene; }
 
 void MSQ_TransitionerScene::update(float deltaTime)
 {
+
 	if (nextScene != nullptr && switchScenes == false)
 	{
-		Director::getInstance()->replaceScene(transition->create(speed, nextScene));
+		Director::getInstance()->replaceScene(nextScene);
+		//vDirector::getInstance()->replaceScene(transition->create(speed, nextScene));
 		switchScenes = true;
 	}
 }

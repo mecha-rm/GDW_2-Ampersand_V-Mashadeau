@@ -32,7 +32,7 @@ float entity::Active::getAttackPower() const { return attackPower; }
 void entity::Active::setAttackPower(float attackPower)
 {
 	// if the attack power passed is negative, it's just set to 0.
-	attackPower = (attackPower > 0.0F) ? attackPower : 0.0F;
+	this->attackPower = (attackPower > 0.0F) ? attackPower : 0.0F;
 }
 
 // gets the movement force applied to the entity when it moves
@@ -53,14 +53,39 @@ void entity::Active::addMoveForceX() { addForce(moveForce.x, 0.0F); }
 // adds 'move force' to the entity's force for movement for the upcoming update (y-axis only)
 void entity::Active::addMoveForceY() { addForce(0.0F, moveForce.y); }
 
+// sets the amount of force applied when the entity moves.
+void entity::Active::setMoveForce(Vec2 moveForce) { this->moveForce = moveForce; }
+
 // adds the jump force to the active entity.
 void entity::Active::addJumpForce() { addForce(Vec2(0.0F, jump)); }
 
-// sets the amount of force applied when the entity moves.
-void entity::Active::setMoveForce(Vec2 moveForce) { this->moveForce = moveForce; }
+// the entity has gotten hit, so it should now be invincible.
+void entity::Active::gotHit() 
+{
+	invincible = true;
+	setOpacity(0.5F); // makes the sprite transparent to convey it's in its invincibility period.
+}
+
+// checks to see if the entity is invincible
+bool entity::Active::getInvincible() { return invincible; }
+
 
 // the update loop for active entities
 void entity::Active::update(float deltaTime)
 {
+	if (invincible) // if the entity is currently invincible.
+	{
+		inviTime+= deltaTime; // adds to the invincibility timer to tell how long the entity has been invincible for.
+		
+		(getOpacity() < 1.0F) ? setOpacity(1.0F) : setOpacity(0.5F);
+
+		if (inviTime >= inviTimeMax)
+		{
+			setOpacity(1.0F); // makes the sprite completely opaque.
+			inviTime = 0.0F;
+			invincible = false;
+		}
+	}
+
 	Entity::update(deltaTime); // calls the entity update loop.
 }

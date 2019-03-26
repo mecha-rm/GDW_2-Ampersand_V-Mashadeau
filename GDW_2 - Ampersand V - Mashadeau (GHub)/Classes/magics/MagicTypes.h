@@ -21,12 +21,12 @@ namespace magic {
 		
 		/*
 		* Types:
-		*	null
-		*	shadow
-		*	fire
-		*	water
-		*	earth
-		*	air
+		*	0: null
+		*	1: shadow
+		*	2: fire
+		*	3: water
+		*	4: earth
+		*	5: air
 		*
 		* sets the type of magic the entity is; the constructor handles the weakness matchup.
 		*/
@@ -34,12 +34,12 @@ namespace magic {
 
 		/*
 		* Types:
-		*	null
-		*	shadow
-		*	fire
-		*	water
-		*	earth
-		*	air
+		*	0: null
+		*	1: shadow
+		*	2: fire
+		*	3: water
+		*	4: earth
+		*	5: air
 		*
 		* sets the type of magic the entity is, and the weakness matchup. This should NOT contradict the standard type magics.
 		* the question applied to this is "how weak is the entity to this type of attack?"

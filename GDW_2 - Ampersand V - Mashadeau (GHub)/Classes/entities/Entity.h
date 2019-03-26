@@ -149,6 +149,7 @@ namespace entity
 		// toggles the anti gravity on/off.
 		void setAntiGravity();
 
+
 		// returns a vector of all collision shapes for the entity.
 		const std::vector<OOP::Primitive *> getCollisionBodies() const;
 
@@ -156,23 +157,31 @@ namespace entity
 		void setCollisionBodies(std::vector<OOP::Primitive *>& colBodies);
 		
 		// checks collision between two primitives. Do note that if the primitives don't have a collision algorithim setup, this will return false.
-		static bool collision(OOP::Primitive & prim1, OOP::Primitive & prim2);
+		static bool collision(OOP::Primitive * prim1, OOP::Primitive * prim2);
 
 		// runs collisions between two primitive vectors. This should be used to check if a body collision collides with an attack collision.
 		// this cannot save what two primitives collided with one another.
 		static bool collision(std::vector<OOP::Primitive *>& cols1, std::vector<OOP::Primitive *>& cols2);
 
-		// checks for collision between the entity object and the one passed. This uses the getCollisionBodies
+		// checks for collision between the entity object and the one passed. This uses the collisionBodies.
 		bool collision(entity::Entity * e2);
 
-		// checks for collision between two entities.
+		// checks for collision between two entities. This uses the collisionBodies vectors for both entities.
 		static bool collision(entity::Entity * e1, entity::Entity * e2);
+
+		// checks for collision between two entities. If the collisionBodies vector isn't the one meant to be used, pass a different set of vectors. Just make sure they're actually meant for the entites.
+		static bool collision(entity::Entity * e1, const std::vector<OOP::Primitive *> & e1Bodies, entity::Entity * e2, const std::vector<OOP::Primitive *> & e2Bodies);
+
+
 
 		// returns the vector of animations.
 		std::vector<OOP::SpriteSheetAnimation *> getAnimations() const;
 
 		// returns an animation at the provided index. If no animation exists at this index, a 'nullptr' is returned.
-		OOP::SpriteSheetAnimation * getAnimation(unsigned int index) const;
+		OOP::SpriteSheetAnimation * getAnimationByIndex(unsigned int index) const;
+
+		// gets an animation by a tag. The first animation with this tag will be returned. If an animation with this tag is not found, a nullptr is returned.
+		OOP::SpriteSheetAnimation * getAnimationByTag(int tag);
 
 		// returns the index of the animation. If the animation does not exist in the animation vector, then a '-1' is returned.
 		int getAnimationIndex(const OOP::SpriteSheetAnimation *) const;
@@ -182,6 +191,15 @@ namespace entity
 
 		// adds an animation to the entity. It also returns the index get the animation that has been added.
 		void addAnimation(OOP::SpriteSheetAnimation *);
+
+		// runs an animation based on a provided index. If no animation has this index, then no animation is run.
+		void runAnimationByIndex(unsigned int index);
+
+		// runs an animation based on a provided tag. If no animation has this tag, no changes are made.
+		void runAnimationByTag(int tag);
+
+		// returns 'true' if an animation is currently running, and false otherwise.
+		bool runningAnimation();
 
 		// update loop
 		virtual void update(float deltaTime);
@@ -219,11 +237,13 @@ namespace entity
 		bool constVelocity = false;
 
 		
-		float age; // gets the length of time the entity has existed for, in milliseconds (delta time)
+		float age = 0; // gets the length of time the entity has existed for, in milliseconds (delta time)
 
 		std::string name = ""; // the entity's name
 		// int NAME_LEN; // maximum name lenth
 		std::string description = ""; // the entity's description
+
+		magic::magic_t magic = magic::magic_t(0); // the magic type of the entity.
 
 	protected:
 		// sets the sprite for the entity

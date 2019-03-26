@@ -38,13 +38,24 @@ namespace entity
 		// adds the force of the active entity's jump.
 		void addJumpForce();
 
+		// tells the program that the active entity has taken damage. Invincibility frames are started when this occures.
+		void gotHit();
+
+		// if true, the entity is currently invincible.
+		bool getInvincible();
+
 		// the update loop for the active entity.
 		void update(float deltaTime);
 
 	private:
 		float health; // the entity's health
+		
 		float MAX_HEALTH; // the entity's maximum health
+		
 		float attackPower; // the entity's attack power
+
+		bool invincible = false; // tells whether an entity is invincible or not.
+		
 
 	protected:
 		// sets the maximum health of the entity
@@ -58,6 +69,9 @@ namespace entity
 
 		Vec2 moveForce; // the amount of force applied when the entity moves.
 		float jump = 0.0F; // the fore applied when an active entity jumps
+
+		float inviTime = 0; // the amount of time since the entity has taken damage
+		float inviTimeMax = 0; // the amount of time an entity stays invincible for after getting hit.
 	};
 }
 

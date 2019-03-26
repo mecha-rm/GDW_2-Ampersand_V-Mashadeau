@@ -4,6 +4,8 @@
 #include "cocos/2d/CCSprite.h"
 #include "cocos/math/CCGeometry.h"
 
+#include "Primitives.h";
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -39,13 +41,24 @@ namespace OOP
 
 		// sets the tag for the sprite sheet frame. This can be used for identification.
 		void setTag(int & tag);
+
+		// sets the primitves for the animation frame. These primitives will be turned on when the animation frame is viewable, and off when it isn't.
+		void setPrimitives(std::vector<OOP::Primitive *> & newPrims);
+
+		// gets the primitives tied to the animation frame.
+		std::vector<OOP::Primitive *> & getPrimitives();
+
+		// sets whether the primitives are active or not.
+		void setActivePrimitives(bool active);
 		
 		int tag; // a tag that can identify the sprite frame.
 	private:
 		
 		cocos2d::Rect rect; // a rectangle used setting a sprite's texture rect.
+		
 		float delayUnits; // the delay units (in milliseconds) between this frame and the following frame.
 		
+		std::vector<OOP::Primitive *> prims;
 
 	protected:
 
@@ -186,19 +199,19 @@ namespace OOP
 		std::string getName() const;
 		
 		 // sets the name of the sprite sheet animtion.
-		void setName(std::string & name);
+		void setName(std::string name);
 
 		// gets the description of the sprite sheet animation.
 		std::string getDescription() const;
 
 		// sets the name of the sprite sheet animtion.
-		void setDescription(std::string & desc);
+		void setDescription(std::string desc);
 
-		// gets a tag representing the animation.
+		// gets a tag representing the animation. 0 by default.
 		int getTag() const;
 
 		// sets the tag for the sprite animation.
-		void setTag(int & tag);
+		void setTag(int tag);
 
 
 		// gets whether the animation is running or not. This will return true even if the animation is paused.
@@ -238,7 +251,7 @@ namespace OOP
 
 		std::string name = ""; // a name for the animation.
 		std::string description = ""; // a description for the animation.
-		int tag; // a tag that can identify the animation.
+		int tag = 0; // a tag that can identify the animation.
 
 		bool running = false; // sets whether the animation is running or not.
 		bool paused = false; // pauses an animation if true.

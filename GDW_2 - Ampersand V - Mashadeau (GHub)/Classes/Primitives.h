@@ -30,7 +30,7 @@ namespace OOP
 	// creates the draw node
 			Primitive(const short int ID);
 			// releases the drawNode
-			virtual ~Primitive();
+			~Primitive();
 
 			// returns square primitive
 			cocos2d::DrawNode * getPrimitive() const;
@@ -154,9 +154,6 @@ namespace OOP
 		// creates an oriented square draw primitive. This is based on the middle of the rect.
 		PrimitiveOrientedSquare(const cocos2d::Vec2 & position, const float & width, const float & height, float rotation = 0.0F, bool inDegrees = false, const cocos2d::Color4F colour = cocos2d::Color4F::RED);
 
-		// creates an oriented square draw primitive. This is based on the middle of the rect.
-		PrimitiveOrientedSquare(const cocos2d::Vec2 & position, const float  & sideLength, float rotation = 0.0F, bool inDegrees = false, const cocos2d::Color4F colour = cocos2d::Color4F::RED);
-
 		// turns a primitive square into an orented primitive square with a rotation factor of 0.
 		PrimitiveOrientedSquare(const OOP::PrimitiveSquare &);
 
@@ -253,6 +250,9 @@ namespace OOP
 		// gets the position of the circle at one of the endings of the capsule. This should be at the ending of the capsule.
 		cocos2d::Vec2 getCirclePosition2() const;
 
+		// gets the rectangle for the capsule as an oriented square.
+		OOP::PrimitiveOrientedSquare * getOrientedRect() const;
+
 		// returns the rotation factor of the primitive in degrees.
 		float getRotationInDegrees() const;
 
@@ -271,6 +271,9 @@ namespace OOP
 
 		// the radius of the capsule.
 		const float m_RADIUS;
+
+		const float m_RECT_WIDTH; // the width (i.e. x-length) of the capsule rectangle. This is unrotated.
+		const float m_RECT_HEIGHT; // the height (i.e. y-length) of the capsule rectangle This is unrotated.
 
 	private:
 

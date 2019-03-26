@@ -62,9 +62,9 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		}
 
 		collisionBodies.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
-		collisionBodies.at(0)->setVisible(true);
+		collisionBodies.at(0)->setVisible(shapesVisible);
 
-		// sprite->setVisible(false); // uncomment to hide all graphics
+		// sprite->setVisible(shapesVisible); // uncomment to hide all graphics
 		break;
 	case 5: // spawn 0
 	case 6: // spawn 1
@@ -80,7 +80,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 
 		// spawn points don't have hitboxes, so no primitives are made.
 
-		// sprite->setVisible(false); // uncomment to hide all graphics
+		// sprite->setVisible(shapesVisible); // uncomment to hide all graphics
 		break;
 	case 10: // stock block
 		

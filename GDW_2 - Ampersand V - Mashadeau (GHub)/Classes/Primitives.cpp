@@ -133,10 +133,6 @@ OOP::PrimitiveOrientedSquare::PrimitiveOrientedSquare(const cocos2d::Vec2 & posi
 	m_Node->setRotation(rotation); // rotates the drawNode.
 }
 
-// creates a rotatable square based on a provided position and side length. It reuses another function.
-OOP::PrimitiveOrientedSquare::PrimitiveOrientedSquare(const cocos2d::Vec2 & position, const float & sideLength, float rotation, bool inDegrees, const cocos2d::Color4F colour)
-	: PrimitiveOrientedSquare(position, sideLength, sideLength, rotation, inDegrees, colour) {}
-
 // creates a primitive oriented square out of a regular primitive square.
 OOP::PrimitiveOrientedSquare::PrimitiveOrientedSquare(const OOP::PrimitiveSquare & sqrPrim)
 	: PrimitiveSquare(sqrPrim)
@@ -220,7 +216,8 @@ void OOP::PrimitiveLine::setRotationInRadians(float rotation) { m_Node->setRotat
 
 //// CAPSULE /////////////////////////////////////////////////////////////////////////////
 // creates a capsule
-OOP::PrimitiveCapsule::PrimitiveCapsule(cocos2d::Vec2 startingPoint, cocos2d::Vec2 endingPoint, float radius, const cocos2d::Color4F colour) : Primitive(5), /*m_Node(cocos2d::DrawNode::create()),*/ m_RADIUS(abs(radius))
+OOP::PrimitiveCapsule::PrimitiveCapsule(cocos2d::Vec2 startingPoint, cocos2d::Vec2 endingPoint, float radius, const cocos2d::Color4F colour)
+	: Primitive(5), /*m_Node(cocos2d::DrawNode::create()),*/ m_RADIUS(abs(radius)), m_RECT_WIDTH(abs(endingPoint.x - startingPoint.x)), m_RECT_HEIGHT(abs(endingPoint.y - startingPoint.y))
 {
 	// Works when angle is greater than 3.14 rad, or when a 90 degree angle
 
@@ -348,6 +345,9 @@ cocos2d::Vec2 OOP::PrimitiveCapsule::getCirclePosition1() const { return m_Circl
 
 // gets the ending circle of the capsule
 cocos2d::Vec2 OOP::PrimitiveCapsule::getCirclePosition2() const { return m_Circle2; }
+
+// gets an oriented rectangle from the capsule.
+OOP::PrimitiveOrientedSquare * OOP::PrimitiveCapsule::getOrientedRect() const { return new OOP::PrimitiveOrientedSquare(getPosition(), m_RECT_WIDTH, m_RECT_HEIGHT); }
 
 // gets the rotation factor of the capsule in degrees.
 float OOP::PrimitiveCapsule::getRotationInDegrees() const { return m_theta; }

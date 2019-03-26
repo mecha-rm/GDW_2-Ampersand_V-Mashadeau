@@ -19,7 +19,9 @@ OOP::KeyboardListener::KeyboardListener(cocos2d::Scene * scene) : keyboardListen
 }
 
 
-OOP::KeyboardListener::~KeyboardListener() { keyboardListener->release(); }
+OOP::KeyboardListener::~KeyboardListener() { 
+	scene->getEventDispatcher()->removeEventListener(keyboardListener);
+	/*keyboardListener->release();*/ }
 
 // key down
 void OOP::KeyboardListener::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event * event)

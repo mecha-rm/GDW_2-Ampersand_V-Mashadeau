@@ -21,10 +21,7 @@ entity::Entity::Entity(std::string texture, float globalZOrder) : sprite(Sprite:
 // releases the sprite 
 entity::Entity::~Entity() 
 {
-	sprite->release(); // this is apparently a bad idea.
-
-	// for (int i = 0; i < collisionBodies.size(); i++)
-		// collisionBodies[i]->getPrimitive()->release
+	// collisionBodies.clear();
 }
 
 // returns the length of time the entity has existed for.
@@ -286,7 +283,10 @@ void entity::Entity::setCollisionBodies(std::vector<OOP::Primitive*>& colBodies)
 // checks collision between two primitives. If a collision check for this combination doesn't exist, a false is returned.
 bool entity::Entity::collision(OOP::Primitive * prim1, OOP::Primitive * prim2)
 {
-	
+	return OOP::Primitive::collision(prim1, prim2);
+
+
+	/*
 	// temporary vectors used for collision checks.
 	std::vector<OOP::Primitive *> vec1;
 	std::vector<OOP::Primitive *> vec2;
@@ -296,7 +296,7 @@ bool entity::Entity::collision(OOP::Primitive * prim1, OOP::Primitive * prim2)
 	vec2.push_back(prim2);
 
 	return collision(vec1, vec2);
-	
+	*/
 
 	/*
 	OOP::PrimitiveSquare * tempRect1 = nullptr; // a temporary object that stores a rect from e1, in the position it is in overall.

@@ -2,18 +2,6 @@
 #pragma once
 #include "cocos2d.h"
 
-// Question 2: cocos2d forward declarations
-namespace cocos2d
-{
-	class Event;
-	class EventListenerMouse;
-	class EventMouse;
-	class MouseButton;
-
-	class Label;
-	class Scene;
-}
-
 namespace OOP
 {
 	// Question 3: MouseListener Class

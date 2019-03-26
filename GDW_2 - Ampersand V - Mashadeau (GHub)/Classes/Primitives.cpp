@@ -16,7 +16,7 @@ OOP::Primitive::Primitive(const short int ID) : m_Node(cocos2d::DrawNode::create
 }
 
 // releases the drawNode. This was originally done in every destructor, but now only happens here.
-OOP::Primitive::~Primitive() { m_Node->release(); }
+OOP::Primitive::~Primitive() { /*m_Node->release();*/ }
 
 // returns the primitive.
 cocos2d::DrawNode * OOP::Primitive::getPrimitive() const { return m_Node; }

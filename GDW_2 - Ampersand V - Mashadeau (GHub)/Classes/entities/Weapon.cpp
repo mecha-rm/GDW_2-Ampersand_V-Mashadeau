@@ -2,7 +2,7 @@
 
 
 
-entity::Weapon::Weapon(unsigned int WIN) : Inactive() {}
+entity::Weapon::Weapon(unsigned int WIN) : Inactive() { createWeapon(WIN); }
 
 
 entity::Weapon::~Weapon() {}
@@ -23,11 +23,13 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 	// WIN 000
 	case 0:
 	default:
-		this->WIN = 0;
+		this->WIN = 0.0F;
 
 		setName("Lite Dagger");
 		setDescription("A weak dagger that the player starts with");
-		sprite->setTexture("weapons/WIN_000.png");
+		sprite->setTexture("images/weapons/WIN_000.png");
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		sprite->setTextureRect(frameSize);
 
 		setMagicType(magic::null);
 		damage = 3.0F;
@@ -38,6 +40,7 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 
 		break;
 	}
+
 }
 
 // sets the damage done by the wepaon

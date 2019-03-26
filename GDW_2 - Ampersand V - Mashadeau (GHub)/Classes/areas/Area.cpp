@@ -35,13 +35,16 @@ world::Area::Area(std::string backgroundLayer1, std::string backgroundLayer2, st
 // destructor; releases all sprites.
 world::Area::~Area()
 {
-	bg1->release();
-	bg2->release();
-	bg3->release();
-	fg->release();
+	// bg1->release();
+	// bg2->release();
+	// bg3->release();
+	// fg->release();
 
-	areaEnemies.clear();
-	areaTiles.clear();
+	// areaEnemies.clear();
+	// areaTiles.clear();
+
+	// areaEnemies.clear();
+	// areaTiles.clear();
 }
 
 // Returns the first background layer
@@ -162,6 +165,7 @@ Node * world::Area::getAsSingleNode()
 		tempNode->addChild(areaEnemies[i]->getSprite());
 	
 	// bg2->setGlobalZOrder(0.0F);
+	t = tempNode;
 	return tempNode;
 }
 
@@ -552,8 +556,9 @@ void world::Area::update(float deltaTime)
 		
 		if (areaEnemies[i]->getHealth() <= 0.0F)
 		{
-			tempEntity = areaEnemies[i];
+			// tempEntity = areaEnemies[i];
 			// tempEntity = areaEnemies.at(i);
+			
 			areaEnemies.erase(areaEnemies.begin() + i); // erases the pointer.
 			// tempEntity->~Entity();
 			// delete tempEntity;

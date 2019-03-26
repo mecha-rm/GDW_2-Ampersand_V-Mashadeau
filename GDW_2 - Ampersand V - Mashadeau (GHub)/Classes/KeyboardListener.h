@@ -1,17 +1,6 @@
 #pragma once
 #include "cocos2d.h"
 
-namespace cocos2d
-{
-	class Event;
-	class EventListenerKeyboard;
-	class EventKeyboard;
-	class KeyboardListener;
-
-	class Label;
-	class Scene;
-}
-
 namespace OOP
 {
 	class KeyboardListener

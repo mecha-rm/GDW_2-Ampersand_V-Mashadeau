@@ -139,7 +139,7 @@ void MSQ_GameplayScene::initSprites()
 	// creating the grid
 	grid = new OOP::PrimitiveGrid(cocos2d::Vec2(0.0F, 0.0F), cocos2d::Vec2(director->getWinSizeInPixels().width, director->getWinSizeInPixels().height), 128.0F, Color4F::WHITE);
 	// grid->getPrimitive()->setGlobalZOrder(10.3F); // makes the grid be above everything else.
-	grid->getPrimitive()->setVisible(false); // makes the grid visible (or not visible)
+	grid->getPrimitive()->setVisible(true); // makes the grid visible (or not visible)
 	this->addChild(grid->getPrimitive()); // adds grid to drawList
 
 
@@ -160,8 +160,8 @@ void MSQ_GameplayScene::initSprites()
 	this->addChild(drawNode);
 	*/
 
-	shapesVisible = false;
-	mouse.setLabelVisible(false);
+	// shapesVisible = false;
+	// mouse.setLabelVisible(false);
 }
 
 // initializes pause menu; currently does nothing.
@@ -306,9 +306,13 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 // the last digit is needed to know what spawn point to use. It must be greater than or equal to 0, and not exceed 4 (it can be 4 though).
 void MSQ_GameplayScene::switchArea(std::string & fileName)
 {
+
 	std::string spawn = ""; // the spawn point of the player in the new area
 	Scene * newScene = nullptr; // a new gameplay scene that will load up a new area.
 	TransitionerScene * pathScene = nullptr; // the scene transferred to for transitions.
+
+	if (switchingScenes)
+		return;
 
 	try // handles invalid uses of this function.
 	{
@@ -354,11 +358,23 @@ void MSQ_GameplayScene::switchArea(std::string & fileName)
 	// director->replaceScene(newScene);
 	// Director::getInstance()->replaceScene(TransitionCrossFade::create(1.0F, newScene));
 
+	if (this->getChildrenCount() > 0)
+	{
+		// this->removeAllChildren();
+		// switchingScenes = false;
+	}
+
 	newScene = GameplayScene::createScene(); // creates the gameplay scene.
 	
+	
 	// newScene = GameplayScene::createScene(); // creates the gameplay scene.
-	Director::getInstance()->replaceScene(TransitionFadeBL::create(1.0F, newScene)); // replaces the scene for the director, and does a transition.
+
+	// if a scene transition is used, the trnasition must finish before the program allows user input, BUT if this happens then the game will start processing things before the player can actually do anything.
+	director->replaceScene(TransitionFadeBL::create(1.0F, newScene)); // replaces the scene for the director, and does a transition.
+	
 	switchingScenes = true; // becomes 'true' so that scene switches don't overlay one another.
+
+	
 }
 
 // runs collision tests.
@@ -370,7 +386,7 @@ void MSQ_GameplayScene::collisions()
 	enemyTileCollisions(); // collision between the enemies and the tiles.
 	
 	playerEnemyCollisions(); // called for player collisions with enemies
-	weaponEnemyCollisions();
+	// weaponEnemyCollisions();
 }
 
 // calculates player collision with tiles.
@@ -400,9 +416,11 @@ void MSQ_GameplayScene::playerTileCollisions()
 			
 			if (!switchingScenes && tile->getTIN() >= 0 && tile->getTIN() <= 4) // if it's a scene exit, then no ohter checks need to be done.
 			{
-				switchArea(sceneArea->getExit(tile->getTIN())); // gets the tile identification number, and gets the exit attached to it.
+				nextArea = sceneArea->getExit(tile->getTIN());
+				swapScene = true;
+				// switchArea(sceneArea->getExit(tile->getTIN())); // gets the tile identification number, and gets the exit attached to it.
 				// delete plyr;
-				break;
+				return;
 			}
 			
 
@@ -521,8 +539,18 @@ void MSQ_GameplayScene::weaponEnemyCollisions()
 	if (weapon == nullptr)
 		return;
 
+
+	for (int i = 0; i < weapon->getCollisionBodies().size(); i++)
+	{
+		// for(int j = 0; j < )
+	}
+
+
 	for (entity::Enemy * emy : *sceneEnemies) // checks collision between the weapon and the enenmy.
 	{
+		if (emy == nullptr)
+			continue;
+
 		if (entity::Entity::collision(weapon, emy)) // if there is collision.
 		{
 			emy->setHealth(emy->getHealth() - weapon->getDamage());
@@ -536,15 +564,7 @@ void MSQ_GameplayScene::weaponEnemyCollisions()
 void MSQ_GameplayScene::update(float deltaTime)
 {
 	if (switchingScenes)
-	{
-		if (this->getChildrenCount() > 0)
-			this->removeAllChildren();
 		return;
-	}
-	else if (!switchingScenes && areaName == "AIN_X01")
-	{
-		// std::cout << "test?" << std::endl;
-	}
 
 	// if (switchingScenes) // if the program is currently switching scenes, the update loop isn't started.
 		// return;
@@ -599,6 +619,23 @@ void MSQ_GameplayScene::update(float deltaTime)
 	sceneArea->update(deltaTime);
 
 	collisions();
+
+	// if (switchingScenes)
+	//{
+		
+	// 	return;
+	// }
+	// else if (!switchingScenes && areaName == "AIN_X01")
+	// {
+		// std::cout << "test?" << std::endl;
+	// }
+
+	if (swapScene && !switchingScenes)
+	{
+		swapScene = false;
+		switchArea(nextArea);
+		nextArea = "";
+	}
 }
 
 

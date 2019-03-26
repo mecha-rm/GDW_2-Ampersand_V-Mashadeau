@@ -36,8 +36,6 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	setHealth(getMaxHealth());
 	inviTimeMax = 3.0F;
 
-	weapons.push_back(new Weapon(0));
-
 	// no animation (0); 1 frame
 	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, true, true);
 	tempAnimate->setName("static");

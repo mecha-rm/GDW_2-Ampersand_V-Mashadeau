@@ -27,74 +27,74 @@ namespace OOP
 	class Primitive
 	{
 	public:
-	// creates the draw node
-			Primitive(const short int ID);
-			// releases the drawNode
-			virtual ~Primitive();
+		// creates the draw node
+		Primitive(const short int ID);
+		// releases the drawNode
+		virtual ~Primitive();
 
-			// returns square primitive
-			cocos2d::DrawNode * getPrimitive() const;
+		// returns square primitive
+		cocos2d::DrawNode * getPrimitive() const;
 
-			// gets the position of the vector.
-			cocos2d::Vec2 getPosition() const;
+		// gets the position of the vector.
+		cocos2d::Vec2 getPosition() const;
 
-			// sets the position of the primitive. This is a 'pure virtual' function so that an object of this type can't be created.
-			// the setPosition() was made virtual because some other things may need to be repositioned in specific primitives.
-			virtual void setPosition(cocos2d::Vec2 position) = 0;
+		// sets the position of the primitive. This is a 'pure virtual' function so that an object of this type can't be created.
+		// the setPosition() was made virtual because some other things may need to be repositioned in specific primitives.
+		virtual void setPosition(cocos2d::Vec2 position) = 0;
 
-			// returns whether the collision shape is visible or not.
-			bool isVisible() const; 
+		// returns whether the collision shape is visible or not.
+		bool isVisible() const; 
 
-			// turns on/off the visibility of the primitive.
-			void setVisible(bool visible);
+		// turns on/off the visibility of the primitive.
+		void setVisible(bool visible);
 
-			// toggle for visible; it turns it on/off.
-			void setVisible();
+		// toggle for visible; it turns it on/off.
+		void setVisible();
 
-			// gets the tag of the primitive.
-			int getTag() const;
+		// gets the tag of the primitive.
+		int getTag() const;
 
-			// sets the tag of the primitive. This is 0 by default.
-			void setTag(int tag);
+		// sets the tag of the primitive. This is 0 by default.
+		void setTag(int tag);
 			
-			// if 'true', then that means this shape is being used for collisions. If false, then this shape is NOT being used for collisions.
-			// Note that this parameter is essentially meaningless for grid and line primitives.
-			// primitives will have have their opacity cut by 50% when they are not active.
-			// this is true by default.
-			bool isActive() const;
+		// if 'true', then that means this shape is being used for collisions. If false, then this shape is NOT being used for collisions.
+		// Note that this parameter is essentially meaningless for grid and line primitives.
+		// primitives will have have their opacity cut by 50% when they are not active.
+		// this is true by default.
+		bool isActive() const;
 			
-			// sets whether a primitive is active or not, i.e. if it's open for collisions or not.
-			// Note that this parameter is essentially meaningless for grid and line primitives.
-			// primitives will have have their opacity cut by 50% when they are not active.
-			void setActive(bool active);
+		// sets whether a primitive is active or not, i.e. if it's open for collisions or not.
+		// Note that this parameter is essentially meaningless for grid and line primitives.
+		// primitives will have have their opacity cut by 50% when they are not active.
+		void setActive(bool active);
 
-			// toggle's primitive functionality as a collision shape on and off.
-			// Note that this parameter is essentially meaningless for grid and line primitives.
-			// primitives will have have their opacity cut put at 50% when they are not active.
-			void setActive();
+		// toggle's primitive functionality as a collision shape on and off.
+		// Note that this parameter is essentially meaningless for grid and line primitives.
+		// primitives will have have their opacity cut put at 50% when they are not active.
+		void setActive();
 
-			/*
-			 * The type of the primitive. Use this for reference when you need to know what to downcast to.
-			 * 1 = sqaure (AABB)
-			 * 2 = square (OBB)
-			 * 3 = circle
-			 * 4 = line
-			 * 5 = capsule
-			 * 6 = grid
+		/*
+			* The type of the primitive. Use this for reference when you need to know what to downcast to.
+			* 1 = sqaure (AABB)
+			* 2 = square (OBB)
+			* 3 = circle
+			* 4 = line
+			* 5 = capsule
+			* 6 = grid
 
-			 // returns an id that identifies what type the primitive is.
-			*/
-			short int getId();
+			// returns an id that identifies what type the primitive is.
+		*/
+		short int getId();
 
-			/*
-			// collision between two primitives. Returns false if there is no check.
-			* AABB - AABB
-			* Circle - Circle
-			* Capsule - Capsule (cannot do OBB and Circle)
-			* AABB - OBB
-			* AABB - Circle
-			*/
-			static bool collision(OOP::Primitive * p1, OOP::Primitive * p2);
+		/*
+		// collision between two primitives. Returns false if there is no check.
+		* AABB - AABB
+		* Circle - Circle
+		* Capsule - Capsule (cannot do OBB and Circle)
+		* AABB - OBB
+		* AABB - Circle
+		*/
+		static bool collision(OOP::Primitive * p1, OOP::Primitive * p2);
 
 	private:
 		int tag = 0; // an identification tag

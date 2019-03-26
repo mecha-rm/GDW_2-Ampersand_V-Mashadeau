@@ -163,6 +163,7 @@ namespace world
 		// Foreground image.
 		Sprite * fg = nullptr; // a foreground layer; this would go in front of all other level assets.
 
+		Node * t;
 	private:
 		float gravity = 100.0F; // the level of gravity in the area.
 

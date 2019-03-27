@@ -35,16 +35,17 @@ world::Area::Area(std::string backgroundLayer1, std::string backgroundLayer2, st
 // destructor; releases all sprites.
 world::Area::~Area()
 {
-	// bg1->release();
-	// bg2->release();
-	// bg3->release();
-	// fg->release();
+	if (bg1 != nullptr)
+		bg1->removeFromParent();
 
-	// areaEnemies.clear();
-	// areaTiles.clear();
+	if (bg2 != nullptr)
+		bg2->removeFromParent();
 
-	// areaEnemies.clear();
-	// areaTiles.clear();
+	if (bg3 != nullptr)
+		bg3->removeFromParent();
+
+	if (fg != nullptr)
+		fg->removeFromParent();
 }
 
 // Returns the first background layer
@@ -554,14 +555,12 @@ void world::Area::update(float deltaTime)
 	{
 		areaEnemies[i]->update(deltaTime);
 		
-		if (areaEnemies[i]->getHealth() <= 0.0F)
+		if (areaEnemies[i]->getHealth() <= 0.0F) // if the enemy has lost all of its health.
 		{
-			// tempEntity = areaEnemies[i];
-			// tempEntity = areaEnemies.at(i);
-			
+			for (OOP::Primitive * p : areaEnemies[i]->getCollisionBodies()) // removing all of the primitives from their parents.
+				p->getPrimitive()->removeFromParent();
+
 			areaEnemies.erase(areaEnemies.begin() + i); // erases the pointer.
-			// tempEntity->~Entity();
-			// delete tempEntity;
 
 			
 		}

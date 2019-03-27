@@ -72,7 +72,7 @@ private:
 	// event toggles; these turn certain functions on or off.
 	const bool ENABLE_MOUSE = true; // turns mouse functionality on/off.
 	const bool ENABLE_KEYBOARD = true; // turns keyboard functionality on/off.
-	const bool ENABLE_CONTACT = true; // turns collision functionality on/off.
+	const bool ENABLE_CAMERA = false; // enables the game camera.
 
 	bool gridVisible = false; // turns on the grid.
 	OOP::PrimitiveGrid * grid = nullptr; // stores the grid information
@@ -86,7 +86,7 @@ private:
 	world::Area * sceneArea; // the current area of the scene
 	bool switchingScenes = false; // becomes 'true' when the scenes are being switched so that the switch animation doesn't get restarted over and over.
 	
-	bool swapScene = false; 
+	// bool swapScene = false; 
 	std::string nextArea = "";
 
 	static std::string areaName; // saves the current area of the scene. This will be used for loading and unloading areas. This is only used upon scene initialization.

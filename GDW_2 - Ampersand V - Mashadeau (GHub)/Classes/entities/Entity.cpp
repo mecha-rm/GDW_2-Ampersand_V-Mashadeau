@@ -21,7 +21,9 @@ entity::Entity::Entity(std::string texture, float globalZOrder) : sprite(Sprite:
 // releases the sprite 
 entity::Entity::~Entity() 
 {
-	// collisionBodies.clear();
+	collisionBodies.clear(); // clearing the primitives so the destructors are called.
+	sprite->removeFromParent();
+	
 }
 
 // returns the length of time the entity has existed for.

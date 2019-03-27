@@ -93,9 +93,6 @@ void MSQ_GameplayScene::initListeners()
 // initalizes all sprites
 void MSQ_GameplayScene::initSprites() 
 {
-	if (areaName == "AIN_X01")
-		std::cout << "let's do this thing." << std::endl;
-
 	// the hp bar's position
 	Vec2 hpBarPos{ director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.96F };
 	// the magic bar's position
@@ -143,25 +140,12 @@ void MSQ_GameplayScene::initSprites()
 	this->addChild(grid->getPrimitive()); // adds grid to drawList
 
 
-	// setting the camera
-	// this->getDefaultCamera()->setAnchorPoint(Vec2(0.5F, 0.5F)); // setting the camera's anchour point
-	// this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the location of the camera
-	
-	/* 
-	// Tester things; ignore this.
-	// DrawNode().setRot
-	// sceneTiles->at(0)->getPosition().x - 64.0F, sceneTiles->at(0)->getPosition().y - 64.0F, 128.0F, 128.0F
-	sceneTiles->at(0)->rotateEntity(umath::degreesToRadians(30.0F), Vec2(0, 0));
-	DrawNode * drawNode(DrawNode::create());
-	drawNode->drawRect(Vec2(sceneTiles->at(0)->getPosition().x - 64.0F, sceneTiles->at(0)->getPosition().y - 64.0F), Vec2(sceneTiles->at(0)->getPosition().x + 64.0F, sceneTiles->at(0)->getPosition().y + 64.0F), Color4F::RED);
-	drawNode->drawRect(Vec2(plyr->getPosition().x - 37.0f, plyr->getPosition().y - 91.0F), Vec2(plyr->getPosition() + Vec2(37.0F, 91.0F)), Color4F::RED);
-	// drawNode->setRotation(30.0F);
-	drawNode->setGlobalZOrder(20.0F);
-	this->addChild(drawNode);
-	*/
-
-	// shapesVisible = false;
-	// mouse.setLabelVisible(false);
+	// setting the camera if it's activated.
+	if (ENABLE_CAMERA)
+	{
+		this->getDefaultCamera()->setAnchorPoint(Vec2(0.5F, 0.5F)); // setting the camera's anchour point
+		this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the location of the camera
+	}
 }
 
 // initializes pause menu; currently does nothing.
@@ -345,36 +329,16 @@ void MSQ_GameplayScene::switchArea(std::string & fileName)
 		return;
 	}
 
-	areaName = fileName; // saves the new area so that it's set upon initalization.
-	spawnPoint = std::stoi(spawn); // saves the spawn point of the player for when they get in the new area.
-
-	// pathScene = new TransitionerScene();
-	// pathScene->switchScene(GameplayScene::createScene());
-	// newScene = pathScene->createScene();
-	// Director::getInstance()->replaceScene(TransitionFadeBL::create(1.0F, newScene));
-
-	// newScene = pathScene->createScene(); // creates the gameplay scene.
-	// pathScene = nullptr;
-	// director->replaceScene(newScene);
-	// Director::getInstance()->replaceScene(TransitionCrossFade::create(1.0F, newScene));
-
-	if (this->getChildrenCount() > 0)
-	{
-		// this->removeAllChildren();
-		// switchingScenes = false;
-	}
+	areaName = fileName; // saves the new area so that it's set upon initalization of the new game object.
+	spawnPoint = std::stoi(spawn); // saves the spawn point of the player for when they get into the new area.
 
 	newScene = GameplayScene::createScene(); // creates the gameplay scene.
 	
-	
-	// newScene = GameplayScene::createScene(); // creates the gameplay scene.
+	// if a scene transition is used, the trnansition must finish before the program allows user input, BUT if this happens then the game will start processing things before the player can actually do anything.
+	// director->replaceScene(TransitionFadeBL::create(1.0F, newScene)); // replaces the scene for the director, and does a transition.
+	director->replaceScene(newScene); // replaces the scene without a transition.
 
-	// if a scene transition is used, the trnasition must finish before the program allows user input, BUT if this happens then the game will start processing things before the player can actually do anything.
-	director->replaceScene(TransitionFadeBL::create(1.0F, newScene)); // replaces the scene for the director, and does a transition.
-	
 	switchingScenes = true; // becomes 'true' so that scene switches don't overlay one another.
-
-	
 }
 
 // runs collision tests.
@@ -416,9 +380,9 @@ void MSQ_GameplayScene::playerTileCollisions()
 			
 			if (!switchingScenes && tile->getTIN() >= 0 && tile->getTIN() <= 4) // if it's a scene exit, then no ohter checks need to be done.
 			{
-				nextArea = sceneArea->getExit(tile->getTIN());
-				swapScene = true;
-				// switchArea(sceneArea->getExit(tile->getTIN())); // gets the tile identification number, and gets the exit attached to it.
+				// nextArea = sceneArea->getExit(tile->getTIN());
+				// swapScene = true;
+				switchArea(sceneArea->getExit(tile->getTIN())); // gets the tile identification number, and gets the exit attached to it.
 				// delete plyr;
 				return;
 			}
@@ -563,15 +527,19 @@ void MSQ_GameplayScene::weaponEnemyCollisions()
 // update loop
 void MSQ_GameplayScene::update(float deltaTime)
 {
-	if (switchingScenes)
+	if (switchingScenes) // updates are no longer run if the scene is being switched.
 		return;
 
 	// if (switchingScenes) // if the program is currently switching scenes, the update loop isn't started.
 		// return;
 	
 	// entity::Enemy * eme = sceneEnemies->at(0);
-	// this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the position of the camera so that it follows hte player
-	// sceneArea->setAllLayerPositions(this->getDefaultCamera()->getPosition()); // makes the backgrounds be directly behind the player. This needs to be changed later so that it scrolls.
+
+	if (ENABLE_CAMERA) // updates the camera if it's active.
+	{
+		this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the position of the camera so that it follows hte player
+		sceneArea->setAllLayerPositions(this->getDefaultCamera()->getPosition()); // makes the backgrounds be directly behind the player. This needs to be changed later so that it scrolls.
+	}
 
 	// These movement parameters will need to be changed later.
 	// if the cancels are true, then the player can't move that given direction.
@@ -620,22 +588,6 @@ void MSQ_GameplayScene::update(float deltaTime)
 
 	collisions();
 
-	// if (switchingScenes)
-	//{
-		
-	// 	return;
-	// }
-	// else if (!switchingScenes && areaName == "AIN_X01")
-	// {
-		// std::cout << "test?" << std::endl;
-	// }
-
-	if (swapScene && !switchingScenes)
-	{
-		swapScene = false;
-		switchArea(nextArea);
-		nextArea = "";
-	}
 }
 
 

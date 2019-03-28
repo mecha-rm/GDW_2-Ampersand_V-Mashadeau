@@ -32,11 +32,11 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 		sprite->setTextureRect(frameSize);
 
 		setMagicType(magic::null);
-		damage = 3.0F;
+		setDamage(5.0F);
 	
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(152.0F, 63.0F), 63, 68, CLR_ATK));
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(187.0F, 71.0F), 37, 89, CLR_ATK));
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(167.0F, 130.0F), 53, 68, CLR_ATK));
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(152.0F - 128.0F, 63.0F - 128.0F), 63, 68, CLR_ATK));
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(187.0F - 128.0F, 71.0F - 128.0F), 37, 89, CLR_ATK));
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(167.0F - 128.0F, 130.0F - 128.0F), 53, 68, CLR_ATK));
 
 		break;
 	}

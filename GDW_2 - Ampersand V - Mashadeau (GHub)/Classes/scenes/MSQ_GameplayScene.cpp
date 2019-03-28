@@ -364,7 +364,9 @@ void MSQ_GameplayScene::playerTileCollisions()
 	cocos2d::Vec2 distVec(0.0F, 0.0F); // saves the distance between the two entities on the (x, y)
 	cocos2d::Vec2 minDistVec(0.0F, 0.0F); // saves the minimum distance 
 	float dist = 0.0F; // the distance between the two entities, which is the 'c' value in the pythagorean theorem.
-	float angle;
+	float theta; // the angle between the player and the tile
+
+	float compAngle = 60.0F; // the angle used to check the player's position relative to the tile, in degrees.
 
 	plyr->setAntiGravity(false); // the player is now affected by gravity. If the player is on a tile, gravity is turned off.
 	plyr->cancelUp = false;
@@ -377,7 +379,7 @@ void MSQ_GameplayScene::playerTileCollisions()
 		if (entity::Entity::collision(plyr, sceneArea->getAreaTiles()->at(i))) // if collision has happened, the program doesn't continue to check.
 		{
 			tile = sceneArea->getAreaTiles()->at(i); // saves the tile the player has collided with.
-			
+
 			if (!switchingScenes && tile->getTIN() >= 0 && tile->getTIN() <= 4) // if it's a scene exit, then no ohter checks need to be done.
 			{
 				// nextArea = sceneArea->getExit(tile->getTIN());
@@ -386,13 +388,14 @@ void MSQ_GameplayScene::playerTileCollisions()
 				// delete plyr;
 				return;
 			}
-			
+
 
 			// gets what primitives collided with the player.
 			colPrim1 = plyr->collidedPrimitive;
 			colPrim2 = tile->collidedPrimitive;
 
 			distVec = plyr->getPosition() - tile->getPosition(); // calculates the distance along the x and y between the player and the tile.
+			// distVec = Vec2(abs(distVec.x), abs(distVec.y));
 
 			dist = sqrt(pow(distVec.x, 2) + pow(distVec.y, 2)); // gets the distance between the player and the tile, usin the pythagoren theorem.
 
@@ -400,49 +403,69 @@ void MSQ_GameplayScene::playerTileCollisions()
 			// both of them are squares.
 			if (colPrim1->getId() == 1 && colPrim2->getId() == 1)
 			{
-				minDistVec.x = ((OOP::PrimitiveSquare *) colPrim1)->m_WIDTH + ((OOP::PrimitiveSquare *) colPrim2)->m_WIDTH;
-				minDistVec.y = ((OOP::PrimitiveSquare *) colPrim2)->m_HEIGHT + ((OOP::PrimitiveSquare *) colPrim2)->m_HEIGHT;
-			
+				minDistVec.x = ((OOP::PrimitiveSquare *) colPrim1)->m_WIDTH / 2 + ((OOP::PrimitiveSquare *) colPrim2)->m_WIDTH / 2;
+				minDistVec.y = ((OOP::PrimitiveSquare *) colPrim1)->m_HEIGHT / 2 + ((OOP::PrimitiveSquare *) colPrim2)->m_HEIGHT / 2;
+
 				// distVec = plyr->getPosition() - Vec2(0.0F, ((OOP::PrimitiveSquare *) colPrim2)->m_HEIGHT / 2) - tile->getPosition();
 			}
 
 			// angle = asinf(distVec.y / dist);
-			angle = atanf(distVec.y / distVec.x); // gets the angle between the the player and the tile using TOA (opposite/adjacent) 
+			theta = atanf(distVec.y / distVec.x); // gets the angle between the the player and the tile using TOA (opposite/adjacent) 
+
+			/*
+			if (distVec.x < minDistVec.x && distVec.y < minDistVec.x)
+			{
+				plyr->setPositionX((plyr->getPositionX() < tile->getPositionX()) ? tile->getPositionX() - minDistVec.x : tile->getPositionX() + minDistVec.x);
+
+				// plyr->setPosition(plyr->getPosition() + Vec2(minDistVec.x * umath::rotate(minDistVec.getNormalized(), angle).x, minDistVec.y * umath::rotate(minDistVec.getNormalized(), angle).y));
+
+				// (plyr->getPositionX() < tile->getPositionX()) ? plyr->setPositionX(tile->getPositionX() - minDistVec.x) : plyr->setPositionX(tile->getPositionX() + minDistVec.x);
+
+				// (plyr->getPositionY() < tile->getPositionY()) ? plyr->setPositionY(tile->getPositionY() - minDistVec.y) : plyr->setPositionY(tile->getPositionY() + minDistVec.y);
+
+			}
+			else if (distVec.y < minDistVec.y)
+			{
+				plyr->setPositionY((plyr->getPositionY() < tile->getPositionY()) ? tile->getPositionY() - minDistVec.y : tile->getPositionY() + minDistVec.y);
+				// plyr->setPositionY(tile->getPositionY() - minDistVec.y);
+			}
+			*/
 
 			// std::cout << umath::radiansToDegrees(angle) << std::endl;
 
 			// if the abs angle is less than 45.0F, then the player is next to the tile.
-			if (abs(umath::radiansToDegrees(angle)) < 45.0F)
+			if (abs(umath::radiansToDegrees(theta)) < compAngle)
 			{
 				if (distVec.x <= 0.0F)
 				{
 					plyr->cancelRight = true;
-					// plyr->setPositionX(tile->getPositionX() - minDistVec.x / 2);
+					plyr->setPositionX(tile->getPositionX() - abs(minDistVec.x));
 					// plyr->setPositionX(plyr->getPositionX() - 1.0); // this will move the player out of the wall. The player's jump wouldn't work properly 
 				}
 				else if (distVec.x > 0.0F)
 				{
 					plyr->cancelLeft = true;
-					// plyr->setPositionX(tile->getPositionX() + minDistVec.y / 2);
-					// plyr->setPositionX(plyr->getPositionX() + 1.0);
+					plyr->setPositionX(tile->getPositionX() + abs(minDistVec.x));
 				}
 				plyr->zeroVelocityX();
 
 			}
 			// if the player is at an angle greater than 45.0F, the player is on top or below the platform.
-			else if (abs(umath::radiansToDegrees(angle)) >= 45.0F)
+			else if (abs(umath::radiansToDegrees(theta)) >= compAngle)
 			{
-				if (distVec.y > 0.0F)
+				if (distVec.y <= 0.0F)
+				{
+					
+					plyr->cancelUp = true;
+					plyr->setAntiGravity(false);
+					plyr->setPositionY(tile->getPositionY() - abs(minDistVec.y));
+				
+				}
+				else if (distVec.y > 0.0F)
 				{
 					plyr->cancelDown = true;
 					plyr->setAntiGravity(true);
-					// plyr->setPositionY(plyr->getPositionY() + 1.0);
-				}
-				else if (distVec.y <= 0.0F)
-				{
-					plyr->cancelUp = true;
-					plyr->setAntiGravity(false);
-					// plyr->setPositionY(plyr->getPositionY() - 1.0);
+					plyr->setPositionY(tile->getPositionY() + abs(minDistVec.y));
 				}
 
 				plyr->zeroVelocityY();
@@ -498,29 +521,80 @@ void MSQ_GameplayScene::playerEnemyCollisions()
 // collision between the player's current weapon and the enemy.
 void MSQ_GameplayScene::weaponEnemyCollisions()
 {
-	entity::Weapon * weapon = plyr->getCurrentWeapon(); // this won't work because the weapons have no sprite.
+	bool collision;
 	
-	if (weapon == nullptr)
+	entity::Player * tempPlyr = new entity::Player(*plyr);
+	entity::Weapon * weapon = nullptr;
+
+	if (plyr->getCurrentWeapon() == nullptr)
 		return;
 
-
-	for (int i = 0; i < weapon->getCollisionBodies().size(); i++)
+	weapon = new entity::Weapon(*plyr->getCurrentWeapon()); // makes a copy of the weapon.
+	
+	tempPlyr->setCollisionBodies(plyr->getCurrentWeapon()->getCollisionBodies()); // sets the weapon collision bodies
+	
+	for (OOP::Primitive * p1 : weapon->getCollisionBodies())
 	{
-		// for(int j = 0; j < )
-	}
-
-
-	for (entity::Enemy * emy : *sceneEnemies) // checks collision between the weapon and the enenmy.
-	{
-		if (emy == nullptr)
-			continue;
-
-		if (entity::Entity::collision(weapon, emy)) // if there is collision.
+		for (entity::Enemy * emy : *sceneEnemies) // goes through every enemy
 		{
-			emy->setHealth(emy->getHealth() - weapon->getDamage());
+			if (emy == nullptr)
+				continue;
+
+			for (OOP::Primitive * p2 : emy->getCollisionBodies())
+			{
+				collision = OOP::Primitive::collision(p1, p2);
+				
+				if(collision) // if collision has happened.
+				{
+					emy->setHealth(emy->getHealth() - weapon->getDamage());
+					emy->gotHit();
+					break;
+				}
+			}
+
 		}
 	}
-	
+
+
+	// plyr->
+
+	// tempPlyr->getCollisionBodies().clear(); // clears the collision bodies for the tempory player.
+
+	// tempPlyr->setCollisionBodies(weapon->getC)
+
+	// tempPlyr->setCollisionBodies()
+
+	// tempEntity = *plyr; // makes a copy of the player so that hte weapon hitboxes can be added
+
+	// for (int i = 0; i < weapon->getCollisionBodies().size(); i++)
+	// {
+	// 	// plyr->getCollisionBodies().push_back(weapon->getCollisionBodies().at(i));
+		// for(int j = 0; j < )
+	// }
+
+	// weapon = new entity::Weapon(*plyr->getCurrentWeapon()); // makes a copy of the player's current weapon
+
+	//for (OOP::Primitive * p : weapon->getCollisionBodies()) // goes through all of the weapon's primitives
+	//{
+	//	p->setPosition(p->getPosition() + plyr->getPosition()); // moves the primitives to the proper position
+	//
+	//	
+	//	for (entity::Enemy * emy : *sceneEnemies) // goes through every enemy
+	//	{
+	//		if (emy == nullptr)
+	//			continue;
+
+	//		for (int i = 0; i < emy->getCollisionBodies().size(); i++) // gets each primitive tied to the enemy
+	//		{
+	//			if (OOP::Primitive::collision(p, emy->getCollisionBodies().at(i))) // if there is collision.
+	//			{
+	//				emy->setHealth(emy->getHealth() - weapon->getDamage());
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
+
 }
 
 
@@ -563,6 +637,7 @@ void MSQ_GameplayScene::update(float deltaTime)
 	
 	if (jump)
 	{
+		plyr->zeroVelocityY();
 		plyr->addJumpForce();
 		jump = false;
 	}

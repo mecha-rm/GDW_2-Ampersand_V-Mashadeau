@@ -52,7 +52,7 @@ namespace world
 		// gets all graphic elements as a single drawNode.
 		Node * getAsSingleNode();
 
-		// gets the name of the area
+		// gets the name of the area. This does NOT include the 'AIN_' prefix, just the ending three characters (Letter, Integer, Integer)
 		std::string getName() const;
 
 		// gets exit 0, being an exit point in the scene; this holds where the area exits to.

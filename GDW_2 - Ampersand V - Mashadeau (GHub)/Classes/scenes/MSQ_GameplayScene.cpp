@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-
+std::vector<std::string> MSQ_GameplayScene::areasVisited;
 
 // constructor; initalizes the mouse listener
 MSQ_GameplayScene::MSQ_GameplayScene() : mouse(OOP::MouseListener(this)), keyboard(OOP::KeyboardListener(this)) {}
@@ -100,10 +100,20 @@ void MSQ_GameplayScene::initSprites()
 	// the magic bar's position
 	Vec2 mpBarPos;
 
+	bool revisit = false; // becomes 'true' if the player has visited this area before.
+
 	// creating the scene
+	for (std::string str : areasVisited)
+		if (str == areaName) // if the area has been visited before, then it's a revisit.
+			revisit = true;
+		
+	if (revisit == false) // 'remembers' the area now that the player has visited it.
+		areasVisited.push_back(areaName);
+
+
 	sceneArea = world::World::getArea(areaName); // makes the area. Remember, all the anchour points are the middle of the sprite layers (0.5, 0.5).
 	sceneArea->setAllLayerPositions(Vec2(director->getWinSizeInPixels().width / 2, director->getWinSizeInPixels().height / 2)); // makes all the layers be at the middle of the screen.
-	
+
 	this->addChild(sceneArea->getAsSingleNode()); // gets the scene graphic elements (hitboxes not withstanding) as a single node.
 
 	sceneTiles = sceneArea->getAreaTiles(); // saves a pointer to the scene tiles
@@ -347,6 +357,13 @@ void MSQ_GameplayScene::switchArea(std::string & fileName)
 	director->replaceScene(newScene); // replaces the scene without a transition.
 
 	switchingScenes = true; // becomes 'true' so that scene switches don't overlay one another.
+}
+
+// exits the game.
+void MSQ_GameplayScene::exitGame()
+{
+	areasVisited.clear(); // removes the 'memory' of visited areas.
+	// TODO: switch back to menu.
 }
 
 // runs collision tests.

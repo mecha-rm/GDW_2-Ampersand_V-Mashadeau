@@ -27,4 +27,4 @@ private:
 	OOP::KeyboardListener keyboard;
 	Scene* _new = MSQ_TransitionerScene::createScene(); //For switching scenes
 
-} MSQ_MainMenu;
+} MainMenu;

@@ -49,6 +49,9 @@ public:
 	// if the string does not have a length of 9, an exception is thrown.
 	void switchArea(std::string & fileName);
 
+	// called to exit the game. This handles information that should be removed before the player starts a new game.
+	void exitGame();
+
 	// called to handle collisions between entities.
 	void collisions();
 	
@@ -87,10 +90,12 @@ private:
 	bool switchingScenes = false; // becomes 'true' when the scenes are being switched so that the switch animation doesn't get restarted over and over.
 	
 	// bool swapScene = false; 
-	std::string nextArea = "";
+	// std::string nextArea = "";
 
 	static std::string areaName; // saves the current area of the scene. This will be used for loading and unloading areas. This is only used upon scene initialization.
 	static int spawnPoint; // the spawn point used upon entering the area. This is only used upon scene initialization.
+	static std::vector<std::string> areasVisited; // the ares that the player has visited.
+
 
 	entity::Player * plyr; // the object used for the player
 	bool plyrAction = false; // becomes 'true' when a new animation should be played.

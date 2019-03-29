@@ -126,11 +126,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 	
     // create a scene. it's an autorelease object
-	auto scene = MSQ_GameplayScene::createScene();
+	auto _scene = MSQ_GameplayScene::createScene();
 	auto _menu = MSQ_MainMenu::createScene();
 	// auto scene = HelloWorld::createScene();
 	
-	bool stats = false; // set it to 'true' if you want the stats to be visisble.
+	bool stats = true; // set it to 'true' if you want the stats to be visisble.
 	
 	if (stats)
 	{
@@ -140,7 +140,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	
     // run
 	//director->runWithScene(_menu); //USE THIS TO RUN FROM MAIN MENU
-    director->runWithScene(scene); //USE THIS TO RUN FROM GAMEPLAYSCENE
+    director->runWithScene(_scene); //USE THIS TO RUN FROM GAMEPLAYSCENE
 	
 	/*
 	// Creating the cocos window.

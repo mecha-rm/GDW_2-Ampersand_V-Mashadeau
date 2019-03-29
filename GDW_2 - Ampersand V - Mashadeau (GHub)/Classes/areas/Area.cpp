@@ -166,7 +166,7 @@ Node * world::Area::getAsSingleNode()
 		tempNode->addChild(areaEnemies[i]->getSprite());
 	
 	// bg2->setGlobalZOrder(0.0F);
-	t = tempNode;
+	mergedNode = tempNode;
 	return tempNode;
 }
 
@@ -560,6 +560,7 @@ void world::Area::update(float deltaTime)
 			for (OOP::Primitive * p : areaEnemies[i]->getCollisionBodies()) // removing all of the primitives from their parents.
 				p->getPrimitive()->removeFromParent();
 
+			areaEnemies[i]->getSprite()->removeFromParent();
 			areaEnemies.erase(areaEnemies.begin() + i); // erases the pointer.
 
 			

@@ -31,10 +31,19 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	this->jump = 14000.0F;
 	setDecelerate(Vec2(getDecelerate().x, 0.99F));
 	setMass(1.0F);
+	
+	// Final game gravity?
+	// this->jump = 13000.0F;
+	// setDecelerate(Vec2(getDecelerate().x, 0.99F));
+	// setMass(0.5F);
 
 	setMaxHealth(100.0F);
 	setHealth(getMaxHealth());
 	inviTimeMax = 3.0F;
+
+	weapon1 = new entity::Weapon(0, this);
+	currentWeapon = weapon1;
+	weapons.push_back(weapon1);
 
 	// no animation (0); 1 frame
 	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, true, true);
@@ -48,6 +57,9 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, false, 0.0F, true, false); // new animation
 	tempAnimate->setTag(6); // sets the tag
 	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 0, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 1
+
+	// tempAnimate->getFrames().at(getFrames()->)
+
 	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 1, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 2
 	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 2, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 3
 	animations.push_back(tempAnimate);
@@ -60,18 +72,29 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	for (OOP::Primitive * prim : collisionBodies)
 		sprite->addChild(prim->getPrimitive());
 
-	weapon1 = new Weapon(0);
-	currentWeapon = weapon1;
-	weapons.push_back(weapon1);
+	
 }
 
 
 // entity::Player::~Player() {}
 
 // uses a specific animation.
+/*
+		Animations:
+			0) static (no animation)
+			1) spawn
+			2) idle
+			3) death
+			4) run
+			5) jump
+			6) attack 1
+*/
 void entity::Player::runAction(unsigned int ani)
 {
 	runAnimationByTag(ani);
+
+	if (ani == 6 || ani == 7)
+		currentWeapon->enableCollisionBodies();
 
 }
 
@@ -92,10 +115,15 @@ void entity::Player::update(float deltaTime)
 		{
 		case 6: // attack 1
 			runAction(0); // switches back to idle once animation is done.
+			currentWeapon->disableCollisionBodies(); // turns off the weapon collisions.
 			break;
 		}
 
 	}
 	// addForce(moveForce); // adds the force of the player for movement.
 	Active::update(deltaTime);
+
+	for (entity::Weapon * w : weapons)
+		w->update(deltaTime);
+
 }

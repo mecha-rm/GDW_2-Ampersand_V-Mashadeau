@@ -85,18 +85,18 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 	case 10: // stock block
 		
 		// this->LETTER = 'a'; // there's only one block at the moment, so it's set as type a.
+		setName("Stone Block");
+		setDescription("A block made of stone.");
 		setTexture("images/tiles/TIN_010.png"); // sets the image for the sprite
 		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+
 		switch (letter)
 		{
 		case 'a': // 'a' is also the default type.
 		default:
 			this->LETTER = 'a'; // since 'a' is also the default, this is set to 'a', just to be sure.
-			setName("Stone Block");
-			setDescription("A block made of stone.");
 			
 			setTextureRect(frameSize);
-
 			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 128.0F, CLR_DEF));
 			break;
 		}

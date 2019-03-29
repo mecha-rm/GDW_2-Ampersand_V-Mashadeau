@@ -21,8 +21,9 @@ entity::Entity::Entity(std::string texture, float globalZOrder) : sprite(Sprite:
 // releases the sprite 
 entity::Entity::~Entity() 
 {
-	collisionBodies.clear(); // clearing the primitives so the destructors are called.
 	sprite->removeFromParent();
+	collisionBodies.clear(); // clearing the primitives so the destructors are called.
+	
 	
 }
 
@@ -285,17 +286,89 @@ void entity::Entity::setCollisionBodies(std::vector<OOP::Primitive*>& colBodies)
 	for (OOP::Primitive * p : collisionBodies) // removes all of the primitives from the current sprite.
 		p->getPrimitive()->removeFromParent();
 
-	collisionBodies = colBodies;
+	collisionBodies.erase(collisionBodies.begin(), collisionBodies.end() + 1); // removes the information in the vector.
+	collisionBodies = colBodies; // saves the new values.
 
 	for (OOP::Primitive * p : collisionBodies) // adds all of the new primitives to the sprite.
 		sprite->addChild(p->getPrimitive());
+}
+
+std::vector<OOP::Primitive*> entity::Entity::getOffsetCollisionBodies() const
+{
+	
+	return getOffsetCollisionBodies(getSprite(), getCollisionBodies());
+}
+
+std::vector<OOP::Primitive*> entity::Entity::getOffsetCollisionBodies(const cocos2d::Sprite * spr, const std::vector<OOP::Primitive*> & prims)
+{
+	// the new primitives.
+	std::vector<OOP::Primitive *> newPrims;
+	// the bottom left-hand corner of the sprite
+	Vec2 eBl(spr->getPositionX() - spr->getTextureRect().size.width / 2, spr->getPositionY() - spr->getTextureRect().size.height / 2);
+
+	for (OOP::Primitive * ePrim : prims)
+	{
+		// downcasts the first primitive to know which one it is.
+		switch (ePrim->getId())
+		{
+		case 1: // Square (AABB)
+			newPrims.push_back(new OOP::PrimitiveSquare(eBl + ((OOP::PrimitiveSquare *)ePrim)->getPosition(), ((OOP::PrimitiveSquare *)ePrim)->m_WIDTH, ((OOP::PrimitiveSquare *)ePrim)->m_HEIGHT));
+			break;
+
+		case 2: // Square (OBB)
+			newPrims.push_back(new OOP::PrimitiveOrientedSquare(eBl + ((OOP::PrimitiveOrientedSquare *)ePrim)->getPosition(), ((OOP::PrimitiveOrientedSquare *) ePrim)->m_WIDTH, ((OOP::PrimitiveOrientedSquare *) ePrim)->m_HEIGHT));
+			break;
+
+		case 3: // Circle
+			newPrims.push_back(new OOP::PrimitiveCircle(Vec2(eBl.x + ((OOP::PrimitiveCircle *)ePrim)->getPosition().x, eBl.y + ((OOP::PrimitiveCircle *)ePrim)->getPosition().y), ((OOP::PrimitiveCircle *)ePrim)->m_RADIUS));
+			break;
+
+		case 5: // Capsule
+			newPrims.push_back(new OOP::PrimitiveCapsule(eBl + ((OOP::PrimitiveCapsule *) ePrim)->getPosition(), ((OOP::PrimitiveCapsule *) ePrim)->m_RECT_WIDTH, ((OOP::PrimitiveCapsule *) ePrim)->m_RECT_HEIGHT / 2, ((OOP::PrimitiveCapsule *) ePrim)->getRotationInDegrees()));
+			break;
+		}
+	}
+
+	return newPrims;
+}
+
+// adds a collision body to the vector
+void entity::Entity::addCollisionBody(OOP::Primitive * prim)
+{
+	// if it's already in the vector, it won't be added again.
+	for each(OOP::Primitive * p in collisionBodies)
+	{
+		if (p == prim)
+			return;
+	}
+
+	collisionBodies.push_back(prim);
+}
+
+// removes a collision body from the vector
+void entity::Entity::removeCollisionBody(OOP::Primitive * prim)
+{
+	// removes the primitive if it exists in the vector.
+	for (int i = 0; i < collisionBodies.size(); i++)
+	{
+		if (collisionBodies.at(i) == prim) // removes the primitive.
+		{
+			collisionBodies.erase(collisionBodies.begin() + i);
+			return;
+		}
+	}
 }
 
 // sets the collision bodies to be either active or non-active.
 void entity::Entity::setActiveCollisionBodies(bool active)
 {
 	for (OOP::Primitive * p : collisionBodies)
+	{
+		if (p == nullptr)
+			continue;
+
 		p->setActive(active);
+	}
 }
 
 // disables collision bodies
@@ -376,7 +449,7 @@ bool entity::Entity::collision(std::vector<OOP::Primitive*>& cols1, std::vector<
 bool entity::Entity::collision(entity::Entity * e2) { return collision(this, e2); }
 
 // checks for collisions using collision bodies
-bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2) { return collision(e1, e1->getCollisionBodies(), e2, e2->getCollisionBodies()); }
+bool entity::Entity::collision(entity::Entity * e1, entity::Entity * e2) { return collision(e1, e1->getOffsetCollisionBodies(), e2, e2->getOffsetCollisionBodies()); }
 
 // checks for collisions using two entites and passed collision vectors
 bool entity::Entity::collision(entity::Entity * e1, const std::vector<OOP::Primitive *> & e1Bodies, entity::Entity * e2, const std::vector<OOP::Primitive *> & e2Bodies)
@@ -387,9 +460,14 @@ bool entity::Entity::collision(entity::Entity * e1, const std::vector<OOP::Primi
 	if (e1 == nullptr || e2 == nullptr) // if either one is null, then a 'false' is returned.
 		return false;
 
+	// These are no longer needed, so you should remove these variables later.
 	// these save the bottom-left-hand-corner of the sprite's texture rect, which is what the positions of the hitboxes are relative to.
 	Vec2 e1Bl(e1->getPositionX() - e1->getSprite()->getTextureRect().size.width / 2, e1->getPositionY() - e1->getSprite()->getTextureRect().size.height / 2);
 	Vec2 e2Bl(e2->getPositionX() - e2->getSprite()->getTextureRect().size.width / 2, e2->getPositionY() - e2->getSprite()->getTextureRect().size.height / 2);
+
+
+	e1Bl = Vec2(0, 0);
+	e2Bl = Vec2(0, 0);
 
 	OOP::PrimitiveSquare * tempRect1 = nullptr; // a temporary object that stores a rect from e1, in the position it is in overall.
 	OOP::PrimitiveSquare * tempRect2 = nullptr; // a temporary object that stores a rect from e2, in the position it is in overall.

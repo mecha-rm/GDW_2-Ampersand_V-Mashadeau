@@ -30,6 +30,32 @@ void OOP::SpriteSheetAnimationFrame::setTag(int & tag) { this->tag = tag; }
 // sets the primitives tied to the animation frame.
 void OOP::SpriteSheetAnimationFrame::setPrimitives(std::vector<OOP::Primitive*>& newPrims) { prims = newPrims; }
 
+// removes a primitive from the animation frame.
+void OOP::SpriteSheetAnimationFrame::addPrimitive(OOP::Primitive * prim)
+{
+	// if it's already in the vector, it won't be added again.
+	for(OOP::Primitive * p : prims)
+	{
+		if (p == prim)
+			return;
+	}
+
+	prims.push_back(prim);
+}
+
+void OOP::SpriteSheetAnimationFrame::removePrimitive(const OOP::Primitive * prim)
+{
+	// removes the primitive if it exists in the vector.
+	for (int i = 0; i < prims.size(); i++)
+	{
+		if (prims.at(i) == prim) // removes the primitive.
+		{
+			prims.erase(prims.begin() + i);
+			return;
+		}
+	}
+}
+
 // gets the primitives tied to the animation frame.
 std::vector<OOP::Primitive*>& OOP::SpriteSheetAnimationFrame::getPrimitives() { return prims; }
 
@@ -289,12 +315,14 @@ void OOP::SpriteSheetAnimation::update(float deltaTime)
 		newIndex = index;
 		
 		for (int i = 0; i < frames.at(oldIndex)->getPrimitives().size(); i++) // turns off the primitives for the previous animation.
-			frames.at(index - 1)->getPrimitives().at(i)->setActive(false);
+			if(frames.at(index - 1) != nullptr)
+				frames.at(index - 1)->getPrimitives().at(i)->setActive(false);
 
 		spriteSheet->setTextureRect(frames.at(index)->getRect()); // moves onto the next frame.
 
 		for (int i = 0; i < frames.at(newIndex)->getPrimitives().size(); i++) // turns on the primitives for the now current animation.
-			frames.at(index - 1)->getPrimitives().at(i)->setActive(true);
+			if (frames.at(index - 1) != nullptr)
+				frames.at(index - 1)->getPrimitives().at(i)->setActive(true);
 
 	}
 }

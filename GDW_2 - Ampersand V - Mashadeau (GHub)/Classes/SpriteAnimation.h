@@ -45,6 +45,12 @@ namespace OOP
 		// sets the primitves for the animation frame. These primitives will be turned on when the animation frame is viewable, and off when it isn't.
 		void setPrimitives(std::vector<OOP::Primitive *> & newPrims);
 
+		// adds a primitive to the animation
+		void addPrimitive(OOP::Primitive * prim);
+
+		// removes a primitive from the animation
+		void removePrimitive(const OOP::Primitive * prim);
+
 		// gets the primitives tied to the animation frame.
 		std::vector<OOP::Primitive *> & getPrimitives();
 

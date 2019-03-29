@@ -216,6 +216,12 @@ void MSQ_GameplayScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event * eve
 	case EventKeyboard::KeyCode::KEY_D:
 		moveRight = true;
 		break;
+
+	case EventKeyboard::KeyCode::KEY_F:
+		pAction = 6;
+		plyrAction = true;
+		AudioLibrary::MSQ_sword.play();
+		break;
 	}
 
 	// change last parameter to check for key codes
@@ -265,9 +271,9 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 		break;
 	case EventKeyboard::KeyCode::KEY_F:
 		//attack
-		AudioLibrary::MSQ_sword.play();
-		pAction = 6;
-		plyrAction = true;
+		// AudioLibrary::MSQ_sword.play();
+		// pAction = 6;
+		// plyrAction = true;
 
 		break;
 	case EventKeyboard::KeyCode::KEY_1:
@@ -343,14 +349,13 @@ void MSQ_GameplayScene::switchArea(std::string & fileName)
 
 // runs collision tests.
 void MSQ_GameplayScene::collisions()
-{
-	
+{	
 	// std::cout << "PX: " << plyr->getAABBs().at(0)->getPosition().x << ", PY: " << plyr->getAABBs().at(0)->getPosition().y << std::endl;
 	playerTileCollisions(); // called for player-tile collisions.
 	enemyTileCollisions(); // collision between the enemies and the tiles.
 	
 	playerEnemyCollisions(); // called for player collisions with enemies
-	// weaponEnemyCollisions();
+	weaponEnemyCollisions();
 }
 
 // calculates player collision with tiles.
@@ -521,40 +526,88 @@ void MSQ_GameplayScene::playerEnemyCollisions()
 // collision between the player's current weapon and the enemy.
 void MSQ_GameplayScene::weaponEnemyCollisions()
 {
-	bool collision;
+	entity::Weapon * weapon = plyr->getCurrentWeapon();
 	
-	entity::Player * tempPlyr = new entity::Player(*plyr);
-	entity::Weapon * weapon = nullptr;
-
-	if (plyr->getCurrentWeapon() == nullptr)
+	if (weapon == nullptr)
 		return;
+	
+	// weapon->enableCollisionBodies();
 
-	weapon = new entity::Weapon(*plyr->getCurrentWeapon()); // makes a copy of the weapon.
-	
-	tempPlyr->setCollisionBodies(plyr->getCurrentWeapon()->getCollisionBodies()); // sets the weapon collision bodies
-	
-	for (OOP::Primitive * p1 : weapon->getCollisionBodies())
+	// plyr->disableCollisionBodies();
+	// weapon->enableCollisionBodies(); // enables the collision bodies of the weapon only.
+
+	for(int i = 0; i < sceneEnemies->size(); i++)
 	{
-		for (entity::Enemy * emy : *sceneEnemies) // goes through every enemy
+		if (sceneEnemies->at(i) == nullptr)
+			continue;
+
+		entity::Enemy * emy = sceneEnemies->at(i);
+
+		// so essenially, a problem with the weapon collisions is that they would be based off the weapon's sprite instead of the player's sprite under a normal function call.
+		// as such, a collision body needs to be paired with the player that only contains the weapons at the appropriate spot, hence the function call.
+		if (entity::Entity::collision(plyr, weapon->getOffsetCollisionBodies(weapon->getOwner()->getSprite(), weapon->getCollisionBodies()), sceneEnemies->at(i), sceneEnemies->at(i)->getOffsetCollisionBodies())) // checks for collision.
 		{
-			if (emy == nullptr)
-				continue;
-
-			for (OOP::Primitive * p2 : emy->getCollisionBodies())
-			{
-				collision = OOP::Primitive::collision(p1, p2);
-				
-				if(collision) // if collision has happened.
-				{
-					emy->setHealth(emy->getHealth() - weapon->getDamage());
-					emy->gotHit();
-					break;
-				}
-			}
-
+			sceneEnemies->at(i)->setHealth(sceneEnemies->at(i)->getHealth() - weapon->getDamage());
+			sceneEnemies->at(i)->gotHit();
+			break;
 		}
 	}
 
+	// plyr->enableCollisionBodies();
+	// weapon->disableCollisionBodies();
+
+	//bool collision;
+	//
+	//entity::Player tempPlyr = *plyr;
+	//entity::Weapon * weapon = nullptr;
+
+	//if (plyr->getCurrentWeapon() == nullptr)
+	//	return;
+
+	//weapon = new entity::Weapon(*plyr->getCurrentWeapon()); // makes a copy of the weapon.
+	//
+	//tempPlyr.setCollisionBodies(plyr->getCurrentWeapon()->getCollisionBodies()); // sets the weapon collision bodies
+	//
+	//weapon->getOwner()->disableCollisionBodies(); // disables the collision bodies for the weapon's owner so that they don't interfere.
+	//weapon->enableCollisionBodies(); // turns on the weapon collision bodies.
+	//
+	//for (entity::Enemy * emy : *sceneEnemies) // goes through every enemy
+	//{
+	//	if (emy == nullptr)
+	//		continue;
+
+	//	if (entity::Entity::collision(weapon->getOwner(), emy)) // checks for collision with the weapon and the enemy, with the one wielding the weapon having their collisions disabled.
+	//	{
+	//		emy->setHealth(emy->getHealth() - weapon->getDamage());
+	//		emy->gotHit();
+	//		break;
+	//	}
+	//}
+
+	//weapon->getOwner()->enableCollisionBodies(); // turns on the collision bodies for the weapon's owner
+	//weapon->disableCollisionBodies(); // disables the collision bodies for the weapon itself.
+
+	//for (OOP::Primitive * p1 : weapon->getCollisionBodies())
+	//{
+	//	for (entity::Enemy * emy : *sceneEnemies) // goes through every enemy
+	//	{
+	//		if (emy == nullptr)
+	//			continue;
+
+	//		for (OOP::Primitive * p2 : emy->getCollisionBodies())
+	//		{
+	//			collision = OOP::Primitive::collision(p1, p2);
+	//			
+	//			if(collision) // if collision has happened.
+	//			{
+	//				emy->setHealth(emy->getHealth() - weapon->getDamage());
+	//				emy->gotHit();
+	//				break;
+	//			}
+	//		}
+
+	//	}
+	//}
 
 	// plyr->
 

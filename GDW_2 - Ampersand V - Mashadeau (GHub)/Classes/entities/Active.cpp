@@ -25,6 +25,16 @@ void entity::Active::setMaxHealth(float maxHealth)
 	(maxHealth > 0.0F) ? this->MAX_HEALTH = maxHealth : this->MAX_HEALTH = 1.0F;
 }
 
+// the entity has gotten hit, so it should now be invincible.
+void entity::Active::gotHit()
+{
+	invincible = true;
+	setOpacity(0.5F); // makes the sprite transparent to convey it's in its invincibility period.
+}
+
+// checks to see if the entity is invincible
+bool entity::Active::getInvincible() { return invincible; }
+
 // returns the attack strength of the enemy
 float entity::Active::getAttackPower() const { return attackPower; }
 
@@ -58,17 +68,6 @@ void entity::Active::setMoveForce(Vec2 moveForce) { this->moveForce = moveForce;
 
 // adds the jump force to the active entity.
 void entity::Active::addJumpForce() { addForce(Vec2(0.0F, jump)); }
-
-// the entity has gotten hit, so it should now be invincible.
-void entity::Active::gotHit() 
-{
-	invincible = true;
-	setOpacity(0.5F); // makes the sprite transparent to convey it's in its invincibility period.
-}
-
-// checks to see if the entity is invincible
-bool entity::Active::getInvincible() { return invincible; }
-
 
 // the update loop for active entities
 void entity::Active::update(float deltaTime)

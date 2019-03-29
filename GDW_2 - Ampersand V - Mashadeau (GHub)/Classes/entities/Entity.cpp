@@ -277,10 +277,33 @@ void entity::Entity::setAntiGravity() { antiGravity = !antiGravity; }
 
 
 // returns the collision shapes for the entity.
-const std::vector<OOP::Primitive*> const entity::Entity::getCollisionBodies() const { return collisionBodies; }
+std::vector<OOP::Primitive*> entity::Entity::getCollisionBodies() const { return collisionBodies; }
 
 // sets a vector of collision bodies
-void entity::Entity::setCollisionBodies(std::vector<OOP::Primitive*>& colBodies) { collisionBodies = colBodies; }
+void entity::Entity::setCollisionBodies(std::vector<OOP::Primitive*>& colBodies)
+{
+	for (OOP::Primitive * p : collisionBodies) // removes all of the primitives from the current sprite.
+		p->getPrimitive()->removeFromParent();
+
+	collisionBodies = colBodies;
+
+	for (OOP::Primitive * p : collisionBodies) // adds all of the new primitives to the sprite.
+		sprite->addChild(p->getPrimitive());
+}
+
+// sets the collision bodies to be either active or non-active.
+void entity::Entity::setActiveCollisionBodies(bool active)
+{
+	for (OOP::Primitive * p : collisionBodies)
+		p->setActive(active);
+}
+
+// disables collision bodies
+void entity::Entity::disableCollisionBodies() { setActiveCollisionBodies(false); }
+
+// enables the collision bodies
+void entity::Entity::enableCollisionBodies() { setActiveCollisionBodies(true); }
+
 
 // checks collision between two primitives. If a collision check for this combination doesn't exist, a false is returned.
 bool entity::Entity::collision(OOP::Primitive * prim1, OOP::Primitive * prim2)
@@ -385,7 +408,7 @@ bool entity::Entity::collision(entity::Entity * e1, const std::vector<OOP::Primi
 	// handles all possible collsions. If 'Active' is turned off for either collision shape, then a no collision is checked.
 	for each(OOP::Primitive * e1Prim in e1Bodies)
 	{
-		if (!e1Prim->isActive()) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
+		if (e1Prim == nullptr || !e1Prim->isActive()) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
 			continue;
 
 		// downcasts the first primitive to know which one it is.
@@ -417,7 +440,7 @@ bool entity::Entity::collision(entity::Entity * e1, const std::vector<OOP::Primi
 
 		for each(OOP::Primitive * e2Prim in e2Bodies)
 		{
-			if (!e2Prim->isActive()) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
+			if (e2Prim == nullptr || !e2Prim->isActive()) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
 				continue;
 
 			switch (e2Prim->getId()) // downcasts the second primitive to know which one it is.

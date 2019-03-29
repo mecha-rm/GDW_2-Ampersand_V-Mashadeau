@@ -18,6 +18,12 @@ namespace entity
 		// gets the entity's maximum health;
 		float getMaxHealth() const;
 		
+		// tells the program that the active entity has taken damage. Invincibility frames are started when this occures.
+		virtual void gotHit();
+
+		// if true, the entity is currently invincible.
+		bool getInvincible();
+
 		// gets the entity's attack power
 		float getAttackPower() const;
 
@@ -37,12 +43,6 @@ namespace entity
 
 		// adds the force of the active entity's jump.
 		void addJumpForce();
-
-		// tells the program that the active entity has taken damage. Invincibility frames are started when this occures.
-		void gotHit();
-
-		// if true, the entity is currently invincible.
-		bool getInvincible();
 
 		// the update loop for the active entity.
 		void update(float deltaTime);

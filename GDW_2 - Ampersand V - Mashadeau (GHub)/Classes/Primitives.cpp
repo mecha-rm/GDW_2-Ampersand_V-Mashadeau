@@ -75,7 +75,6 @@ short int OOP::Primitive::getId() { return ID; }
 // collision between two primitives.
 bool OOP::Primitive::collision(OOP::Primitive * p1, OOP::Primitive * p2)
 {
-
 	bool col = false;
 
 	if (p1->getId() == 1 && p2->getId() == 1) // AABB and AABB

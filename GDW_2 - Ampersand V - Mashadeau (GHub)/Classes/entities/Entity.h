@@ -151,10 +151,23 @@ namespace entity
 
 
 		// returns a vector of all collision shapes for the entity.
-		const std::vector<OOP::Primitive *> getCollisionBodies() const;
+		std::vector<OOP::Primitive *> getCollisionBodies() const;
 
 		// sets a vector for collision bodies for the entity.
 		void setCollisionBodies(std::vector<OOP::Primitive *>& colBodies);
+
+		// returns the collision bodies of the entity, offset so that they're where they are relative to the whole game world.
+		// note, if the entity doesn't have a sprite, you shouldn't use this function, since it's based on the position of the sprite.
+		std::vector<OOP::Primitive *> getOffsetCollisionBodies() const;
+
+		// used to make all of the collision bodies either active or not active. Non-active collison boxes will not be picked up by collisions.
+		void setActiveCollisionBodies(bool active);
+
+		// turns off the collision bodies for the sprite.
+		void disableCollisionBodies();
+
+		// turns on the body collisions for the entity
+		void enableCollisionBodies();
 		
 		// checks collision between two primitives. Do note that if the primitives don't have a collision algorithim setup, this will return false.
 		static bool collision(OOP::Primitive * prim1, OOP::Primitive * prim2);

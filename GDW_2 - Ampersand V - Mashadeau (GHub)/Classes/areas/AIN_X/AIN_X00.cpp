@@ -24,7 +24,7 @@ world::AIN_X00::AIN_X00() : Area("")
 	exit4 = "";
 
 	// setting all of the spawn points. These are based on the middle of the sprite.
-	spawn0 = Vec2(64.0F, 128.0F);
+	spawn0 = Vec2(256.0F, 364.0F);
 	spawn1 = Vec2(0.0F, 0.0F);
 	spawn2 = Vec2(0.0F, 0.0F);
 	spawn3 = Vec2(0.0F, 0.0F);

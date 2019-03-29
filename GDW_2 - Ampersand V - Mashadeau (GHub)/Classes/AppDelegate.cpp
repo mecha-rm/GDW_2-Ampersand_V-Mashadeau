@@ -24,6 +24,7 @@
 
 #include "AppDelegate.h"
 #include "HelloWorldScene.h"
+#include "scenes/MSQ_MainMenu.h" //Main menu scene
 #include "scenes/MSQ_GameplayScene.h" // the gameplay scene
 
 // #define USE_AUDIO_ENGINE 1
@@ -126,6 +127,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	
     // create a scene. it's an autorelease object
 	auto scene = MSQ_GameplayScene::createScene();
+	auto _menu = MSQ_MainMenu::createScene();
 	// auto scene = HelloWorld::createScene();
 	
 	bool stats = false; // set it to 'true' if you want the stats to be visisble.
@@ -137,7 +139,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	}
 	
     // run
-    director->runWithScene(scene);
+	//director->runWithScene(_menu); //USE THIS TO RUN FROM MAIN MENU
+    director->runWithScene(scene); //USE THIS TO RUN FROM GAMEPLAYSCENE
 	
 	/*
 	// Creating the cocos window.

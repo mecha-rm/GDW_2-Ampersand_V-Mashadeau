@@ -71,6 +71,8 @@ void MSQ_GameplayScene::initListeners()
 	// getEventDispatcher()->addEventListenerWithFixedPriority(mouse.getListener(), 1); // adds a mouse listener to the scene using the event dispatcher. It has a priority of 1.
 	
 	mouse.setLabelVisible(true); // sets whether the label is visible or not.
+	//mouse.getListener()->onMouseDown = CC_CALLBACK_2(MSQ_GameplayScene::onMousePressed, this);
+	//mouse.getListener()->onMouseUp = CC_CALLBACK_2(MSQ_GameplayScene::onMouseReleased, this);
 	mouse.getListener()->setEnabled(ENABLE_MOUSE); // sets whether the mouse is enabled or not.
 
 	// KEYBOARD LISTENER SETUP
@@ -265,7 +267,7 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 		break;
 	case EventKeyboard::KeyCode::KEY_F:
 		//attack
-		AudioLibrary::MSQ_sword.play();
+		AudioLibrary::MSQ_whoosh0.play();
 		pAction = 6;
 		plyrAction = true;
 
@@ -601,6 +603,13 @@ void MSQ_GameplayScene::weaponEnemyCollisions()
 // update loop
 void MSQ_GameplayScene::update(float deltaTime)
 {
+	//FPS COUNTER (commented out because it's being bad)
+	//std::string _fps = std::to_string(Director::getInstance()->getFrameRate());
+	//auto fps = Label::createWithTTF(_fps, "fonts/BRITANIC.TTF", 36);
+	//fps->setPosition(Vec2(20.0f, 500.0f));
+	//this->addChild(fps, 1);
+	//END OF FPS COUNTER
+
 	if (switchingScenes) // updates are no longer run if the scene is being switched.
 		return;
 
@@ -619,11 +628,11 @@ void MSQ_GameplayScene::update(float deltaTime)
 	// if the cancels are true, then the player can't move that given direction.
 	if (moveUp && !plyr->cancelUp)
 	{
-		plyr->addMoveForceY();
+		//plyr->addMoveForceY();
 	}
 	else if (moveDown && !plyr->cancelDown) // this should be disabled later
 	{
-		plyr->addForce(0.0F, plyr->getMoveForceY() * -1);
+		//plyr->addForce(0.0F, plyr->getMoveForceY() * -1);
 	}
 
 	if (moveLeft && !plyr->cancelLeft)
@@ -664,9 +673,3 @@ void MSQ_GameplayScene::update(float deltaTime)
 	collisions();
 
 }
-
-
-
-
-
-

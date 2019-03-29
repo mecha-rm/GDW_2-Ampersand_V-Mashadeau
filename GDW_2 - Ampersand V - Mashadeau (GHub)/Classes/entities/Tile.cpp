@@ -62,9 +62,9 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		}
 
 		collisionBodies.at(0)->getPrimitive()->setGlobalZOrder(19.9F);
-		collisionBodies.at(0)->setVisible(shapesVisible);
+		collisionBodies.at(0)->setVisible(true);
 
-		// sprite->setVisible(shapesVisible); // uncomment to hide all graphics
+		// sprite->setVisible(false); // uncomment to hide all graphics
 		break;
 	case 5: // spawn 0
 	case 6: // spawn 1
@@ -80,7 +80,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 
 		// spawn points don't have hitboxes, so no primitives are made.
 
-		// sprite->setVisible(shapesVisible); // uncomment to hide all graphics
+		// sprite->setVisible(false); // uncomment to hide all graphics
 		break;
 	case 10: // stock block
 		
@@ -106,6 +106,20 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 	case 11: // semi-solid stone platform
 
 		// setTexture()
+		break;
+	case 500: //air area block base
+		setName("Mountain Block");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_500.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+
+		switch (this->LETTER) {
+			case 'a':
+			default:
+				setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
+		}
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
 
 	case 600: // stone castle block

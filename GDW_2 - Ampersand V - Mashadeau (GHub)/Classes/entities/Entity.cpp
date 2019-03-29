@@ -295,12 +295,12 @@ void entity::Entity::setCollisionBodies(std::vector<OOP::Primitive*>& colBodies)
 
 std::vector<OOP::Primitive*> entity::Entity::getOffsetCollisionBodies() const
 {
-	
 	return getOffsetCollisionBodies(getSprite(), getCollisionBodies());
 }
 
 std::vector<OOP::Primitive*> entity::Entity::getOffsetCollisionBodies(const cocos2d::Sprite * spr, const std::vector<OOP::Primitive*> & prims)
 {
+	bool added = false; // used to make sure a primitive was actually added.
 	// the new primitives.
 	std::vector<OOP::Primitive *> newPrims;
 	// the bottom left-hand corner of the sprite
@@ -313,20 +313,27 @@ std::vector<OOP::Primitive*> entity::Entity::getOffsetCollisionBodies(const coco
 		{
 		case 1: // Square (AABB)
 			newPrims.push_back(new OOP::PrimitiveSquare(eBl + ((OOP::PrimitiveSquare *)ePrim)->getPosition(), ((OOP::PrimitiveSquare *)ePrim)->m_WIDTH, ((OOP::PrimitiveSquare *)ePrim)->m_HEIGHT));
+			added = true;
 			break;
 
 		case 2: // Square (OBB)
 			newPrims.push_back(new OOP::PrimitiveOrientedSquare(eBl + ((OOP::PrimitiveOrientedSquare *)ePrim)->getPosition(), ((OOP::PrimitiveOrientedSquare *) ePrim)->m_WIDTH, ((OOP::PrimitiveOrientedSquare *) ePrim)->m_HEIGHT));
+			added = true;
 			break;
 
 		case 3: // Circle
 			newPrims.push_back(new OOP::PrimitiveCircle(Vec2(eBl.x + ((OOP::PrimitiveCircle *)ePrim)->getPosition().x, eBl.y + ((OOP::PrimitiveCircle *)ePrim)->getPosition().y), ((OOP::PrimitiveCircle *)ePrim)->m_RADIUS));
+			added = true;
 			break;
 
 		case 5: // Capsule
 			newPrims.push_back(new OOP::PrimitiveCapsule(eBl + ((OOP::PrimitiveCapsule *) ePrim)->getPosition(), ((OOP::PrimitiveCapsule *) ePrim)->m_RECT_WIDTH, ((OOP::PrimitiveCapsule *) ePrim)->m_RECT_HEIGHT / 2, ((OOP::PrimitiveCapsule *) ePrim)->getRotationInDegrees()));
+			added = true;
 			break;
 		}
+
+		if (added)
+			newPrims.at(newPrims.size() - 1)->setActive(ePrim->isActive()); // saves the 'active' parameter to the new entity.
 	}
 
 	return newPrims;
@@ -486,7 +493,7 @@ bool entity::Entity::collision(entity::Entity * e1, const std::vector<OOP::Primi
 	// handles all possible collsions. If 'Active' is turned off for either collision shape, then a no collision is checked.
 	for each(OOP::Primitive * e1Prim in e1Bodies)
 	{
-		if (e1Prim == nullptr || !e1Prim->isActive()) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
+		if (e1Prim == nullptr || e1Prim->isActive() == false) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
 			continue;
 
 		// downcasts the first primitive to know which one it is.
@@ -518,7 +525,7 @@ bool entity::Entity::collision(entity::Entity * e1, const std::vector<OOP::Primi
 
 		for each(OOP::Primitive * e2Prim in e2Bodies)
 		{
-			if (e2Prim == nullptr || !e2Prim->isActive()) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
+			if (e2Prim == nullptr || e2Prim->isActive() == false) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
 				continue;
 
 			switch (e2Prim->getId()) // downcasts the second primitive to know which one it is.

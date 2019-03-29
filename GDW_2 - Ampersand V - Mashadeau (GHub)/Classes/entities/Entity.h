@@ -157,9 +157,11 @@ namespace entity
 		void setCollisionBodies(std::vector<OOP::Primitive *>& colBodies);
 
 		// returns the collision bodies of the entity, offset so that they're where they are relative to the whole game world.
-		// note, if the entity doesn't have a sprite, you shouldn't use this function, since it's based on the position of the sprite.
+		// NOTE: if the entity doesn't have a sprite, and/or if the sprite hasn't been added to anything, you shouldn't use this function, since it's based on the position of the sprite.
 		virtual std::vector<OOP::Primitive *> getOffsetCollisionBodies() const;
 
+		// returns the collision bodies of the provided entity, offset so that they're where they are relative to the whole game world.
+		// NOTE: if the entity doesn't have a sprite, and/or if the sprite hasn't been added to anything, you shouldn't use this function, since it's based on the position of the sprite.
 		static std::vector<OOP::Primitive *> getOffsetCollisionBodies(const cocos2d::Sprite * spr, const std::vector<OOP::Primitive *> & prims);
 
 		// adds a primitive to the collision bodies vector. If it's already in the vector, it won't be added again.

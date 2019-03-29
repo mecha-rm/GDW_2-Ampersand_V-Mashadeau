@@ -24,6 +24,7 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 
 	sprite->setGlobalZOrder(3.0F); // the global z order of enemies
 	sprite->setTag(enemy);
+	inviTimeMax = 1.0F;
 
 	this->EIN = EIN; // saving the EIN; will be changed if invalid.
 	this->LETTER = letter; // saving the letter; will be changed if invalid.

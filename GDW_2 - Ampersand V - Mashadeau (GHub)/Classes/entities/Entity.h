@@ -158,8 +158,16 @@ namespace entity
 
 		// returns the collision bodies of the entity, offset so that they're where they are relative to the whole game world.
 		// note, if the entity doesn't have a sprite, you shouldn't use this function, since it's based on the position of the sprite.
-		std::vector<OOP::Primitive *> getOffsetCollisionBodies() const;
+		virtual std::vector<OOP::Primitive *> getOffsetCollisionBodies() const;
 
+		static std::vector<OOP::Primitive *> getOffsetCollisionBodies(const cocos2d::Sprite * spr, const std::vector<OOP::Primitive *> & prims);
+
+		// adds a primitive to the collision bodies vector. If it's already in the vector, it won't be added again.
+		void addCollisionBody(OOP::Primitive * prim);
+
+		// remove a primitive from the collision bodes vector
+		void removeCollisionBody(OOP::Primitive * prim);
+		
 		// used to make all of the collision bodies either active or not active. Non-active collison boxes will not be picked up by collisions.
 		void setActiveCollisionBodies(bool active);
 
@@ -183,6 +191,7 @@ namespace entity
 		static bool collision(entity::Entity * e1, entity::Entity * e2);
 
 		// checks for collision between two entities. If the collisionBodies vector isn't the one meant to be used, pass a different set of vectors. Just make sure they're actually meant for the entites.
+		// this offsets the locations of the attached primitives so that they're in the proper place.
 		static bool collision(entity::Entity * e1, const std::vector<OOP::Primitive *> & e1Bodies, entity::Entity * e2, const std::vector<OOP::Primitive *> & e2Bodies);
 
 

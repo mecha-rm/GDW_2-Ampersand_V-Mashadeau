@@ -163,9 +163,11 @@ namespace world
 		// Foreground image.
 		Sprite * fg = nullptr; // a foreground layer; this would go in front of all other level assets.
 
-		Node * t;
+		Node * mergedNode; // a node that saves the whole area on a single node (see getAsSingleNode())
+
 	private:
-		float gravity = 100.0F; // the level of gravity in the area.
+		float gravity = 100.0F; // the level of gravity in the area. f
+		// float gravity = 600.0F; // final game gravity?
 
 		std::string fileName; // the name of the file
 		std::fstream file; // the file itself

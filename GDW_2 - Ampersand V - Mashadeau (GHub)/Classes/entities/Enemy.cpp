@@ -42,10 +42,11 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 
 		setName("Kraw-Fly");
 		setDescription("a banana fly creature.");
+		setMagicType(magic::shadow);
 
 		setMaxHealth(1.0F);
 		setHealth(getMaxHealth());
-		setAttackPower(15.0F);
+		setAttackPower(55.0F);
 
 		filePath = "images/enemies/EIN_101.png"; // sets the file path for the enemy.
 		frameSize = Rect(0.0F, 0.0F, 192.0F, 192.0F);

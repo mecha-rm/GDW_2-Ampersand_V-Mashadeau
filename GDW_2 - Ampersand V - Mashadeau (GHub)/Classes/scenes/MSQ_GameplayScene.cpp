@@ -3,7 +3,7 @@
 #include <iostream>
 
 // initalizing static variables
-std::string MSQ_GameplayScene::areaName = "AIN_X01"; // debug area
+std::string MSQ_GameplayScene::areaName = "AIN_X00"; // debug area
 int MSQ_GameplayScene::spawnPoint = 0; // spawn point 0
 
 bool MSQ_GameplayScene::debug = true;
@@ -89,9 +89,9 @@ void MSQ_GameplayScene::initListeners()
 void MSQ_GameplayScene::initSprites() 
 {
 	// the hp bar's position
-	Vec2 hpBarPos{ director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.96F };
+	hpBarPos = Vec2(director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.96F);
 	// the magic bar's position
-	Vec2 mpBarPos;
+	mpBarPos = Vec2(0.0F, 0.0F);
 
 	bool revisit = false; // becomes 'true' if the player has visited this area before.
 
@@ -126,7 +126,7 @@ void MSQ_GameplayScene::initSprites()
 	// [0] = front, [1] = middle (the part that shows the actual HP), [2] = back
 	for (int i = 0; i < BAR_LEN; i++)
 	{
-		hpBar[i] = Sprite::create("images/HP_BAR_A.png"); // creates the sprite.
+		hpBar[i] = Sprite::create("images/HP_BAR_B.png"); // creates the sprite.
 		hpBar[i]->setTextureRect(Rect(0.0F, 0.0F + hpBarRect.getMaxY() * i, hpBarRect.getMaxX(), hpBarRect.getMaxY())); // sets what section of the image to use.
 		// test = hpBar[i]->getTextureRect();
 
@@ -138,19 +138,28 @@ void MSQ_GameplayScene::initSprites()
 	}
 
 	this->addChild(hud);
+	hpBarOffset = hpBarPos - getDefaultCamera()->getPosition(); // gets the diffrence between the camera's position and the camera.
 
 	// creating the grid
 	grid = new OOP::PrimitiveGrid(cocos2d::Vec2(0.0F, 0.0F), cocos2d::Vec2(director->getWinSizeInPixels().width, director->getWinSizeInPixels().height), 128.0F, Color4F::WHITE);
 	// grid->getPrimitive()->setGlobalZOrder(10.3F); // makes the grid be above everything else.
 	grid->getPrimitive()->setVisible(true); // makes the grid visible (or not visible)
 	this->addChild(grid->getPrimitive()); // adds grid to drawList
+	gridOffset = grid->getPosition() - getDefaultCamera()->getPosition();
 
 
 	// setting the camera if it's activated.
 	if (ENABLE_CAMERA)
 	{
 		this->getDefaultCamera()->setAnchorPoint(Vec2(0.5F, 0.5F)); // setting the camera's anchour point
+		
 		this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the location of the camera
+		
+		hpBarPos = getDefaultCamera()->getPosition() + hpBarOffset; // moves the hp bar
+		for (int i = 0; i < BAR_LEN; i++) // moves all of the hp bars accordingly.
+			hpBar[i]->setPosition(hpBarPos);
+
+		grid->setPosition(gridOffset + getDefaultCamera()->getPosition()); // moves the grid.
 	}
 
 	debugMode(); // called to turn on (or off) debug mode.
@@ -540,8 +549,7 @@ void MSQ_GameplayScene::enemyTileCollisions()
 // calculates player collision with enemies
 void MSQ_GameplayScene::playerEnemyCollisions()
 {
-	OOP::Primitive * colPrim1; // the primitive from the player that encountered a collision
-	OOP::Primitive * colPrim2; // the primitive from the other entity that encounted a collision
+	float offset = 0.0F;
 
 	if (plyr->getInvincible()) // if the player currently has invincibility frames, then the enemy collisions are ignored.
 		return;
@@ -556,12 +564,21 @@ void MSQ_GameplayScene::playerEnemyCollisions()
 			// colPrim2 = enemy->collidedPrimitive;
 
 			
-			plyr->setHealth(plyr->getHealth() - enemy->getAttackPower()); // replace with proper calculation.
+			// plyr->setHealth(plyr->getHealth() - enemy->getAttackPower());
+			plyr->setHealth(plyr->getHealth() - magic::MagicType::damage(enemy->getMagicType(), plyr->getMagicType(), enemy->getAttackPower())); // replace with proper calculation.
 			plyr->gotHit();
+			
+			// offset = (hpBarRect.getMaxX() * (1.0F - plyr->getHealth() / plyr->getMaxHealth())) / 2.0F;
+
+			offset = hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()); // calculates the new length of the health bar.
+
 			hpBar[1]->setTextureRect(Rect(0.0F, hpBarRect.getMaxY(), hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()), hpBarRect.getMaxY()));
 			
-			// hpBar[1]->setTextureRect(Rect(0.0F, 0.0F, hpBar[1]->getTexture.size.width * (plyr->getHealth() / plyr->getMaxHealth()), hpBar[1]->getTextureRect().size.height));
-			// hpBar[1]->setTextureRect(Rect(0.0F, 0.0F, hpBar[1]->getTexture()->getContentSize().width * (plyr->getHealth() / plyr->getMaxHealth()), hpBar[1]->getTexture()->getContentSize().height));
+			// This takes the size of the hpBar at full size (hpBarRect.getMaxX()), halves it.
+			// It then subtracts the position of hpBar[0] (i.e. the frame doesn't move) by it, and then adds the new size of the health bar divided by '2' to it.
+			// in other words it basically just aligns itself with the left edge of the frame and then moves it over by half of the health bar's current length, since the position is based on its centre.
+			// this is all so the hp bar is where it should be.
+			hpBar[1]->setPositionX(hpBar[0]->getPositionX() - hpBarRect.getMaxX() / 2 + offset / 2);
 
 			break;
 
@@ -710,7 +727,14 @@ void MSQ_GameplayScene::update(float deltaTime)
 	if (ENABLE_CAMERA) // updates the camera if it's active.
 	{
 		this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the position of the camera so that it follows hte player
+		
 		sceneArea->setAllLayerPositions(this->getDefaultCamera()->getPosition()); // makes the backgrounds be directly behind the player. This needs to be changed later so that it scrolls.
+		
+		hpBarPos = getDefaultCamera()->getPosition() + hpBarOffset; // moves the hp bar
+		for (int i = 0; i < BAR_LEN; i++) // moves all of the hp bars accordingly.
+			hpBar[i]->setPosition(hpBarPos);
+
+		grid->setPosition(gridOffset + getDefaultCamera()->getPosition()); // moves the grid so that it
 	}
 
 	// These movement parameters will need to be changed later.
@@ -750,7 +774,7 @@ void MSQ_GameplayScene::update(float deltaTime)
 	if (jump)
 	{
 		plyr->zeroVelocityY();
-		plyr->setPositionY(plyr->getPositionY() + 1.00F);
+		plyr->setPositionY(plyr->getPositionY());
 		plyr->addJumpForce();
 		jump = false;
 	}
@@ -760,7 +784,7 @@ void MSQ_GameplayScene::update(float deltaTime)
 		{
 		case 6: // attack 1 animation.
 			plyr->runAction(pAction);
-			// pAction = 0;
+			pAction = 0;
 		}
 
 		plyrAction = false;

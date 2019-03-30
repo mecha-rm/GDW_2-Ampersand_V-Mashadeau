@@ -15,7 +15,7 @@ namespace magic {
 		air = 5
 	};
 
-	class MagicTypes
+	typedef class MagicType
 	{
 	public:
 		
@@ -30,7 +30,7 @@ namespace magic {
 		*
 		* sets the type of magic the entity is; the constructor handles the weakness matchup.
 		*/
-		MagicTypes(magic_t type = null);
+		MagicType(magic_t type = null);
 
 		/*
 		* Types:
@@ -44,21 +44,42 @@ namespace magic {
 		* sets the type of magic the entity is, and the weakness matchup. This should NOT contradict the standard type magics.
 		* the question applied to this is "how weak is the entity to this type of attack?"
 		*/
-		MagicTypes(magic_t type, float nullWeakness, float shadowWeakness, float fireWeakness, float waterWeakness, float earthWeakness, float airWeakness);
-		~MagicTypes();
+		MagicType(magic_t type, float nullWeakness, float shadowWeakness, float fireWeakness, float waterWeakness, float earthWeakness, float airWeakness);
+		
+		~MagicType();
 
 		// returns the magic type of the entity
 		magic_t getType() const;
 
+		// sets the magic type. The weaknesses remain the same if this is called.
+		void setType(magic_t type);
+
 		// returns how weak the entity is to the provided type. This should be used to consult how much damage an attack should do to an entity.
-		float getWeakness(magic_t entityType) const;
+		float getWeakness(magic_t magicType) const;
+
+		// gets how weak the entity is to null damage.
+		float getNullWeakness() const;
+
+		// gets how weak the entity is to shadow damage.
+		float getShadowWeakness() const;
+
+		// gets how weak the entity is to fire damage.
+		float getFireWeakness() const;
+
+		// gets how weak the entity is to water damage.
+		float getWaterWeakness() const;
+
+		// gets how weak the entity is to earth damage.
+		float getEarthWeakness() const;
+
+		// gets how weak the entity is to air damage.
+		float getAirWeakness() const;
+
+		// calculates the amount of damage the 'attacker' will do the 'victim' my multiplying variable 'damage'.
+		static float damage(MagicType & attacker, MagicType & victim, float damage);
 
 		static const int TOTAL_TYPES; // the total amount of types in the game.
 	private:
-		
-		
-
-	protected:
 		magic_t type; // the type of magic the entity is.
 		
 		/*
@@ -82,19 +103,23 @@ namespace magic {
 		*/
 		float damageMultipliers[6];
 
-		// saves pointers to specific parts of the array for easy access.
+		// saves pointers to specific parts of the array for easy access. These couldn't be made 'const' becasue it would delete the functions.
 
 		// a pointer ot the spot in the array that saves how weak the entity is to null damage.
-		float * const nullWeakness = &damageMultipliers[0];
+		float * nullWeakness = &damageMultipliers[0];
 		// a pointer ot the spot in the array that saves how weak the entity is to shadow damage.
-		float * const shadowWeakness = &damageMultipliers[1];
+		float * shadowWeakness = &damageMultipliers[1];
 		// a pointer ot the spot in the array that saves how weak the entity is to fire damage.
-		float * const fireWeakness = &damageMultipliers[2];
+		float * fireWeakness = &damageMultipliers[2];
 		// a pointer ot the spot in the array that saves how weak the entity is to water damage.
-		float * const waterWeakness = &damageMultipliers[3];
+		float *waterWeakness = &damageMultipliers[3];
 		// a pointer ot the spot in the array that saves how weak the entity is to earth damage.
-		float * const earthWeakness = &damageMultipliers[4];
+		float * earthWeakness = &damageMultipliers[4];
 		// a pointer ot the spot in the array that saves how weak the entity is to air damage.
-		float * const airWeakness = &damageMultipliers[5];
-	};
+		float * airWeakness = &damageMultipliers[5];
+
+
+	protected:
+
+	} Magic;
 }

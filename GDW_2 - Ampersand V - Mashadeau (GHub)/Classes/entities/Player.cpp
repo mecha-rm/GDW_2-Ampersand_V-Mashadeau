@@ -10,6 +10,8 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	setDescription("The shadow mage, Mashadeau!");
 	frameSize = Rect(0.0F, 0.0F, 256.0F, 256.0F);
 
+	setMagicType(magic::shadow);
+
 	sprite->setTextureRect(frameSize); // setting the area of the sprite that's used
 	sprite->setGlobalZOrder(2.0F); // sets the global Z order of the player.
 	sprite->setTag(player);
@@ -109,6 +111,43 @@ entity::Weapon * entity::Player::getWeapon3() const { return weapon3; }
 // returns the current weapon
 entity::Weapon * entity::Player::getCurrentWeapon() const { return currentWeapon; }
 
+// gets the magic power of the player.
+float entity::Player::getMagicPower() { return magicPower; }
+
+// sets the magic power.
+void entity::Player::setMagicPower(float mp)
+{
+	magicPower = (mp > magicPowerMax) ? magicPowerMax : (mp < 0.0F) ? 0.0F : mp;
+}
+
+// sets the maximum magic power which cannot be 0. The current amount of magic is adjusted accordingly.
+void entity::Player::setMagicPowerMax(float mpm, bool changeCurrent)
+{
+	float oldMax = magicPowerMax;
+
+	if (mpm <= 0.0F)
+	{
+		magicPowerMax = 0.0F;
+		
+		if(changeCurrent)
+			magicPower = magicPowerMax;
+	}
+	else
+	{
+		if (changeCurrent)
+			magicPower = (magicPower / magicPowerMax) * mpm; // sets the magic power proportionally to the maximum health the player now has.
+		
+		magicPowerMax = mpm; // sets the maximum magic power.
+	}
+}
+
+
+// adds to the magic power of the player.
+void entity::Player::addMagicPower(float mp) { setMagicPower(magicPower + mp); }
+
+// adds to the maximum magic power.
+void entity::Player::addMagicPowerMax(float mpm, bool changeCurrent) { setMagicPowerMax(magicPowerMax + mpm, changeCurrent); }
+
 void entity::Player::update(float deltaTime)
 {
 	if (!runningAnimation()) // if no animation is running right now.
@@ -129,3 +168,4 @@ void entity::Player::update(float deltaTime)
 		w->update(deltaTime);
 
 }
+

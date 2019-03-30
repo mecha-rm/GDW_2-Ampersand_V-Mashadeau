@@ -91,6 +91,7 @@ private:
 
 	bool gridVisible = false; // turns on the grid.
 	OOP::PrimitiveGrid * grid = nullptr; // stores the grid information
+	Vec2 gridOffset = Vec2(0.0F, 0.0F); // the offset of the grid so that it remains on screen.
 
 	// gets a reference to the 'shapesVisible' so that the collision spaces can be turned on/off from the scene file.
 	bool * shapesVisible = &entity::Entity::shapesVisible;
@@ -128,6 +129,8 @@ private:
 	*/
 	Sprite * hpBar[3]; // an array used for holding sprite information on the hpbar
 	Rect hpBarRect; // used to recall how big each image for the hpBar is. This is set in the gameplay scene.
+	Vec2 hpBarPos = Vec2(0.0F, 0.0F); // the hpBar position
+	Vec2 hpBarOffset = Vec2(0.0F, 0.0F); // the position of the hpBar proportional to the camera.
 
 	/*
 	 * [0]: the front of the hp bar, which is an overlay.
@@ -135,7 +138,9 @@ private:
 	 * [2]: the back of the magic bar, which is what appears as the health bar goes down.
 	*/
 	Sprite * mpBar[3] { nullptr, nullptr, nullptr };
-
+	Rect mpBarRect;
+	Vec2 mpBarPos = Vec2(0.0F, 0.0F);
+	Vec2 mpBarOffset = Vec2(0.0F, 0.0F);
 
 	bool moveUp = false;
 	bool moveDown = false;

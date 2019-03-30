@@ -15,7 +15,6 @@ entity::Entity::Entity(std::string texture, float globalZOrder) : sprite(Sprite:
 	sprite->setAnchorPoint(Vec2(0.5, 0.5)); // anchour point is the middle of the sprite
 	sprite->setGlobalZOrder(globalZOrder); // setting the global z order
 	sprite->setTag(entity);
-
 }
 
 // releases the sprite 
@@ -73,14 +72,16 @@ void entity::Entity::setTextureRect(float x, float y, float width, float height,
 }
 
 // gets the magic type of the entity
-magic::magic_t entity::Entity::getMagicType() const { return magicType->getType(); }
+magic::magic_t entity::Entity::getMagic_T() const { return magicType.getType(); }
+
+// gets the magic object of the entity. Use this to get it's level of effectiveness against other types.
+magic::MagicType entity::Entity::getMagicType() const { return magicType; }
 
 // sets the type of magic for the entity. Changing the magic type will result in the defaults for that type being used.
-void entity::Entity::setMagicType(magic::magic_t magicType)
-{
-	magic::MagicTypes * newMagic = new magic::MagicTypes(magicType);
-	this->magicType = newMagic;
-}
+void entity::Entity::setMagicType(magic::magic_t magicType) { this->magicType = magic::MagicType(magicType); }
+
+// sets a new magic object for the entity.
+void entity::Entity::setMagicType(magic::MagicType newMagic) { magicType = newMagic; }
 
 // sets the entity's position. While all sprite children move with the sprite, their positions don't change (i.e. getPosition() for them would return the same value).
 void entity::Entity::setPosition(Vec2 newPos) 
@@ -535,39 +536,9 @@ bool entity::Entity::collision(entity::Entity * e1, const std::vector<OOP::Primi
 	OOP::PrimitiveCapsule * tempCap1 = nullptr; // temporary capsule pointer for e1
 	OOP::PrimitiveCapsule * tempCap2 = nullptr; // temporary capsule pointer for e2
 
-	// OOP::PrimitiveCircle * tempCirc1x;
-
-	// handles all possible collsions. If 'Active' is turned off for either collision shape, then a no collision is checked.
 	for each(OOP::Primitive * e1Prim in e1Bodies)
 	{
 		if (e1Prim == nullptr || e1Prim->isActive() == false) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
-			continue;
-
-		// downcasts the first primitive to know which one it is.
-		switch (e1Prim->getId())
-		{
-		case 1: // Square (AABB)
-			tempRect1 = new OOP::PrimitiveSquare(e1Bl + ((OOP::PrimitiveSquare *)e1Prim)->getPosition(), ((OOP::PrimitiveSquare *)e1Prim)->m_WIDTH, ((OOP::PrimitiveSquare *)e1Prim)->m_HEIGHT);
-			break;
-
-		case 2: // Square (OBB)
-			tempObb1 = new OOP::PrimitiveOrientedSquare(e1Bl + ((OOP::PrimitiveOrientedSquare *)e1Prim)->getPosition(), ((OOP::PrimitiveOrientedSquare *) e1Prim)->m_WIDTH, ((OOP::PrimitiveOrientedSquare *) e1Prim)->m_HEIGHT);
-			break;
-
-		case 3: // Circle
-			tempCirc1 = new OOP::PrimitiveCircle(Vec2(e1Bl.x + ((OOP::PrimitiveCircle *)e1Prim)->getPosition().x, e1Bl.y + ((OOP::PrimitiveCircle *)e1Prim)->getPosition().y), ((OOP::PrimitiveCircle *)e1Prim)->m_RADIUS);
-			break;
-
-		case 5: // Capsule; this splits the capsule up into two circles and an oriented rectangle.
-			tempCap1 = new OOP::PrimitiveCapsule(e1Bl + ((OOP::PrimitiveCapsule *) e1Prim)->getPosition(), ((OOP::PrimitiveCapsule *) e1Prim)->m_RECT_WIDTH, ((OOP::PrimitiveCapsule *) e1Prim)->m_RECT_HEIGHT / 2, ((OOP::PrimitiveCapsule *) e1Prim)->getRotationInDegrees());
-			// tempCirc1 = new OOP::PrimitiveCircle(tempCap1->getCirclePosition1(), tempCap1->m_RADIUS); // gets the circle of
-			// tempObb1 = tempCap1->getOrientedRect();
-
-			// tempCap1 = new OOP::PrimitiveCapsule(Vec2)
-			break;
-		}
-
-		if (tempRect1 == nullptr && tempCirc1 == nullptr && tempObb1 == nullptr) // if all of these are nullptrs, then an unusable primitive was found.
 			continue;
 
 		for each(OOP::Primitive * e2Prim in e2Bodies)
@@ -575,131 +546,183 @@ bool entity::Entity::collision(entity::Entity * e1, const std::vector<OOP::Primi
 			if (e2Prim == nullptr || e2Prim->isActive() == false) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
 				continue;
 
-			switch (e2Prim->getId()) // downcasts the second primitive to know which one it is.
-			{
-			case 1: // Square (AABB)
-				tempRect2 = new OOP::PrimitiveSquare(e2Bl + ((OOP::PrimitiveSquare *)e2Prim)->getPosition(), ((OOP::PrimitiveSquare *)e2Prim)->m_WIDTH, ((OOP::PrimitiveSquare *)e2Prim)->m_HEIGHT);
-				break;
-
-			case 2: // Square (OBB)
-				tempObb2 = new OOP::PrimitiveOrientedSquare(e2Bl + ((OOP::PrimitiveOrientedSquare *)e2Prim)->getPosition(), ((OOP::PrimitiveOrientedSquare *) e2Prim)->m_WIDTH, ((OOP::PrimitiveOrientedSquare *) e2Prim)->m_HEIGHT);
-				break;
-
-			case 3: // Circle
-				tempCirc2 = new OOP::PrimitiveCircle(Vec2(e2Bl.x + ((OOP::PrimitiveCircle *)e2Prim)->getPosition().x, e2Bl.y + ((OOP::PrimitiveCircle *)e2Prim)->getPosition().y), ((OOP::PrimitiveCircle *)e2Prim)->m_RADIUS);
-				break;
-
-			case 5: // Capsule; this splits the capsule up into two circles and an oriented rectangle.
-				tempCap2 = new OOP::PrimitiveCapsule(e2Bl + ((OOP::PrimitiveCapsule *) e2Prim)->getPosition(), ((OOP::PrimitiveCapsule *) e2Prim)->m_RECT_WIDTH, ((OOP::PrimitiveCapsule *) e2Prim)->m_RECT_HEIGHT / 2, ((OOP::PrimitiveCapsule *) e2Prim)->getRotationInDegrees());
-			}
-
-			if (tempRect2 == nullptr && tempCirc2 == nullptr && tempObb2 == nullptr) // if all of these are nullptrs, then an unusable primitive was found.
-				continue;
-
-			// goes in the order of AABB - circle - OBB - capsule
-			// capsule hasn't been implemented as of yet.
-			if (tempRect1 != nullptr && tempRect2 != nullptr) // AABB check (rectangle and rectangle)
-			{
-				if (umath::aabbCollision(&tempRect1->getRect(), &tempRect2->getRect())) // if true, the collided primitives at their proper location are saved.
-				{
-					e1->collidedPrimitive = tempRect1;
-					e2->collidedPrimitive = tempRect2;
-					return true;
-				}
-			}
-			else if (tempRect1 != nullptr && tempCirc2 != nullptr) // rectangle and circle check
-			{
-				if (umath::aabbCircleCollision(tempRect1->getRect(), tempCirc2->getPosition(), tempCirc2->m_RADIUS)) // if true, the collided primitives at their proper location are saved.
-				{
-					e1->collidedPrimitive = tempRect1;
-					e2->collidedPrimitive = tempCirc2;
-					return true;
-				}
-			}
-			else if (tempRect1 != nullptr && tempObb2 != nullptr) // rectangle and oriented rectangle
-			{
-				if (umath::obbCollision(tempRect1->getRect(), 0.0F, tempObb2->getRect(), tempObb2->getRotationInRadians(), false)) // if true, the collided primitives at their proper location are saved.
-				{
-					e1->collidedPrimitive = tempRect1;
-					e2->collidedPrimitive = tempObb2;
-					return true;
-				}
-			}
-			else if (tempRect1 != nullptr && tempCap2 != nullptr) // rectangle and capsule
-			{
-				// collision between the rect and the capsule
-				if (umath::obbCollision(tempRect1->getRect(), 0.0F, tempCap2->getOrientedRect()->getRect(), tempCap2->getOrientedRect()->getRotationInRadians(), false) ||
-					umath::aabbCircleCollision(tempRect1->getRect(), tempCap2->getCirclePosition1(), tempCap2->m_RADIUS) ||
-					umath::aabbCircleCollision(tempRect1->getRect(), tempCap2->getCirclePosition2(), tempCap2->m_RADIUS)
-					)
-				{
-					e1->collidedPrimitive = tempRect1;
-					e2->collidedPrimitive = tempCap2;
-					return true;
-				}
-			}
 			
-			
-			// tempCircle1
-			if (tempCirc1 != nullptr && tempRect2 != nullptr) // circle-rectangle check
+			if (OOP::Primitive::collision(e1Prim, e2Prim)) // if the two primitives have collided.
 			{
-				if (umath::aabbCircleCollision(tempRect2->getRect(), tempCirc1->getPosition(), tempCirc1->m_RADIUS)) // if true, the collided primitives at their proper location are saved.
-				{
-					e1->collidedPrimitive = tempCirc1;
-					e2->collidedPrimitive = tempRect2;
-					return true;
-				}
+				e1->collidedPrimitive = e1Prim;
+				e2->collidedPrimitive = e2Prim;
+				return true;
 			}
-			else if (tempCirc1 != nullptr && tempCirc2 != nullptr) // circle-circle check
-			{
-				// if true, the collided primitives at their proper location are saved.
-				if (umath::circleCollision(tempCirc1->getPosition(), tempCirc1->m_RADIUS, tempCirc2->getPosition(), tempCirc2->m_RADIUS))
-				{
-					e1->collidedPrimitive = tempCirc1;
-					e2->collidedPrimitive = tempCirc2;
-					return true;
-				}
-			}
-			else if (tempCirc1 != nullptr && tempObb2 != nullptr) // circle-OBB check. Unfortunately, this is just a disguised square-OBB check, since I don't actually understand the algorithm for it.
-			{
-				if (umath::obbCollision(
-					Rect(tempCirc1->getPosition().x - tempCirc1->m_RADIUS, tempCirc1->getPosition().y - tempCirc1->m_RADIUS, tempCirc1->m_RADIUS * 2, tempCirc1->m_RADIUS * 2),
-					0.0F, tempObb2->getRect(), tempObb2->getRotationInRadians(), false))
-				{
-					e1->collidedPrimitive = tempCirc1;
-					e2->collidedPrimitive = tempObb2;
-					return true;
-				}
-			}
-			else if (tempCirc1 != nullptr && tempCap2 != nullptr) // circle and capsule
-			{
-				if (umath::circleCollision(tempCirc1->getPosition(), tempCirc1->m_RADIUS, tempCap2->getCirclePosition1(), tempCap2->m_RADIUS) ||
-					umath::circleCollision(tempCirc1->getPosition(), tempCirc1->m_RADIUS, tempCap2->getCirclePosition2(), tempCap2->m_RADIUS) ||
-					umath::obbCollision(
-						Rect(tempCirc1->getPosition().x - tempCirc1->m_RADIUS, tempCirc1->getPosition().y - tempCirc1->m_RADIUS, tempCirc1->m_RADIUS * 2, tempCirc1->m_RADIUS * 2), 0.0F,
-						tempCap2->getOrientedRect()->getRect(), tempCap2->getOrientedRect()->getRotationInRadians(), false)
-					)
-				{
-					e1->collidedPrimitive = tempCirc1;
-					e2->collidedPrimitive = tempCap2;
-					return true;
-				}
-			}
-
-
-			// sets all of these to nullptr for the following check.
-			tempRect2 = nullptr;
-			tempCirc2 = nullptr;
-			tempObb2 = nullptr;
-			tempCap2= nullptr;
 		}
-
-		// sets all of these to nullptr for the following check.
-		tempRect1 = nullptr;
-		tempCirc1 = nullptr;
-		tempObb1 = nullptr;
-		tempCap2 = nullptr;
 	}
+
+	return false;
+
+	// OOP::PrimitiveCircle * tempCirc1x;
+
+	//// handles all possible collsions. If 'Active' is turned off for either collision shape, then a no collision is checked.
+	//for each(OOP::Primitive * e1Prim in e1Bodies)
+	//{
+	//	if (e1Prim == nullptr || e1Prim->isActive() == false) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
+	//		continue;
+
+	//	// downcasts the first primitive to know which one it is.
+	//	switch (e1Prim->getId())
+	//	{
+	//	case 1: // Square (AABB)
+	//		tempRect1 = new OOP::PrimitiveSquare(e1Bl + ((OOP::PrimitiveSquare *)e1Prim)->getPosition(), ((OOP::PrimitiveSquare *)e1Prim)->m_WIDTH, ((OOP::PrimitiveSquare *)e1Prim)->m_HEIGHT);
+	//		break;
+
+	//	case 2: // Square (OBB)
+	//		tempObb1 = new OOP::PrimitiveOrientedSquare(e1Bl + ((OOP::PrimitiveOrientedSquare *)e1Prim)->getPosition(), ((OOP::PrimitiveOrientedSquare *) e1Prim)->m_WIDTH, ((OOP::PrimitiveOrientedSquare *) e1Prim)->m_HEIGHT);
+	//		break;
+
+	//	case 3: // Circle
+	//		tempCirc1 = new OOP::PrimitiveCircle(Vec2(e1Bl.x + ((OOP::PrimitiveCircle *)e1Prim)->getPosition().x, e1Bl.y + ((OOP::PrimitiveCircle *)e1Prim)->getPosition().y), ((OOP::PrimitiveCircle *)e1Prim)->m_RADIUS);
+	//		break;
+
+	//	case 5: // Capsule; this splits the capsule up into two circles and an oriented rectangle.
+	//		tempCap1 = new OOP::PrimitiveCapsule(e1Bl + ((OOP::PrimitiveCapsule *) e1Prim)->getPosition(), ((OOP::PrimitiveCapsule *) e1Prim)->m_RECT_WIDTH, ((OOP::PrimitiveCapsule *) e1Prim)->m_RECT_HEIGHT / 2, ((OOP::PrimitiveCapsule *) e1Prim)->getRotationInDegrees());
+	//		// tempCirc1 = new OOP::PrimitiveCircle(tempCap1->getCirclePosition1(), tempCap1->m_RADIUS); // gets the circle of
+	//		// tempObb1 = tempCap1->getOrientedRect();
+
+	//		// tempCap1 = new OOP::PrimitiveCapsule(Vec2)
+	//		break;
+	//	}
+
+	//	if (tempRect1 == nullptr && tempCirc1 == nullptr && tempObb1 == nullptr) // if all of these are nullptrs, then an unusable primitive was found.
+	//		continue;
+
+	//	for each(OOP::Primitive * e2Prim in e2Bodies)
+	//	{
+	//		if (e2Prim == nullptr || e2Prim->isActive() == false) // if the primitive is inactive (i.e. the collision has been turned off), it moves onto the next one.
+	//			continue;
+
+	//		switch (e2Prim->getId()) // downcasts the second primitive to know which one it is.
+	//		{
+	//		case 1: // Square (AABB)
+	//			tempRect2 = new OOP::PrimitiveSquare(e2Bl + ((OOP::PrimitiveSquare *)e2Prim)->getPosition(), ((OOP::PrimitiveSquare *)e2Prim)->m_WIDTH, ((OOP::PrimitiveSquare *)e2Prim)->m_HEIGHT);
+	//			break;
+
+	//		case 2: // Square (OBB)
+	//			tempObb2 = new OOP::PrimitiveOrientedSquare(e2Bl + ((OOP::PrimitiveOrientedSquare *)e2Prim)->getPosition(), ((OOP::PrimitiveOrientedSquare *) e2Prim)->m_WIDTH, ((OOP::PrimitiveOrientedSquare *) e2Prim)->m_HEIGHT);
+	//			break;
+
+	//		case 3: // Circle
+	//			tempCirc2 = new OOP::PrimitiveCircle(Vec2(e2Bl.x + ((OOP::PrimitiveCircle *)e2Prim)->getPosition().x, e2Bl.y + ((OOP::PrimitiveCircle *)e2Prim)->getPosition().y), ((OOP::PrimitiveCircle *)e2Prim)->m_RADIUS);
+	//			break;
+
+	//		case 5: // Capsule; this splits the capsule up into two circles and an oriented rectangle.
+	//			tempCap2 = new OOP::PrimitiveCapsule(e2Bl + ((OOP::PrimitiveCapsule *) e2Prim)->getPosition(), ((OOP::PrimitiveCapsule *) e2Prim)->m_RECT_WIDTH, ((OOP::PrimitiveCapsule *) e2Prim)->m_RECT_HEIGHT / 2, ((OOP::PrimitiveCapsule *) e2Prim)->getRotationInDegrees());
+	//		}
+
+	//		if (tempRect2 == nullptr && tempCirc2 == nullptr && tempObb2 == nullptr) // if all of these are nullptrs, then an unusable primitive was found.
+	//			continue;
+
+	//		// goes in the order of AABB - circle - OBB - capsule
+	//		// capsule hasn't been implemented as of yet.
+	//		if (tempRect1 != nullptr && tempRect2 != nullptr) // AABB check (rectangle and rectangle)
+	//		{
+	//			if (umath::aabbCollision(&tempRect1->getRect(), &tempRect2->getRect())) // if true, the collided primitives at their proper location are saved.
+	//			{
+	//				e1->collidedPrimitive = tempRect1;
+	//				e2->collidedPrimitive = tempRect2;
+	//				return true;
+	//			}
+	//		}
+	//		else if (tempRect1 != nullptr && tempCirc2 != nullptr) // rectangle and circle check
+	//		{
+	//			if (umath::aabbCircleCollision(tempRect1->getRect(), tempCirc2->getPosition(), tempCirc2->m_RADIUS)) // if true, the collided primitives at their proper location are saved.
+	//			{
+	//				e1->collidedPrimitive = tempRect1;
+	//				e2->collidedPrimitive = tempCirc2;
+	//				return true;
+	//			}
+	//		}
+	//		else if (tempRect1 != nullptr && tempObb2 != nullptr) // rectangle and oriented rectangle
+	//		{
+	//			if (umath::obbCollision(tempRect1->getRect(), 0.0F, tempObb2->getRect(), tempObb2->getRotationInRadians(), false)) // if true, the collided primitives at their proper location are saved.
+	//			{
+	//				e1->collidedPrimitive = tempRect1;
+	//				e2->collidedPrimitive = tempObb2;
+	//				return true;
+	//			}
+	//		}
+	//		else if (tempRect1 != nullptr && tempCap2 != nullptr) // rectangle and capsule
+	//		{
+	//			// collision between the rect and the capsule
+	//			if (umath::obbCollision(tempRect1->getRect(), 0.0F, tempCap2->getOrientedRect()->getRect(), tempCap2->getOrientedRect()->getRotationInRadians(), false) ||
+	//				umath::aabbCircleCollision(tempRect1->getRect(), tempCap2->getCirclePosition1(), tempCap2->m_RADIUS) ||
+	//				umath::aabbCircleCollision(tempRect1->getRect(), tempCap2->getCirclePosition2(), tempCap2->m_RADIUS)
+	//				)
+	//			{
+	//				e1->collidedPrimitive = tempRect1;
+	//				e2->collidedPrimitive = tempCap2;
+	//				return true;
+	//			}
+	//		}
+	//		
+	//		
+	//		// tempCircle1
+	//		if (tempCirc1 != nullptr && tempRect2 != nullptr) // circle-rectangle check
+	//		{
+	//			if (umath::aabbCircleCollision(tempRect2->getRect(), tempCirc1->getPosition(), tempCirc1->m_RADIUS)) // if true, the collided primitives at their proper location are saved.
+	//			{
+	//				e1->collidedPrimitive = tempCirc1;
+	//				e2->collidedPrimitive = tempRect2;
+	//				return true;
+	//			}
+	//		}
+	//		else if (tempCirc1 != nullptr && tempCirc2 != nullptr) // circle-circle check
+	//		{
+	//			// if true, the collided primitives at their proper location are saved.
+	//			if (umath::circleCollision(tempCirc1->getPosition(), tempCirc1->m_RADIUS, tempCirc2->getPosition(), tempCirc2->m_RADIUS))
+	//			{
+	//				e1->collidedPrimitive = tempCirc1;
+	//				e2->collidedPrimitive = tempCirc2;
+	//				return true;
+	//			}
+	//		}
+	//		else if (tempCirc1 != nullptr && tempObb2 != nullptr) // circle-OBB check. Unfortunately, this is just a disguised square-OBB check, since I don't actually understand the algorithm for it.
+	//		{
+	//			if (umath::obbCollision(
+	//				Rect(tempCirc1->getPosition().x - tempCirc1->m_RADIUS, tempCirc1->getPosition().y - tempCirc1->m_RADIUS, tempCirc1->m_RADIUS * 2, tempCirc1->m_RADIUS * 2),
+	//				0.0F, tempObb2->getRect(), tempObb2->getRotationInRadians(), false))
+	//			{
+	//				e1->collidedPrimitive = tempCirc1;
+	//				e2->collidedPrimitive = tempObb2;
+	//				return true;
+	//			}
+	//		}
+	//		else if (tempCirc1 != nullptr && tempCap2 != nullptr) // circle and capsule
+	//		{
+	//			if (umath::circleCollision(tempCirc1->getPosition(), tempCirc1->m_RADIUS, tempCap2->getCirclePosition1(), tempCap2->m_RADIUS) ||
+	//				umath::circleCollision(tempCirc1->getPosition(), tempCirc1->m_RADIUS, tempCap2->getCirclePosition2(), tempCap2->m_RADIUS) ||
+	//				umath::obbCollision(
+	//					Rect(tempCirc1->getPosition().x - tempCirc1->m_RADIUS, tempCirc1->getPosition().y - tempCirc1->m_RADIUS, tempCirc1->m_RADIUS * 2, tempCirc1->m_RADIUS * 2), 0.0F,
+	//					tempCap2->getOrientedRect()->getRect(), tempCap2->getOrientedRect()->getRotationInRadians(), false)
+	//				)
+	//			{
+	//				e1->collidedPrimitive = tempCirc1;
+	//				e2->collidedPrimitive = tempCap2;
+	//				return true;
+	//			}
+	//		}
+
+
+	//		// sets all of these to nullptr for the following check.
+	//		tempRect2 = nullptr;
+	//		tempCirc2 = nullptr;
+	//		tempObb2 = nullptr;
+	//		tempCap2= nullptr;
+	//	}
+
+	//	// sets all of these to nullptr for the following check.
+	//	tempRect1 = nullptr;
+	//	tempCirc1 = nullptr;
+	//	tempObb1 = nullptr;
+	//	tempCap2 = nullptr;
+	//}
 }
 
 

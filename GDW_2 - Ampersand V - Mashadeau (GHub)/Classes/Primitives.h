@@ -87,13 +87,15 @@ namespace OOP
 		short int getId();
 
 		/*
-		// collision between two primitives. Returns false if there is no check availble, at least one of the primitives is inactive, or if there is no collision.
-		// avaiable checks are shown below:
+		* collision between two primitives. Returns false if there is no check availble, at least one of the primitives is inactive, or if there is no collision.
+		* These are the accurate collision checks that have proper algorithms. 
 			* AABB - AABB
 			* Circle - Circle
-			* Capsule - Capsule (cannot do OBB and Circle)
 			* AABB - OBB
-			* AABB - Circle
+		
+		* These are the 'inaccurate' collision checks. NONE OF THESE HAVE BEEN IMPLEMENTED.
+			* Capsule - Capsule (this cannot do OBB and Circle, so the circles are made into AABBs for the sake of the check)
+			* OBB - Circle (this makes the circle an AABB box in order for it to work).
 		*/
 		static bool collision(OOP::Primitive * p1, OOP::Primitive * p2);
 

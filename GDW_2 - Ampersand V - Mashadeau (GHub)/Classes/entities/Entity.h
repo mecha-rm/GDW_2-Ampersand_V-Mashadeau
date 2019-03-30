@@ -57,7 +57,11 @@ namespace entity
 		Rect getTextureRect() const;
 
 		// returns the magic type of the entity; changing the magic type will result in the defaults for that type being used.
-		magic::magic_t getMagicType() const;
+		magic::magic_t getMagic_T() const;
+
+		// gets the magic object of the entity. Use this to get it's level of effectiveness against other types.
+		magic::MagicType getMagicType() const;
+
 
 		// Setting the position. While all sprite children move with the sprite, their positions don't change (i.e. getPosition() for them would return the same value).
 		void setPosition(Vec2 newPos);
@@ -315,8 +319,11 @@ namespace entity
 		// if USE_CENTRE is true, then the cropped area treats (x, y) as the centre of the area, rather than the corner of the area.
 		void setTextureRect(float x, float y, float width, float height, const bool USE_CENTRE = false);
 
-		// sets a new magic type for the entity
+		// sets a new magic object for the entity based on a type and uses the default values for said type.
 		void setMagicType(magic::magic_t magicType);
+
+		// sets a new magic object for the entity.
+		void setMagicType(magic::MagicType magic);
 
 		// sets the entity's current velocity.
 		void setVelocity(Vec2 velocity);
@@ -335,7 +342,7 @@ namespace entity
 		void setConstVelocity();
 
 		// the magic type of the entity
-		magic::MagicTypes * magicType = new magic::MagicTypes(magic::null);
+		magic::MagicType magicType = magic::MagicType(magic::null);
 
 		Sprite * sprite; // the entity's sprite
 		Rect frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F); // the size of an individual frame of the sprite.

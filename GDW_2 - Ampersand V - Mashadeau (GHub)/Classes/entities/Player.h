@@ -39,6 +39,15 @@ namespace entity
 		// gets the current weapon equipped
 		entity::Weapon * getCurrentWeapon() const;
 
+		// gets the magic power of the player
+		float getMagicPower();
+
+		// adds to the magic power of the player. If this goes beyond the maximum magic power, it's set to max. If it goes below 0, it's set to 0.
+		void addMagicPower(float mp);
+
+		// adds to the maximum magic power, and changes the current magic power (only if 'changeCurrent' is true)
+		void addMagicPowerMax(float mpm, bool changeCurrent);
+
 		void update(float deltaTime);
 
 		bool cancelUp = false;
@@ -48,9 +57,11 @@ namespace entity
 
 	private:
 
+		
+
 		std::vector<entity::Weapon *> weapons; // saves all of the weapons the player has.
 
-		entity::Weapon * currentWeapon = nullptr;
+		entity::Weapon * currentWeapon = nullptr; // current weapon equipped
 
 		entity::Weapon * weapon1 = nullptr;
 		entity::Weapon * weapon2 = nullptr;
@@ -58,7 +69,18 @@ namespace entity
 
 		bool usingWeapon = false;
 
+		float magicPower = 0.0F;
+		float magicPowerMax = 0.0F;
+
 	protected:
+
+		// sets the magic power. If an mp less than 0 is given, then it's set to 0. If an mp greater than the max is given, then it's set to the max.
+		void setMagicPower(float mp);
+
+		// sets the maximum magic power, which cannot be 0. The current amount of magic is adjusted accordingly.
+		// if 'changeCurrent' is true, then the current amount of magic power is changed accordingly.
+		void setMagicPowerMax(float mpm, bool changeCurrent);
+
 	};
 }
 

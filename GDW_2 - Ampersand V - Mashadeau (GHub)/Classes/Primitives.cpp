@@ -99,7 +99,8 @@ bool OOP::Primitive::collision(OOP::Primitive * p1, OOP::Primitive * p2)
 	}
 	else if (p1->getId() == 5 && p2->getId() == 5) // capsule-capsule
 	{
-	
+
+		// Proper checks
 		col = collision(((OOP::PrimitiveCapsule *)p1)->getCircle1(), ((OOP::PrimitiveCapsule *)p2)->getCircle1()); // p1 circ1 and p2 circ1
 		if (col == true)
 			return col;
@@ -118,7 +119,8 @@ bool OOP::Primitive::collision(OOP::Primitive * p1, OOP::Primitive * p2)
 
 		col = collision(((OOP::PrimitiveCapsule *)p1)->getOrientedRect(), ((OOP::PrimitiveCapsule *)p2)->getOrientedRect()); // p1 oriented rect and p2 oriented rect
 
-		// unfortuantely I do not know how to do circle-obb
+		// Improper checks
+		// col = collision(((OOP::PrimitiveCapsule *)p1)->getOrientedRect(), OOP::PrimitiveSquare(p2->getPosition(), p2->)
 	}
 	else if ((p1->getId() == 1 && p2->getId() == 2) || (p1->getId() == 2 || p2->getId() == 1)) // AABB and OBB (or OBB and AABB)
 	{

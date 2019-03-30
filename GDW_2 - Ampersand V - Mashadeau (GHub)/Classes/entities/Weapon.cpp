@@ -39,7 +39,7 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(187.0F, 71.0F), 37, 89, CLR_ATK));
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(167.0F, 130.0F), 53, 68, CLR_ATK));
 
-		owner->getSprite()->addChild(sprite); // the sprite's positon won't be saved unless this is done.
+		owner->getSprite()->addChild(sprite); // the sprite's positon won't be saved unless this is done. This is just to ensure that the code doesn't crash from trying to get the sprite's position.
 		sprite->setVisible(false);
 		break;
 	}
@@ -92,6 +92,6 @@ bool entity::Weapon::hasOwner() { return !(owner == nullptr); }
 // the update loop
 void entity::Weapon::update(float deltaTime)
 {
-	// Inactive::update(deltaTime); // caused crashing.
+	Inactive::update(deltaTime); // caused crashing.
 }
 

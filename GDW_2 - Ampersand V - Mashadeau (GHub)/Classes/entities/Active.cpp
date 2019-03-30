@@ -66,6 +66,13 @@ void entity::Active::addMoveForceY() { addForce(0.0F, moveForce.y); }
 // sets the amount of force applied when the entity moves.
 void entity::Active::setMoveForce(Vec2 moveForce) { this->moveForce = moveForce; }
 
+// gets the jump force of the entity.
+float entity::Active::getJumpForce() const { return jump; }
+
+
+// sets the amount of jump force. If < 0, then jump force is set to 0.
+void entity::Active::setJumpForce(float jumpF) { jump = (jumpF > 0.0F) ? jumpF : 0.0F; }
+
 // adds the jump force to the active entity.
 void entity::Active::addJumpForce() { addForce(Vec2(0.0F, jump)); }
 

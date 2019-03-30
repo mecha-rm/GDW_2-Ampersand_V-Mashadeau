@@ -87,12 +87,13 @@ namespace OOP
 		short int getId();
 
 		/*
-		// collision between two primitives. Returns false if there is no check.
-		* AABB - AABB
-		* Circle - Circle
-		* Capsule - Capsule (cannot do OBB and Circle)
-		* AABB - OBB
-		* AABB - Circle
+		// collision between two primitives. Returns false if there is no check availble, at least one of the primitives is inactive, or if there is no collision.
+		// avaiable checks are shown below:
+			* AABB - AABB
+			* Circle - Circle
+			* Capsule - Capsule (cannot do OBB and Circle)
+			* AABB - OBB
+			* AABB - Circle
 		*/
 		static bool collision(OOP::Primitive * p1, OOP::Primitive * p2);
 

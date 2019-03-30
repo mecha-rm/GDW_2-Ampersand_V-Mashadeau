@@ -82,44 +82,11 @@ void entity::Entity::setMagicType(magic::magic_t magicType)
 	this->magicType = newMagic;
 }
 
-// sets the entity's position
+// sets the entity's position. While all sprite children move with the sprite, their positions don't change (i.e. getPosition() for them would return the same value).
 void entity::Entity::setPosition(Vec2 newPos) 
 { 
 
-	/*
-	// updates all of the collision shapes so that they're proportional to the player's new position.
-	for each(OOP::Primitive * primitive in aabbs)
-	{
-		// Vec2 pos1 = sprite->getPosition();
-		// Vec2 primPos = primitive->getPosition();
-		// Vec2 pos3 = primitive->getPosition() + newPos - sprite->getPosition();
-		// primitive->setPosition(newPos + primitive->getPosition() - sprite->getPosition());
-		primitive->setPosition(primitive->getPosition() + newPos - sprite->getPosition());
-	}
-
-	for each(OOP::Primitive * primitive in circles)
-		primitive->setPosition(primitive->getPosition() + newPos - sprite->getPosition());
-	
-	for each(OOP::Primitive * primitive in capsules)
-		primitive->setPosition(primitive->getPosition() + newPos - sprite->getPosition());
-
-	*/
-
-	sprite->setPosition(newPos); // this also moves all of the draw nodes attached to the sprite.
-
-	/*
-	// changes the positions of all aabbs so that they're consistent with the player's postion.
-	for each (OOP::PrimitiveSquare * aabb in aabbs)
-		aabb->setPosition(aabb->getPosition() + newPos - sprite->getPosition());
-	
-	// changes the positions of all circles so that they're consistent with the player's postion.
-	for each (OOP::PrimitiveCircle * circ in circles)
-		circ->setPosition(circ->getPosition() + newPos - sprite->getPosition());
-
-	// changes the positions of all capsules so that they're consistent with the player's postion.
-	for each (OOP::PrimitiveCapsule * caps in capsules)
-		caps->setPosition(caps->getPosition() + newPos - sprite->getPosition());
-	*/
+	sprite->setPosition(newPos);
 }
 
 // sets the entity's position
@@ -165,7 +132,88 @@ Vec2 entity::Entity::rotateEntity(float theta, Vec2 acceleration)
 */
 
 // gets the sprite's opacity as a percentage.
-float entity::Entity::getOpacity() { return sprite->getOpacity() / 255; }
+float entity::Entity::getOpacity() { return sprite->getOpacity() / 255.0F; }
+
+// flips the sprite based on the value of sprFX. If 'aniFX' is 'true', then all of the animations are given this flip factor as well.
+void entity::Entity::setFlippedSpriteX(bool sprFX, bool aniFX)
+{
+	sprite->setFlippedX(sprFX); // flips the sprite
+
+	if (aniFX)
+	{
+		for (OOP::SpriteSheetAnimation * sprA : animations) // flips all of the animations.
+			sprA->setFlippedAnimationX(sprFX);	
+	}
+}
+
+// flips the sprite on the x-axis. If it was already flipped, it is un-flipped, and vice versa.
+// if aniFX is true, then the animations are also flipped in a similar fashion (if flipped, they become un-flipped, and vice-versa).
+void entity::Entity::flipSpriteX(bool aniFX)
+{
+	sprite->setFlippedX(!sprite->isFlippedX()); // makes the flip factor the opposite of what it currently is.
+
+	if (aniFX)
+	{
+		for (OOP::SpriteSheetAnimation * sprA : animations) // reverses the current animation flip (if flipped, they become unflipped and vice versa).
+			sprA->setFlippedAnimationX(!sprA->getFlippedAnimationX());
+	}
+}
+
+// returns 'true' if the sprite is currently flipped on the x-axis. Do note that the current animation may have flip the sprite.
+bool entity::Entity::getFlippedSpriteX() const { return sprite->isFlippedX(); }
+
+// returns 'true' if all of the sprite animations are flipped, false otherwise.
+bool entity::Entity::getFlippedSpriteAnimationsX() const
+{
+	for (OOP::SpriteSheetAnimation * sprAni : animations)
+	{
+		if (!sprAni->getFlippedAnimationX()) // if the sprite isn't flipped, then a 'false' is returned.
+			return false;
+	}
+
+	return true;
+}
+
+// flips the sprite on the y-axis using 'sprFY'. If 'aniFY' is 'true', then the sprite's animations are flipped on the y-axis as well.
+// If 'aniFY' is true, the provided value of 'sprFY' will become the flip factor for ALL ANIMATIONS.
+// in other words, if the sprite is flipped (sprFX == true) and aniFX is 'true', then all of the animation frames would share the same flip factor.
+void entity::Entity::setFlippedSpriteY(bool sprFY, bool aniFY)
+{
+	sprite->setFlippedY(sprFY); // flips the sprite
+
+	if (aniFY)
+	{
+		for (OOP::SpriteSheetAnimation * sprA : animations) // flips all of the animations.
+			sprA->setFlippedAnimationY(sprFY);
+	}
+}
+
+// flips the sprite based on the value of sprFY. If 'aniFY' is 'true', then all of the animations are given this flip factor as well.
+void entity::Entity::flipSpriteY(bool aniFX)
+{
+	sprite->setFlippedY(!sprite->isFlippedY()); // makes the flip factor the opposite of what it currently is.
+
+	if (aniFX)
+	{
+		for (OOP::SpriteSheetAnimation * sprA : animations) // reverses the current animation flip (if flipped, they become unflipped and vice versa).
+			sprA->setFlippedAnimationY(!sprA->getFlippedAnimationY());
+	}
+}
+
+// returns 'true' if the sprite is currently flipped on the y-axis. Do note that the current animation may have flip the sprite.
+bool entity::Entity::getFlippedSpriteY() const { return sprite->isFlippedY(); }
+
+// returns 'true' if all the sprite animations are flipped, false otherwise.
+bool entity::Entity::getFlippedSpriteAnimationsY() const
+{
+	for (OOP::SpriteSheetAnimation * sprAni : animations)
+	{
+		if (!sprAni->getFlippedAnimationY()) // if the sprite isn't flipped, then a 'false' is returned.
+			return false;
+	}
+
+	return true;
+}
 
 // sets the opacity of the sprite via a percentage.
 void entity::Entity::setOpacity(float opacity)
@@ -293,11 +341,10 @@ void entity::Entity::setCollisionBodies(std::vector<OOP::Primitive*>& colBodies)
 		sprite->addChild(p->getPrimitive());
 }
 
-std::vector<OOP::Primitive*> entity::Entity::getOffsetCollisionBodies() const
-{
-	return getOffsetCollisionBodies(getSprite(), getCollisionBodies());
-}
+// gets collision bodies offset by the sprite's position in the scene (or just whatever the sprite is relative to)
+std::vector<OOP::Primitive*> entity::Entity::getOffsetCollisionBodies() const { return getOffsetCollisionBodies(getSprite(), getCollisionBodies()); }
 
+// offsets the collision bodies by the sprite because position of attached sprites uses the sprite as the 'canvas', and as such doesn't change position when the sprite does.
 std::vector<OOP::Primitive*> entity::Entity::getOffsetCollisionBodies(const cocos2d::Sprite * spr, const std::vector<OOP::Primitive*> & prims)
 {
 	bool added = false; // used to make sure a primitive was actually added.

@@ -72,10 +72,16 @@ void OOP::Primitive::setActive() { setActive(!active); }
 */
 short int OOP::Primitive::getId() { return ID; }
 
-// collision between two primitives.
+// collision between two active primitives.
 bool OOP::Primitive::collision(OOP::Primitive * p1, OOP::Primitive * p2)
 {
 	bool col = false;
+
+	if (p1 == nullptr || p2 == nullptr) // returns false of one of these are null.
+		return false;
+
+	if (!p1->isActive() || !p2->isActive()) // returns false if one of these are inactive.
+		return false;
 
 	if (p1->getId() == 1 && p2->getId() == 1) // AABB and AABB
 	{

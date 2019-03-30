@@ -10,7 +10,7 @@ namespace entity
 		// default player image, default position of (0.0F, 0.0F), and the amount of force that's applied when a button is pressed.
 		// for the player, moveForce.x will be applied when horizontal movement is activated, and moveForce.y will be applied when vertical movement is requested.
 		Player();
-		// ~Player();
+		~Player();
 
 		/*
 		Animations:
@@ -38,7 +38,6 @@ namespace entity
 		
 		// gets the current weapon equipped
 		entity::Weapon * getCurrentWeapon() const;
-
 
 		void update(float deltaTime);
 

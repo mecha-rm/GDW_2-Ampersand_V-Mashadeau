@@ -59,7 +59,7 @@ namespace entity
 		// returns the magic type of the entity; changing the magic type will result in the defaults for that type being used.
 		magic::magic_t getMagicType() const;
 
-		// Setting the position
+		// Setting the position. While all sprite children move with the sprite, their positions don't change (i.e. getPosition() for them would return the same value).
 		void setPosition(Vec2 newPos);
 
 		// Setting the position
@@ -97,6 +97,38 @@ namespace entity
 		// gets the sprite's current opacity as a value from 0.0 to 1.0 (i.e. a decimal percentage)
 		// Opacity for sprites are out of 255, but this function works on percentages.
 		float getOpacity();
+
+		// flips the sprite on the x-axis using 'sprFX'. If 'aniFX' is 'true', then the sprite's animations are flipped on the x-axis as well.
+		// If 'aniFX' is true, the provided value of 'sprFX' will become the flip factor for ALL ANIMATIONS.
+		// in other words, if the sprite is flipped (sprFX == true) and aniFX is 'true', then all of the animation frames would share the same flip factor.
+		void setFlippedSpriteX(bool sprFX, bool aniFX = true);
+
+		// flips the sprite on the x-axis. If it was already flipped, it is un-flipped, and vice versa.
+		// if aniFX is true, then the animations are also flipped in a similar fashion (if flipped, they become un-flipped, and vice-versa).
+		void flipSpriteX(bool aniFX = true);
+
+		// returns 'true' if the sprite is currently flipped on the x-axis. Do note that the current animation may have flip the sprite.
+		bool getFlippedSpriteX() const;
+
+		// returns 'true' if all of the sprite animations are flipped, false otherwise.
+		bool getFlippedSpriteAnimationsX() const;
+
+
+		// flips the sprite on the y-axis using 'sprFY'. If 'aniFY' is 'true', then the sprite's animations are flipped on the y-axis as well.
+		// If 'aniFY' is true, the provided value of 'sprFY' will become the flip factor for ALL ANIMATIONS.
+		// in other words, if the sprite is flipped (sprFX == true) and aniFX is 'true', then all of the animation frames would share the same flip factor.
+		void setFlippedSpriteY(bool sprFY, bool aniFY = true);
+		
+		// flips the sprite on the y-axis. If it was already flipped, it is un-flipped, and vice versa.
+		// if aniFx is true, then the animations are also flipped in a similar fashion (if flipped, they become un-flipped, and vice-versa).
+		void flipSpriteY(bool aniFX = true);
+
+		// returns 'true' if the sprite is currently flipped on the y-axis. Do note that the current animation may have flip the sprite.
+		bool getFlippedSpriteY() const;
+
+		// returns 'true' if all the sprite animations are flipped, false otherwise.
+		bool getFlippedSpriteAnimationsY() const;
+
 
 		// sets the mass of the entity; it must be greater than 0.
 		void setMass(float mass);

@@ -68,7 +68,7 @@ void OOP::SpriteSheetAnimationFrame::setActivePrimitives(bool active)
 
 
 
-//// SPRITE SHEET ANIMATION CLASS ////
+//////////// SPRITE SHEET ANIMATION CLASS ///////////////////
 // sets a sprite sheet
 OOP::SpriteSheetAnimation::SpriteSheetAnimation(cocos2d::Sprite * spriteSheet, unsigned int totalLoops, bool infiniteLoop, float delayUnits, bool sharedDelay, bool restoreOriginalFrame)
 	: spriteSheet(spriteSheet), sharedDelay(sharedDelay), restoreOriginalFrame(restoreOriginalFrame)
@@ -121,23 +121,46 @@ float OOP::SpriteSheetAnimation::getSpeed() const { return speed; }
 // sets the speed of the animation. If less than 0, then the speed is set to 1.
 void OOP::SpriteSheetAnimation::setSpeed(float speed) { this->speed = (speed > 0.0F) ? speed : 1.0F; }
 
+// gets the opacity based on a percentage (0.0 - 1.0). Uses the same algorithm as the entity class.
+float OOP::SpriteSheetAnimation::getOpacity()
+{
+	return spriteSheet->getOpacity() / 255.0F;
+}
+
+// sets the opacity based on a percentage (0.0 - 1.0). Uses the same algorithm as the entity class.
+void OOP::SpriteSheetAnimation::setOpacity(float opacity)
+{
+
+	if (opacity > 1.0F) // If an opacity greater than 100% (1.0) is provided, the variable is set to 1.0.
+	{
+		opacity = 1.0F;
+	}
+	else if (opacity < 0.0F) // If a negative opacity is provided, it is set to 0.
+	{
+		opacity = 0.0F;
+	}
+
+	spriteSheet->setOpacity(255 * opacity); // sets the sprite's new opacity.
+}
+
+
 // flips the animation on the x-axis if a 'true' is passed.
 void OOP::SpriteSheetAnimation::setFlippedAnimationX(bool flipX) { this->flipX = flipX; }
 
-// flips the animation on the x-axis
+// toggles the animation flip on the x-axis
 void OOP::SpriteSheetAnimation::setFlippedAnimationX() { setFlippedAnimationX(!flipX); }
 
 // checks if the animation is flipped on the x-axis
-bool OOP::SpriteSheetAnimation::getFlippedAnimationX() { return flipX; }
+bool OOP::SpriteSheetAnimation::getFlippedAnimationX() const { return flipX; }
 
 // flips the animation on the y-axis 
 void OOP::SpriteSheetAnimation::setFlippedAnimationY(bool flipY) { this->flipY = flipY; }
 
-// flips the animation on the y-axis
+// toggles the animation flip on the y-axis
 void OOP::SpriteSheetAnimation::setFlippedAnimationY() { setFlippedAnimationY(!flipY); }
 
-// checks if the animation is flipped on the y-axis
-bool OOP::SpriteSheetAnimation::getFlippedAnimationY() { return flipY; }
+// gets whether the animation is flipped on the y-axis or not.
+bool OOP::SpriteSheetAnimation::getFlippedAnimationY() const { return flipY; }
 
 
 void OOP::SpriteSheetAnimation::setDelayUnits(float & delayUnits)
@@ -157,6 +180,7 @@ bool OOP::SpriteSheetAnimation::getRestoreOriginalFrame() const { return restore
 
 // sets whether to restore frame 1 once the animation finishes or not.
 void OOP::SpriteSheetAnimation::setRestoreOriginalFrame(bool restoreFrame1) { restoreOriginalFrame = restoreFrame1; }
+
 
 // returns the sprite sheet.
 cocos2d::Sprite * OOP::SpriteSheetAnimation::getSpriteSheet() const { return spriteSheet; }
@@ -248,7 +272,7 @@ bool OOP::SpriteSheetAnimation::isRunning() { return running; }
 void OOP::SpriteSheetAnimation::runAnimation() { running = true; }
 
 // stops an animation. This will cause the animation to return to its start.
-void OOP::SpriteSheetAnimation::stopAnimation()
+void OOP::SpriteSheetAnimation::stopAnimation(bool restoreF1)
 {
 	running = false;
 	paused = false;
@@ -259,7 +283,8 @@ void OOP::SpriteSheetAnimation::stopAnimation()
 	for (int i = 0; i < frames.size(); i++)
 		frames.at(i)->setActivePrimitives(false);
 
-	spriteSheet->setTextureRect(frames.at(0)->getRect()); // returns the sprite to its first frame.
+	// if 'restoreF1' is true, then the original frame is restored. If not, the ending frame is restored.
+	spriteSheet->setTextureRect((restoreF1) ? frames.at(0)->getRect() : frames[frames.size() - 1]->getRect());
 }
 
 // pauses an animation.
@@ -279,7 +304,15 @@ void OOP::SpriteSheetAnimation::update(float deltaTime)
 
 	if (frames.size() == 0 || spriteSheet == nullptr || paused || !running) // if the animation is paused or isn't running, then the update loop isn't done.
 		return;
-	
+
+	// if the sprite sheet does not match up with 'flipX', it is flippd accordingly.
+	if (spriteSheet->isFlippedX() != flipX)
+		spriteSheet->setFlippedX(flipX);
+
+	// if the sprite sheet does not match up with 'flipY', it is flippd accordingly.
+	if (spriteSheet->isFlippedY() != flipY)
+		spriteSheet->setFlippedY(flipY);
+
 
 	frameTime += deltaTime; // adds to the amount of time the frame has existed for.
 	
@@ -299,11 +332,7 @@ void OOP::SpriteSheetAnimation::update(float deltaTime)
 
 			if (finishedLoops >= totalLoops && !infiniteLoop) // if all of the loops have finished, and the animation does not loop infinitly.
 			{
-				stopAnimation(); // called to end the animation.
-
-				if(!restoreOriginalFrame) // in stopAnimation(), the sprite returns to its original frame. If it's supposed to stay on its ending frame, then it's set here.
-					spriteSheet->setTextureRect(frames[frames.size() - 1]->getRect());
-
+				stopAnimation(restoreOriginalFrame); // called to end the animation.
 				return;
 			}
 			else

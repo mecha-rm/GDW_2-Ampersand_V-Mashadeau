@@ -41,6 +41,9 @@ namespace entity
 		// adds only the 'Y' value of moveForce to the force of the active entity
 		void addMoveForceY();
 
+		// gets the jump force of the active entity.
+		float getJumpForce() const;
+
 		// adds the force of the active entity's jump.
 		void addJumpForce();
 
@@ -56,6 +59,7 @@ namespace entity
 
 		bool invincible = false; // tells whether an entity is invincible or not.
 		
+		float jump = 0.0F; // the fore applied when an active entity jumps
 
 	protected:
 		// sets the maximum health of the entity
@@ -67,8 +71,10 @@ namespace entity
 		// sets the amount of force applied when the entity moves.
 		void setMoveForce(Vec2 moveForce);
 
+		// sets the jump force of the entity. If a number less than '0' is passed, then it's set to 0.
+		void setJumpForce(float jumpF);
+
 		Vec2 moveForce; // the amount of force applied when the entity moves.
-		float jump = 0.0F; // the fore applied when an active entity jumps
 
 		float inviTime = 0; // the amount of time since the entity has taken damage
 		float inviTimeMax = 0; // the amount of time an entity stays invincible for after getting hit.

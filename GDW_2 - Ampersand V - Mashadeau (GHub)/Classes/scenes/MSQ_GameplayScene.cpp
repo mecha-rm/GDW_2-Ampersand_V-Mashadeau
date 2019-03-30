@@ -2,14 +2,15 @@
 
 #include <iostream>
 
+// initalizing static variables
+std::string MSQ_GameplayScene::areaName = "AIN_X01"; // debug area
+int MSQ_GameplayScene::spawnPoint = 0; // spawn point 0
+
+bool MSQ_GameplayScene::debug = true;
 std::vector<std::string> MSQ_GameplayScene::areasVisited;
 
 // constructor; initalizes the mouse listener
 MSQ_GameplayScene::MSQ_GameplayScene() : mouse(OOP::MouseListener(this)), keyboard(OOP::KeyboardListener(this)) {}
-
-// initalizing static variables
-std::string MSQ_GameplayScene::areaName = "AIN_X00"; // debug area
-int MSQ_GameplayScene::spawnPoint = 0; // spawn point 0
 
 void MSQ_GameplayScene::preloadAudio() { //This thing is called to preload all the audio needed
 	//Music
@@ -32,8 +33,10 @@ Scene * MSQ_GameplayScene::createScene()
 	return scene;
 }
 
+// called when scene is entered.
 void MSQ_GameplayScene::onEnter() { Scene::onEnter(); }
 
+// called when scene is exited.
 void MSQ_GameplayScene::onExit() { Scene::onExit(); }
 
 bool MSQ_GameplayScene::init()
@@ -75,18 +78,8 @@ void MSQ_GameplayScene::initListeners()
 	//mouse.getListener()->onMouseUp = CC_CALLBACK_2(MSQ_GameplayScene::onMouseReleased, this);
 	mouse.getListener()->setEnabled(ENABLE_MOUSE); // sets whether the mouse is enabled or not.
 
-	// KEYBOARD LISTENER SETUP
-	// creates the keyboard listener
-	/*
-	keyboardListener = EventListenerKeyboard::create();
-	keyboardListener->onKeyPressed = CC_CALLBACK_2(MSQ_GameplayScene::onKeyPressed, this); // creating key pressed callback
-	keyboardListener->onKeyReleased = CC_CALLBACK_2(MSQ_GameplayScene::onKeyReleased, this); // creacting key released callback
-
-	getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboardListener, this); // adds the keyboard listener to the event dispatcher
-	keyboardListener->setEnabled(ENABLE_KEYBOARD); // enables the keyboard if it is meant to be turned on.
-	*/
-
 	keyboard.setLabelVisible(false);
+	// we shouldn't need to set these here, but we do. We'll fix it if we have time.
 	keyboard.getListener()->onKeyPressed = CC_CALLBACK_2(MSQ_GameplayScene::onKeyPressed, this);
 	keyboard.getListener()->onKeyReleased = CC_CALLBACK_2(MSQ_GameplayScene::onKeyReleased, this);
 	keyboard.getListener()->setEnabled(ENABLE_KEYBOARD); // enables (or disables) keyboard
@@ -122,6 +115,7 @@ void MSQ_GameplayScene::initSprites()
 	// creating the player; the default values handle the creation process.
 	plyr = new entity::Player(); // creates the player
 	plyr->setPosition(sceneArea->getSpawn(spawnPoint)); // sets the player using spawn point 0.
+	plyr->setAntiGravity(debug);
 	this->addChild(plyr->getSprite());
 
 	// creating the hud
@@ -158,6 +152,8 @@ void MSQ_GameplayScene::initSprites()
 		this->getDefaultCamera()->setAnchorPoint(Vec2(0.5F, 0.5F)); // setting the camera's anchour point
 		this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the location of the camera
 	}
+
+	debugMode(); // called to turn on (or off) debug mode.
 }
 
 // initializes pause menu; currently does nothing.
@@ -199,11 +195,14 @@ void MSQ_GameplayScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event * eve
 	switch (keyCode)
 	{
 	case EventKeyboard::KeyCode::KEY_UP_ARROW:
-		moveUp = true;
+		if (debug)
+			moveUp = true; // tells the program to move the player up.
+
 		break;
 
 	case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-		moveDown = true;
+		if (debug)
+			moveDown = true; // tells the player to go down.
 		break;
 
 	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
@@ -246,9 +245,16 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 	
 	switch (keyCode)
 	{
+	case EventKeyboard::KeyCode::KEY_X: // turns debug mode on/off.
+		debug = !debug;
+		break;
+
 	case EventKeyboard::KeyCode::KEY_UP_ARROW:
 		moveUp = false;
-		// jump = true; // commented out while testing.
+
+		if(!debug) // if debug is off, then the jump is turned on upon 'UP' being let go.
+			jump = true;
+
 		break;
 
 	case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
@@ -281,7 +287,7 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 	case EventKeyboard::KeyCode::KEY_D:
 		moveRight = false;
 		break;
-	case EventKeyboard::KeyCode::KEY_F:
+	case EventKeyboard::KeyCode::KEY_F: // moved to key down.
 		//attack
 		// pAction = 6;
 		// plyrAction = true;
@@ -301,6 +307,21 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 		//menu
 		break;
 	}
+}
+
+// called to turn on/off debug mode.
+void MSQ_GameplayScene::debugMode()
+{
+	static bool d_mode = false;
+
+	if (d_mode == debug)
+		return;
+
+	d_mode = debug;
+	
+	plyr->zeroVelocity(); // zeroes out the player's velocity to remove any velocity they currently have.
+	plyr->setAntiGravity(debug); // disables or enables the player's gravity
+	
 }
 
 
@@ -392,7 +413,9 @@ void MSQ_GameplayScene::playerTileCollisions()
 
 	float compAngle = 60.0F; // the angle used to check the player's position relative to the tile, in degrees.
 
-	plyr->setAntiGravity(false); // the player is now affected by gravity. If the player is on a tile, gravity is turned off.
+	if(debug == false)
+		plyr->setAntiGravity(false); // the player is now affected by gravity. If the player is on a tile, gravity is turned off.
+	
 	plyr->cancelUp = false;
 	plyr->cancelDown = false;
 	plyr->cancelLeft = false;
@@ -481,15 +504,19 @@ void MSQ_GameplayScene::playerTileCollisions()
 				{
 					
 					plyr->cancelUp = true;
-					plyr->setAntiGravity(false);
 					plyr->setPositionY(tile->getPositionY() - abs(minDistVec.y));
+
+					if(debug == false)
+						plyr->setAntiGravity(false);
 				
 				}
 				else if (distVec.y > 0.0F)
 				{
 					plyr->cancelDown = true;
-					plyr->setAntiGravity(true);
 					plyr->setPositionY(tile->getPositionY() + abs(minDistVec.y));
+
+					if(debug == false)
+						plyr->setAntiGravity(true);
 				}
 
 				plyr->zeroVelocityY();
@@ -673,20 +700,12 @@ void MSQ_GameplayScene::weaponEnemyCollisions()
 // update loop
 void MSQ_GameplayScene::update(float deltaTime)
 {
-	//FPS COUNTER (commented out because it's being bad)
-	//std::string _fps = std::to_string(Director::getInstance()->getFrameRate());
-	//auto fps = Label::createWithTTF(_fps, "fonts/BRITANIC.TTF", 36);
-	//fps->setPosition(Vec2(20.0f, 500.0f));
-	//this->addChild(fps, 1);
-	//END OF FPS COUNTER
+	float d_movespeed = 300.0F; // the movement speed of the player (when debug is on).
 
 	if (switchingScenes) // updates are no longer run if the scene is being switched.
 		return;
 
-	// if (switchingScenes) // if the program is currently switching scenes, the update loop isn't started.
-		// return;
-	
-	// entity::Enemy * eme = sceneEnemies->at(0);
+	debugMode(); // called to change the settings if debug mode has been turned on/off.
 
 	if (ENABLE_CAMERA) // updates the camera if it's active.
 	{
@@ -696,27 +715,42 @@ void MSQ_GameplayScene::update(float deltaTime)
 
 	// These movement parameters will need to be changed later.
 	// if the cancels are true, then the player can't move that given direction.
-	if (moveUp && !plyr->cancelUp)
+
+	if (moveUp && !plyr->cancelUp) // moves the player up.
 	{
-		//plyr->addMoveForceY();
+		plyr->setPositionY(plyr->getPositionY() + d_movespeed * deltaTime);
 	}
-	else if (moveDown && !plyr->cancelDown) // this should be disabled later
+	else if (moveDown && !plyr->cancelDown) // moves the player down.
 	{
-		//plyr->addForce(0.0F, plyr->getMoveForceY() * -1);
+		plyr->setPositionY(plyr->getPositionY() - d_movespeed * deltaTime);
 	}
 
-	if (moveLeft && !plyr->cancelLeft)
+	if (moveLeft && !plyr->cancelLeft) // moving left
 	{
-		plyr->addForce(plyr->getMoveForceX() * -1, 0.0F);
+		if (plyr->getFlippedSpriteX() == false) // flips the sprite so that it's facing left
+			plyr->setFlippedSpriteX(true);
+
+		if (debug) // if debug is on, then the player moves at a fixed speed.
+			plyr->setPositionX(plyr->getPositionX() - d_movespeed * deltaTime);
+		else
+			plyr->addForce(plyr->getMoveForceX() * -1, 0.0F);
 	}
-	else if (moveRight && !plyr->cancelRight)
+	else if (moveRight && !plyr->cancelRight) // moving right
 	{
-		plyr->addForce(plyr->getMoveForceX(), 0.0F);
+		if (plyr->getFlippedSpriteX() == true) // flips the sprite so that it's facing right (i.e. the default)
+			plyr->setFlippedSpriteX(false);
+
+		if(debug) // if debug is on, then the player moves at a fixed speed.
+			plyr->setPositionX(plyr->getPositionX() + d_movespeed * deltaTime);
+		else // if debug is off, the player is given force to move.
+			plyr->addForce(plyr->getMoveForceX(), 0.0F);
+
 	}
 	
 	if (jump)
 	{
 		plyr->zeroVelocityY();
+		plyr->setPositionY(plyr->getPositionY() + 1.00F);
 		plyr->addJumpForce();
 		jump = false;
 	}

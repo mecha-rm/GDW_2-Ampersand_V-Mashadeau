@@ -28,14 +28,16 @@ entity::Player::Player() : Active("images/PLR_000.png")
 
 	
 	this->moveForce = Vec2(200.0F, 200.0F); // sets the amount of force that gets applied for
-	this->jump = 14000.0F;
-	setDecelerate(Vec2(getDecelerate().x, 0.99F));
-	setMass(1.0F);
+	
+	// old, floaty physics
+	// setJumpForce(14000.0F);
+	// setDecelerate(Vec2(getDecelerate().x, 0.99F));
+	// setMass(1.0F);
 	
 	// Final game gravity?
-	// this->jump = 13000.0F;
-	// setDecelerate(Vec2(getDecelerate().x, 0.99F));
-	// setMass(0.5F);
+	setJumpForce(13000.0F);
+	setDecelerate(Vec2(getDecelerate().x, 0.99F));
+	setMass(0.5F);
 
 	setMaxHealth(100.0F);
 	setHealth(getMaxHealth());
@@ -56,15 +58,15 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	// attack animation 1 (tag = 6) : 3 frames
 	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, false, 0.0F, true, false); // new animation
 	tempAnimate->setTag(6); // sets the tag
-	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 0, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 1
-
+	
 	// tempAnimate->getFrames().at(getFrames()->)
-
+	
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 0, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 1
 	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 1, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 2
 	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 2, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 3
+	// tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX(), 0.0F + frameSize.getMaxY(), frameSize.getMaxX(), frameSize.getMaxY())));
 	animations.push_back(tempAnimate);
-
-	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX(), 0.0F + frameSize.getMaxY(), frameSize.getMaxX(), frameSize.getMaxY())));
+	
 	// runAction(0);
 
 	// currentAnimation->runAnimation();
@@ -76,7 +78,7 @@ entity::Player::Player() : Active("images/PLR_000.png")
 }
 
 
-// entity::Player::~Player() {}
+entity::Player::~Player() {}
 
 // uses a specific animation.
 /*

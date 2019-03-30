@@ -129,14 +129,14 @@ namespace OOP
 
 		// sets the speed of the animation. If this is less than 0, then the speed is set to '1'.
 		void setSpeed(float speed);
-		
+
+
 		// sets the opacity of the animation as a decimal percentage (cocos does it as a fraction of 255, but this function handles it based on a decimal number)
 		// If given a number less than 0.0, the opacity is set to 0.0. IF given an opacity greater than 1.0 (i.e. 100%), the opacity is set to 1.0.
-		// void setOpacity(float opacity);
+		void setOpacity(float opacity);
 
 		// returns the opacity of the whole animation out of 1.0 (i.e. 100%). If a srite frame has had its opacity changed individually, then that sprite frame's opacity should be checked instead.
-		// float getOpacity();
-
+		float getOpacity();
 
 		// flips the animation on the x-axis if a 'true' is passed.
 		// unflips the animation if a 'false' is passed.
@@ -146,7 +146,7 @@ namespace OOP
 		void setFlippedAnimationX();
 
 		// checks to see if the animation is flipped on the x-axis.
-		bool getFlippedAnimationX();
+		bool getFlippedAnimationX()const;
 
 		// flips the animation on the y-axis if a 'true' is passed.
 		// unflips the animation if a 'false' is passed.
@@ -156,7 +156,7 @@ namespace OOP
 		void setFlippedAnimationY();
 
 		// checks to see if the animation is flipped on the y-axis.
-		bool getFlippedAnimationY();
+		bool getFlippedAnimationY() const;
 
 
 
@@ -175,6 +175,7 @@ namespace OOP
 		// if true, the original frame (frame 1) is restored once the animation finishes.
 		void setRestoreOriginalFrame(bool restoreFrame1);
 	
+
 		// returns the sprite sheet.
 		cocos2d::Sprite * getSpriteSheet() const;
 
@@ -226,8 +227,9 @@ namespace OOP
 		// starts running an animation from its beginning.
 		void runAnimation();
 		
-		// stops an animation. This returns the animation back to its start.
-		void stopAnimation();
+		// stops an animation.
+		// This returns the animation back to its start if 'restoreF1' is true, and keeps it at it's final frame if 'restoreF1' is false, acting as if the animation finished.
+		void stopAnimation(bool restoreF1 = true);
 
 		// pauses an animation.
 		void pauseAnimation();

@@ -43,6 +43,9 @@ public:
 	void onMouseReleased(EventMouse::MouseButton mouseButt, Event* event); //if a mouse button is released
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event); // if a key is held down
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event); // if a key is let go
+	
+	// send 'true' to turn on debug mode. Send 'false' to turn off debug mode.
+	void debugMode(); // called to switch debug settings
 
 	// switches from one area to another. The format is as follows: AIN_###_#.
 	// the last digit is needed to know what spawn point to use. It must be greater than or equal to 0, and not exceed 4 (it can be 4 though).
@@ -64,6 +67,13 @@ public:
 
 	// update function for the scene
 	void update(float deltaTime);
+	
+	/*
+	 * becomes 'true' if in debug, false otherwise. Things that happen 
+	 * if 'debug' is on, the player is moved around wiht the keyboard, and they aren't affected by gravity.
+	*/
+	
+
 
 	CREATE_FUNC(MSQ_GameplayScene);
 
@@ -76,6 +86,8 @@ private:
 	const bool ENABLE_MOUSE = true; // turns mouse functionality on/off.
 	const bool ENABLE_KEYBOARD = true; // turns keyboard functionality on/off.
 	const bool ENABLE_CAMERA = false; // enables the game camera.
+
+	static bool debug; // becomes 'true' when debug mode is turned on.
 
 	bool gridVisible = false; // turns on the grid.
 	OOP::PrimitiveGrid * grid = nullptr; // stores the grid information
@@ -100,7 +112,7 @@ private:
 	entity::Player * plyr; // the object used for the player
 	bool plyrAction = false; // becomes 'true' when a new animation should be played.
 	int pAction = 0; // saves the action the player is taking.
-
+	
 	// static std::vector<world::Area *> areas; // this will save the areas gone to, and will be used to switch screens if scenes are not stored. These will be stored in dat files later on.
 	
 	std::vector<entity::Tile *> * sceneTiles; // the tiles in the scene, which are gotten from the Area class.

@@ -17,14 +17,14 @@ world::AIN_X01::AIN_X01() : Area("")
 
 	// setting all of the exits. Format: AIN_###_#
 	// - the last digit (after the second underscore) determines what spawn point to use.
-	exit0 = "";
+	exit0 = "AIN_X00_0";
 	exit1 = "";
 	exit2 = "";
 	exit3 = "";
 	exit4 = "";
 
 	// setting all of the spawn points. These are based on the middle of the sprite.
-	spawn0 = Vec2(64.0F, 64.0F);
+	spawn0 = Vec2(64.0F, 128.0F);
 	spawn1 = Vec2(0.0F, 0.0F);
 	spawn2 = Vec2(0.0F, 0.0F);
 	spawn3 = Vec2(0.0F, 0.0F);

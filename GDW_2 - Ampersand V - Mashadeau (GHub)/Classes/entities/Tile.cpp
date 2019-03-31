@@ -192,6 +192,42 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
 
+	case 102://cult platform left
+		setName("Cult Platform Left");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_102.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+
+	case 103://cult platform middle
+		setName("Cult Platform Middle");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_103.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+
+	case 104://cult platform right
+		setName("Cult Platform Right");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_104.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+
+	case 105://Sewer Ladder
+		setName("Sewer Ladder");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_105.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+
 	case 500: //air area block base
 		setName("Mountain Block");
 		setDescription("Tile set");

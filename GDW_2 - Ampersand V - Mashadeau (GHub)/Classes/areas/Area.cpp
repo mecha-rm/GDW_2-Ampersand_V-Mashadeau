@@ -295,6 +295,10 @@ void world::Area::tileArrayToVector(entity::Tile * tileGrid[][52], const bool fl
 			if (tileGrid[row][col] == nullptr) // if the location is a nullptr, the program skips it
 				continue;
 
+			if (areaTiles.size() >= ROW_MAX * COL_MAX) // if the vector is full.
+				return;
+
+			
 			tileGrid[row][col]->setPosition(64.0F + GRID_UNIT_SIZE * col, 64.0F + GRID_UNIT_SIZE * row); // sets the position of the current tile, based on its position in the array.
 			if (flipY)
 				tileGrid[row][col]->setPositionY(GRID_UNIT_SIZE * ROW_MAX - tileGrid[row][col]->getPositionY());

@@ -78,6 +78,10 @@ public:
 	CREATE_FUNC(MSQ_GameplayScene);
 
 private:
+
+	// collision between the entity and all tiles.
+	// void entityTileCollisions(entity::Entity & ety);
+
 	Director * director; // engine
 	OOP::MouseListener mouse; // the mouse functions
 	OOP::KeyboardListener keyboard;
@@ -88,6 +92,7 @@ private:
 	const bool ENABLE_CAMERA = false; // enables the game camera.
 
 	static bool debug; // becomes 'true' when debug mode is turned on.
+	static bool enable_hud; // enables the hud, or disables it.
 
 	bool gridVisible = false; // turns on the grid.
 	OOP::PrimitiveGrid * grid = nullptr; // stores the grid information
@@ -137,10 +142,16 @@ private:
 	 * [1]: the actual bar that decreases as part of the magic bar.
 	 * [2]: the back of the magic bar, which is what appears as the health bar goes down.
 	*/
-	Sprite * mpBar[3] { nullptr, nullptr, nullptr };
+	Sprite * mpBar[3];
 	Rect mpBarRect;
 	Vec2 mpBarPos = Vec2(0.0F, 0.0F);
 	Vec2 mpBarOffset = Vec2(0.0F, 0.0F);
+
+	// sprites added to the hud overlay.
+	Sprite * currentWeaponIcon = nullptr;
+	Sprite * weaponIcon1 = nullptr;
+	Sprite * weaponIcon2 = nullptr;
+	Sprite * weaponIocn3 = nullptr;
 
 	bool moveUp = false;
 	bool moveDown = false;

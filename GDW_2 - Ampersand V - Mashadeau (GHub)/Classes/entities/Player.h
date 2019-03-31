@@ -20,12 +20,9 @@ namespace entity
 			3) death
 			4) run
 			5) jump
-			6) attack 1
+			6) attack
 		*/
 		void runAction(unsigned int ani);
-
-		// uses the current weapon.
-		// void useWeapon();
 
 		// gets weapon 1
 		entity::Weapon * getWeapon1() const;
@@ -39,8 +36,22 @@ namespace entity
 		// gets the current weapon equipped
 		entity::Weapon * getCurrentWeapon() const;
 
+		/*
+		 * Switches the weapon. It can only be a value from 1 - 3
+		 * [1]: weapon 1
+		 * [2]: weapon 2
+		 * [3]: weapon 3
+		*/
+		void switchWeapon(short int weapon);
+
 		// gets the magic power of the player
 		float getMagicPower();
+
+		// sets the magic power. If an mp less than 0 is given, then it's set to 0. If an mp greater than the max is given, then it's set to the max.
+		void setMagicPower(float mp);
+
+		// gets the maximum magic power the player has.
+		float getMagicPowerMax();
 
 		// adds to the magic power of the player. If this goes beyond the maximum magic power, it's set to max. If it goes below 0, it's set to 0.
 		void addMagicPower(float mp);
@@ -73,9 +84,6 @@ namespace entity
 		float magicPowerMax = 0.0F;
 
 	protected:
-
-		// sets the magic power. If an mp less than 0 is given, then it's set to 0. If an mp greater than the max is given, then it's set to the max.
-		void setMagicPower(float mp);
 
 		// sets the maximum magic power, which cannot be 0. The current amount of magic is adjusted accordingly.
 		// if 'changeCurrent' is true, then the current amount of magic power is changed accordingly.

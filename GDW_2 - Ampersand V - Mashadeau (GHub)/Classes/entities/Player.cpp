@@ -45,6 +45,9 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	setHealth(getMaxHealth());
 	inviTimeMax = 3.0F;
 
+	setMagicPowerMax(100.0F, false);
+	setMagicPower(getMagicPowerMax());
+
 	weapon1 = new entity::Weapon(0, this);
 	currentWeapon = weapon1;
 	weapons.push_back(weapon1);
@@ -111,8 +114,21 @@ entity::Weapon * entity::Player::getWeapon3() const { return weapon3; }
 // returns the current weapon
 entity::Weapon * entity::Player::getCurrentWeapon() const { return currentWeapon; }
 
+/*
+ * Switches the weapon. It can only be a value from 1 - 3
+ * [1]: weapon 1
+ * [2]: weapon 2
+ * [3]: weapon 3
+*/
+void entity::Player::switchWeapon(short int weapon)
+{
+}
+
 // gets the magic power of the player.
 float entity::Player::getMagicPower() { return magicPower; }
+
+// gets the maximum magic power of the player.
+float entity::Player::getMagicPowerMax() { return magicPowerMax; }
 
 // sets the magic power.
 void entity::Player::setMagicPower(float mp)

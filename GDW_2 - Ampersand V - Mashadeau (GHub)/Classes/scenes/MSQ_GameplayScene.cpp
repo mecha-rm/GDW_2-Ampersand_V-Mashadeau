@@ -7,6 +7,8 @@ std::string MSQ_GameplayScene::areaName = "AIN_X00"; // debug area
 int MSQ_GameplayScene::spawnPoint = 0; // spawn point 0
 
 bool MSQ_GameplayScene::debug = true;
+bool MSQ_GameplayScene::enable_hud = true; // enables hud view
+
 std::vector<std::string> MSQ_GameplayScene::areasVisited;
 
 // constructor; initalizes the mouse listener
@@ -46,7 +48,6 @@ bool MSQ_GameplayScene::init()
 		return false;
 
 	director = Director::getInstance();
-	// SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images/backgrounds/AIN_X00a.png");
 
 	// Initialize the event handlers
 	initListeners();
@@ -88,11 +89,6 @@ void MSQ_GameplayScene::initListeners()
 // initalizes all sprites
 void MSQ_GameplayScene::initSprites() 
 {
-	// the hp bar's position
-	hpBarPos = Vec2(director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.96F);
-	// the magic bar's position
-	mpBarPos = Vec2(0.0F, 0.0F);
-
 	bool revisit = false; // becomes 'true' if the player has visited this area before.
 
 	// creating the scene
@@ -120,25 +116,47 @@ void MSQ_GameplayScene::initSprites()
 
 	// creating the hud
 	hud = DrawNode::create(); // creating the hud
-	hpBarRect = Rect(0.0F, 0.0F, 465.0F, 67.0F); // the size of an individual space
 	
 	// initalizes the HP bar
+	hpBarRect = Rect(0.0F, 0.0F, 465.0F, 67.0F); // the size of an individual space
+	hpBarPos = Vec2(director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.96F); // setting the hp bar's position.
+
 	// [0] = front, [1] = middle (the part that shows the actual HP), [2] = back
 	for (int i = 0; i < BAR_LEN; i++)
 	{
 		hpBar[i] = Sprite::create("images/HP_BAR_B.png"); // creates the sprite.
 		hpBar[i]->setTextureRect(Rect(0.0F, 0.0F + hpBarRect.getMaxY() * i, hpBarRect.getMaxX(), hpBarRect.getMaxY())); // sets what section of the image to use.
-		// test = hpBar[i]->getTextureRect();
 
 		hpBar[i]->setPosition(hpBarPos); // moves the bar to the proper place.
 		hpBar[i]->setLocalZOrder(3.0 - i); // sets the local z-order.
 		hpBar[i]->setGlobalZOrder(10.0F); // sets the global z-order.
 
-		hud->addChild(hpBar[i]);
+		hud->addChild(hpBar[i]); // adds to the hud.
 	}
 
+	hpBarOffset = hpBarPos - getDefaultCamera()->getPosition(); // gets the diffrence between the camera's position and hp bar's location.
+
+	// initializes the MP bar
+	mpBarRect = Rect(0.0F, 0.0F, 465.0F, 67.0F);
+	mpBarPos = Vec2(director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.89F);
+
+	// [0] = front, [1] = middle (the part that shows the actual MP), [2] = back
+	for (int i = 0; i < BAR_LEN; i++)
+	{
+		mpBar[i] = Sprite::create("images/MP_BAR_A.png"); // creates the sprite.
+		mpBar[i]->setTextureRect(Rect(0.0F, 0.0F + mpBarRect.getMaxY() * i, mpBarRect.getMaxX(), mpBarRect.getMaxY())); // sets what section of the image to use.
+
+		mpBar[i]->setPosition(mpBarPos); // moves the bar to the proper place.
+		mpBar[i]->setLocalZOrder(3.0 - i); // sets the local z-order.
+		mpBar[i]->setGlobalZOrder(10.0F); // sets the global z-order.
+
+		hud->addChild(mpBar[i]); // adds to the hud.
+	}
+
+	mpBarOffset = mpBarPos - getDefaultCamera()->getPosition(); // gets the different between the camera's position and the mp bar's location.
+
 	this->addChild(hud);
-	hpBarOffset = hpBarPos - getDefaultCamera()->getPosition(); // gets the diffrence between the camera's position and the camera.
+	hud->setVisible(enable_hud); // Hud visibility.
 
 	// creating the grid
 	grid = new OOP::PrimitiveGrid(cocos2d::Vec2(0.0F, 0.0F), cocos2d::Vec2(director->getWinSizeInPixels().width, director->getWinSizeInPixels().height), 128.0F, Color4F::WHITE);
@@ -256,6 +274,10 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 	{
 	case EventKeyboard::KeyCode::KEY_X: // turns debug mode on/off.
 		debug = !debug;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_H: // toggles on/off hud.
+		enable_hud = !enable_hud;
 		break;
 
 	case EventKeyboard::KeyCode::KEY_UP_ARROW:
@@ -568,9 +590,7 @@ void MSQ_GameplayScene::playerEnemyCollisions()
 			plyr->setHealth(plyr->getHealth() - magic::MagicType::damage(enemy->getMagicType(), plyr->getMagicType(), enemy->getAttackPower())); // replace with proper calculation.
 			plyr->gotHit();
 			
-			// offset = (hpBarRect.getMaxX() * (1.0F - plyr->getHealth() / plyr->getMaxHealth())) / 2.0F;
-
-			offset = hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()); // calculates the new length of the health bar.
+			offset = hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()); // calculates the offset needed to reposition the newly sized hp bar.
 
 			hpBar[1]->setTextureRect(Rect(0.0F, hpBarRect.getMaxY(), hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()), hpBarRect.getMaxY()));
 			
@@ -590,14 +610,14 @@ void MSQ_GameplayScene::playerEnemyCollisions()
 void MSQ_GameplayScene::weaponEnemyCollisions()
 {
 	entity::Weapon * weapon = plyr->getCurrentWeapon();
-	
+	magic::Magic weaponMagic; // gets the magic type of the weapon.
+	float offset = 0.0F; // saves the offset needed for the mpBar
+
 	if (weapon == nullptr)
 		return;
-	
-	// weapon->enableCollisionBodies();
 
-	// plyr->disableCollisionBodies();
-	// weapon->enableCollisionBodies(); // enables the collision bodies of the weapon only.
+	// if the player has no magic power, then the weapon's type is switched to 'null'.
+	weaponMagic = (plyr->getMagicPower() > 0.0F) ? weapon->getMagicType() : magic::Magic(magic::null);
 
 	for(int i = 0; i < sceneEnemies->size(); i++)
 	{
@@ -610,106 +630,26 @@ void MSQ_GameplayScene::weaponEnemyCollisions()
 		// as such, a collision body needs to be paired with the player that only contains the weapons at the appropriate spot, hence the function call.
 		if (entity::Entity::collision(plyr, weapon->getOffsetCollisionBodies(weapon->getOwner()->getSprite(), weapon->getCollisionBodies()), sceneEnemies->at(i), sceneEnemies->at(i)->getOffsetCollisionBodies())) // checks for collision.
 		{
-			sceneEnemies->at(i)->setHealth(sceneEnemies->at(i)->getHealth() - weapon->getDamage());
-			sceneEnemies->at(i)->gotHit();
+			// if the player has no magic power, then the weapon's attack power is cut in half, and has a type value of 'null'.
+			sceneEnemies->at(i)->setHealth(sceneEnemies->at(i)->getHealth() - 
+				magic::Magic::damage(weaponMagic, emy->getMagicType(), weapon->getDamage() / (plyr->getMagicPower() > 0.0F) ? 1 : 2));
+
+			sceneEnemies->at(i)->gotHit(); // the enemy has been hit
+
+			plyr->addMagicPower(-1 * (weapon->getMagicUsage())); // reduces the player's magic.
+			offset = mpBarRect.getMaxX() * (plyr->getMagicPower() / plyr->getMagicPowerMax()); // calculates the offset needed to reposition the newly sized mp bar.
+
+			mpBar[1]->setTextureRect(Rect(0.0F, mpBarRect.getMaxY(), mpBarRect.getMaxX() * (plyr->getMagicPower() / plyr->getMagicPowerMax()), mpBarRect.getMaxY()));
+
+			// This takes the size of the hpBar at full size (hpBarRect.getMaxX()), halves it.
+			// It then subtracts the position of hpBar[0] (i.e. the frame doesn't move) by it, and then adds the new size of the health bar divided by '2' to it.
+			// in other words it basically just aligns itself with the left edge of the frame and then moves it over by half of the health bar's current length, since the position is based on its centre.
+			// this is all so the hp bar is where it should be.
+			mpBar[1]->setPositionX(mpBar[0]->getPositionX() - mpBarRect.getMaxX() / 2 + offset / 2);
+
 			break;
 		}
 	}
-
-	// plyr->enableCollisionBodies();
-	// weapon->disableCollisionBodies();
-
-	//bool collision;
-	//
-	//entity::Player tempPlyr = *plyr;
-	//entity::Weapon * weapon = nullptr;
-
-	//if (plyr->getCurrentWeapon() == nullptr)
-	//	return;
-
-	//weapon = new entity::Weapon(*plyr->getCurrentWeapon()); // makes a copy of the weapon.
-	//
-	//tempPlyr.setCollisionBodies(plyr->getCurrentWeapon()->getCollisionBodies()); // sets the weapon collision bodies
-	//
-	//weapon->getOwner()->disableCollisionBodies(); // disables the collision bodies for the weapon's owner so that they don't interfere.
-	//weapon->enableCollisionBodies(); // turns on the weapon collision bodies.
-	//
-	//for (entity::Enemy * emy : *sceneEnemies) // goes through every enemy
-	//{
-	//	if (emy == nullptr)
-	//		continue;
-
-	//	if (entity::Entity::collision(weapon->getOwner(), emy)) // checks for collision with the weapon and the enemy, with the one wielding the weapon having their collisions disabled.
-	//	{
-	//		emy->setHealth(emy->getHealth() - weapon->getDamage());
-	//		emy->gotHit();
-	//		break;
-	//	}
-	//}
-
-	//weapon->getOwner()->enableCollisionBodies(); // turns on the collision bodies for the weapon's owner
-	//weapon->disableCollisionBodies(); // disables the collision bodies for the weapon itself.
-
-	//for (OOP::Primitive * p1 : weapon->getCollisionBodies())
-	//{
-	//	for (entity::Enemy * emy : *sceneEnemies) // goes through every enemy
-	//	{
-	//		if (emy == nullptr)
-	//			continue;
-
-	//		for (OOP::Primitive * p2 : emy->getCollisionBodies())
-	//		{
-	//			collision = OOP::Primitive::collision(p1, p2);
-	//			
-	//			if(collision) // if collision has happened.
-	//			{
-	//				emy->setHealth(emy->getHealth() - weapon->getDamage());
-	//				emy->gotHit();
-	//				break;
-	//			}
-	//		}
-
-	//	}
-	//}
-
-	// plyr->
-
-	// tempPlyr->getCollisionBodies().clear(); // clears the collision bodies for the tempory player.
-
-	// tempPlyr->setCollisionBodies(weapon->getC)
-
-	// tempPlyr->setCollisionBodies()
-
-	// tempEntity = *plyr; // makes a copy of the player so that hte weapon hitboxes can be added
-
-	// for (int i = 0; i < weapon->getCollisionBodies().size(); i++)
-	// {
-	// 	// plyr->getCollisionBodies().push_back(weapon->getCollisionBodies().at(i));
-		// for(int j = 0; j < )
-	// }
-
-	// weapon = new entity::Weapon(*plyr->getCurrentWeapon()); // makes a copy of the player's current weapon
-
-	//for (OOP::Primitive * p : weapon->getCollisionBodies()) // goes through all of the weapon's primitives
-	//{
-	//	p->setPosition(p->getPosition() + plyr->getPosition()); // moves the primitives to the proper position
-	//
-	//	
-	//	for (entity::Enemy * emy : *sceneEnemies) // goes through every enemy
-	//	{
-	//		if (emy == nullptr)
-	//			continue;
-
-	//		for (int i = 0; i < emy->getCollisionBodies().size(); i++) // gets each primitive tied to the enemy
-	//		{
-	//			if (OOP::Primitive::collision(p, emy->getCollisionBodies().at(i))) // if there is collision.
-	//			{
-	//				emy->setHealth(emy->getHealth() - weapon->getDamage());
-	//				break;
-	//			}
-	//		}
-	//	}
-	//}
 
 }
 
@@ -734,8 +674,15 @@ void MSQ_GameplayScene::update(float deltaTime)
 		for (int i = 0; i < BAR_LEN; i++) // moves all of the hp bars accordingly.
 			hpBar[i]->setPosition(hpBarPos);
 
+		mpBarPos = getDefaultCamera()->getPosition() + mpBarOffset; // moves the mp bar
+		for (int i = 0; i < BAR_LEN; i++) // moves all of the mp bars accordingly.
+			mpBar[i]->setPosition(hpBarPos);
+
 		grid->setPosition(gridOffset + getDefaultCamera()->getPosition()); // moves the grid so that it
 	}
+
+	if (enable_hud != hud->isVisible()) // if the hud's visibility is wrong, it's set accordingly.
+		hud->setVisible(enable_hud);
 
 	// These movement parameters will need to be changed later.
 	// if the cancels are true, then the player can't move that given direction.

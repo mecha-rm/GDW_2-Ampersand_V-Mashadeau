@@ -71,7 +71,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 	case 7: // spawn 2
 	case 8: // spawn 3
 	case 9: // spawn 4
-		
+
 		frameSize = Rect(0.0F, 0.0F, 256.0F, 256.0F);
 		sprite->setTextureRect(frameSize); // creates a texture rect, so that the default only has one tile
 		sprite->setColor(Color3B::GREEN);
@@ -83,7 +83,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		// sprite->setVisible(false); // uncomment to hide all graphics
 		break;
 	case 10: // stock block
-		
+
 		// this->LETTER = 'a'; // there's only one block at the moment, so it's set as type a.
 		setName("Stone Block");
 		setDescription("A block made of stone.");
@@ -95,7 +95,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		case 'a': // 'a' is also the default type.
 		default:
 			this->LETTER = 'a'; // since 'a' is also the default, this is set to 'a', just to be sure.
-			
+
 			setTextureRect(frameSize);
 			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 128.0F, CLR_DEF));
 			break;
@@ -192,41 +192,31 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
 
-	case 102://cult platform left
-		setName("Cult Platform Left");
+	case 102://cult platforms and Sewer ladder
+		setName("Platforms and Ladders");
 		setDescription("Tile set");
 		setTexture("images/tiles/TIN_102.png");
 		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
 
+		switch (this->LETTER) {
+		case 'a'://platform left
+		default:
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
+
+		case 'b'://platform mid
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'c'://platform right
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'd'://sewer ladder 
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+
+		}
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
-
-	case 103://cult platform middle
-		setName("Cult Platform Middle");
-		setDescription("Tile set");
-		setTexture("images/tiles/TIN_103.png");
-		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
-
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
-		break;
-
-	case 104://cult platform right
-		setName("Cult Platform Right");
-		setDescription("Tile set");
-		setTexture("images/tiles/TIN_104.png");
-		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
-
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
-		break;
-
-	case 105://Sewer Ladder
-		setName("Sewer Ladder");
-		setDescription("Tile set");
-		setTexture("images/tiles/TIN_105.png");
-		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
-
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
-		break;
+	
 
 	case 500: //air area block base
 		setName("Mountain Block");

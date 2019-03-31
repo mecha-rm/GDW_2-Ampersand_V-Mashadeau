@@ -70,7 +70,7 @@ namespace entity
 
 		float moveSpeedX = 0.0F;// the speed of the platform on the x-axis. If this is 0, the platform doesn't move horizontally.
 		float moveSpeedY = 0.0F; // the speed of the platform on the y-axis. If this is 0, the platform doesn't move vertically.
-		
+
 		float rotationSpeed = 0.0F; // the rotation speed of the platform. If 0, the platform doesn't rotate.
 
 		bool moveUp = false; // used to move the platform up
@@ -80,6 +80,6 @@ namespace entity
 	protected:
 
 	};
-
+}
 
 

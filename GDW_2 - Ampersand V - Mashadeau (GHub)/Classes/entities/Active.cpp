@@ -76,6 +76,22 @@ void entity::Active::setJumpForce(float jumpF) { jump = (jumpF > 0.0F) ? jumpF :
 // adds the jump force to the active entity.
 void entity::Active::addJumpForce() { addForce(Vec2(0.0F, jump)); }
 
+// returns projectile vector.
+std::vector<entity::Projectile *>& entity::Active::getProjectileVector() { return projectiles; }
+
+// sets projectile vector.
+void entity::Active::setProjectileVector(std::vector<Projectile*>& newVec)
+{
+	projectiles.erase(projectiles.begin(), projectiles.end() + 1);
+	projectiles = newVec;
+}
+
+// adds projectile to the vector
+void entity::Active::addProjectile(entity::Projectile * shot) { ustd::addToVector(projectiles, shot); }
+
+// removes projectile from vector.
+void entity::Active::removeProjectile(entity::Projectile * shot) { ustd::removeFromVector(projectiles, shot); }
+
 // the update loop for active entities
 void entity::Active::update(float deltaTime)
 {

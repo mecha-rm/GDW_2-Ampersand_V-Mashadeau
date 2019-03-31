@@ -114,9 +114,124 @@ void MSQ_GameplayScene::initSprites()
 	plyr->setAntiGravity(debug);
 	this->addChild(plyr->getSprite());
 
-	// creating the hud
 	hud = DrawNode::create(); // creating the hud
-	
+	hud->setGlobalZOrder(10.0F);
+
+	// initalizing the weapons on the HUD
+	weaponIconSize = Rect(0.0F, 0.0F, 148.0F, 163.5F);
+
+	for (int i = 0; i < HUD_WEAPONS_ROWS; i++) // each row is a different weapon (current, 1, 2, 3)
+	{
+		for (int j = 0; j < HUD_WEAPONS_COLS; j++) // three parts -> (frame, weapon image, backdrop)
+		{
+			hudWeapons[i][j] = Sprite::create();
+			hudWeapons[i][j]->setGlobalZOrder(10.0F);
+
+			switch (j)
+			{
+			case 0: // tile frame; for some reason there's a weird line remenant at the bottom.
+				hudWeapons[i][j]->setTexture("images/HUD_WEAPONS_A.png");
+
+				switch (i) // chooses the frame with the proper number on it.
+				{
+				case 0:
+					hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 2.0F, 0.0F + weaponIconSize.getMaxY() * 0.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+				case 1:
+					hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 3.0F, 0.0F + weaponIconSize.getMaxY() * 0.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+				case 2:
+					hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 4.0F, 0.0F + weaponIconSize.getMaxY() * 0.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+				case 3:
+					hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 5.0F, 0.0F + weaponIconSize.getMaxY() * 0.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+				}
+				
+				hudWeapons[i][j]->setLocalZOrder(3.0F);
+
+				break;
+			case 1: // weapon
+				if (plyr->getWeapon(i) != nullptr)
+				{
+					weaponImages[i] = plyr->getWeapon(i)->getTextureFilePath(); // saves the image name
+					hudWeapons[i][j]->setTexture(weaponImages[i]); // sets the image
+					hudWeapons[i][j]->setTextureRect(weaponIconSize); // sets a section of the image so that it matches up with everything else.
+				}
+				hudWeapons[i][j]->setLocalZOrder(2.0F);
+
+				break;
+
+			case 2: // background
+				
+				hudWeapons[i][j]->setTexture("images/HUD_WEAPONS_A.png");
+				if (plyr->getWeapon(i) != nullptr)
+				{
+					switch (plyr->getWeapon(i)->getMagic_T()) // the background should correspond with the weapon type.
+					{
+					case magic::null:
+					default:
+						hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 0.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+						break;
+
+					case magic::shadow:
+						hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 1.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+						break;
+
+					case magic::fire:
+						hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 2.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+						break;
+
+					case magic::water:
+						hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 3.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+						break;
+
+					case magic::earth:
+						hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 4.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+						break;
+
+					case magic::air:
+						hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 5.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+						break;
+					}
+				}
+				else
+				{
+					// just has null background by default.
+					hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 0.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+				}
+
+				
+				hudWeapons[i][j]->setLocalZOrder(1.0F);
+				break;
+			}
+
+			this->addChild(hudWeapons[i][j]); // adds the sprite
+
+			switch (i) // moves blocks accordingly.
+			{
+			case 0: // current weapon
+				hudWeapons[i][j]->setPosition(director->getWinSizeInPixels().width * 0.48F, director->getWinSizeInPixels().height * 0.93F); // moves it
+				break;
+
+			case 1: // weapon 1
+				hudWeapons[i][j]->setPosition(director->getWinSizeInPixels().width * 0.65F, director->getWinSizeInPixels().height * 0.93F); // moves it
+				break;
+
+			case 2: // weapon 2
+				hudWeapons[i][j]->setPosition(director->getWinSizeInPixels().width * 0.72F, director->getWinSizeInPixels().height * 0.93F); // moves it
+				break;
+
+			case 3: // weapon 3
+				hudWeapons[i][j]->setPosition(director->getWinSizeInPixels().width * 0.79F, director->getWinSizeInPixels().height * 0.93F); // moves it
+				break;
+			}
+			
+			hudWeapons[i][j]->setScale(0.78F); // scales it.
+		}
+	}
+
+
 	// initalizes the HP bar
 	hpBarRect = Rect(0.0F, 0.0F, 465.0F, 67.0F); // the size of an individual space
 	hpBarPos = Vec2(director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.96F); // setting the hp bar's position.
@@ -138,7 +253,7 @@ void MSQ_GameplayScene::initSprites()
 
 	// initializes the MP bar
 	mpBarRect = Rect(0.0F, 0.0F, 465.0F, 67.0F);
-	mpBarPos = Vec2(director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.89F);
+	mpBarPos = Vec2(director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.885F);
 
 	// [0] = front, [1] = middle (the part that shows the actual MP), [2] = back
 	for (int i = 0; i < BAR_LEN; i++)
@@ -326,13 +441,13 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 
 		break;
 	case EventKeyboard::KeyCode::KEY_1:
-		//item 1
+		plyr->switchWeapon(1);
 		break;
 	case EventKeyboard::KeyCode::KEY_2:
-		//item 2
+		plyr->switchWeapon(2);
 		break;
 	case EventKeyboard::KeyCode::KEY_3:
-		//item 3
+		plyr->switchWeapon(3);
 		break;
 	case EventKeyboard::KeyCode::KEY_ESCAPE:
 		//menu
@@ -684,7 +799,6 @@ void MSQ_GameplayScene::update(float deltaTime)
 	if (enable_hud != hud->isVisible()) // if the hud's visibility is wrong, it's set accordingly.
 		hud->setVisible(enable_hud);
 
-	// These movement parameters will need to be changed later.
 	// if the cancels are true, then the player can't move that given direction.
 
 	if (moveUp && !plyr->cancelUp) // moves the player up.
@@ -730,15 +844,57 @@ void MSQ_GameplayScene::update(float deltaTime)
 		switch (pAction)
 		{
 		case 6: // attack 1 animation.
-			plyr->runAction(pAction);
+
+			plyr->useWeapon();
 			pAction = 0;
 		}
 
 		plyrAction = false;
 	}
 	
+	for (int i = 0; i < HUD_WEAPONS_ROWS; i++)
+	{
+		if (plyr->getWeapon(i) != nullptr)
+		{
+			if (weaponImages[i] != plyr->getWeapon(i)->getTextureFilePath()) // if the weapon has been changed out.
+			{
+				weaponImages[i] = plyr->getWeapon(i)->getTextureFilePath(); // gets the image path
+				hudWeapons[i][1]->setTexture(weaponImages[i]); // changes the image.
+				
 
-	// std::cout << DrawNode::create()->getPosition().x << std::endl;
+				switch (plyr->getWeapon(i)->getMagic_T()) // the background should correspond with the weapon type.
+				{
+				case magic::null:
+				default:
+					hudWeapons[i][2]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 0.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+
+				case magic::shadow:
+					hudWeapons[i][2]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 1.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+
+				case magic::fire:
+					hudWeapons[i][2]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 2.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+
+				case magic::water:
+					hudWeapons[i][2]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 3.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+
+				case magic::earth:
+					hudWeapons[i][2]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 4.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+
+				case magic::air:
+					hudWeapons[i][2]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 5.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+				}
+
+			}
+		}
+		
+	}
+
 	// updates the player
 	plyr->update(deltaTime);
 	

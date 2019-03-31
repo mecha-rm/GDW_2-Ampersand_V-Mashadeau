@@ -37,12 +37,24 @@ namespace entity
 		entity::Weapon * getCurrentWeapon() const;
 
 		/*
+		// gets the weapon based on a provided number. If the number is out of bounds, then a nullptr is returned.
+		 * [0] = current weapon
+		 * [1] = weapon 1
+		 * [2] = weapon 2
+		 * [3] = weapon 3
+		*/
+		entity::Weapon * getWeapon(unsigned short int weapon);
+
+		/*
 		 * Switches the weapon. It can only be a value from 1 - 3
-		 * [1]: weapon 1
-		 * [2]: weapon 2
-		 * [3]: weapon 3
+		 * [1]: switch to weapon 1
+		 * [2]: switch to weapon 2
+		 * [3]: switch to weapon 3
 		*/
 		void switchWeapon(short int weapon);
+
+		// has the player use their weapon.
+		void useWeapon();
 
 		// gets the magic power of the player
 		float getMagicPower();
@@ -72,6 +84,7 @@ namespace entity
 
 		std::vector<entity::Weapon *> weapons; // saves all of the weapons the player has.
 
+		// a total of 4 weapons can be held at a time (1 current weapon, and the rest our 'in the backpack' if you will)
 		entity::Weapon * currentWeapon = nullptr; // current weapon equipped
 
 		entity::Weapon * weapon1 = nullptr;

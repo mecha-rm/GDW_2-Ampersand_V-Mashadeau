@@ -147,11 +147,14 @@ private:
 	Vec2 mpBarPos = Vec2(0.0F, 0.0F);
 	Vec2 mpBarOffset = Vec2(0.0F, 0.0F);
 
-	// sprites added to the hud overlay.
-	Sprite * currentWeaponIcon = nullptr;
-	Sprite * weaponIcon1 = nullptr;
-	Sprite * weaponIcon2 = nullptr;
-	Sprite * weaponIocn3 = nullptr;
+	// sprites added to the hud overlay. These are displayed on the HUD.
+	// [0][y] = current, [1][y] = weapon 1, [2][y] = weapon 2, [3][y] = weapon 3
+	// [x][0] = frame, [x][1] = weapon image, [x][2] = background
+	Sprite * hudWeapons[4][3];
+	std::string weaponImages[4]{ "", "", "", "" }; // the weapons that go in the hud.
+	Rect weaponIconSize; // the size of a frame icon.
+	const int HUD_WEAPONS_ROWS = 4;
+	const int HUD_WEAPONS_COLS = 3;
 
 	bool moveUp = false;
 	bool moveDown = false;

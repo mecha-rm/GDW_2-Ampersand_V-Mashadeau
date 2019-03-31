@@ -50,7 +50,7 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 
 		filePath = "images/enemies/EIN_101.png"; // sets the file path for the enemy.
 		frameSize = Rect(0.0F, 0.0F, 192.0F, 192.0F);
-		sprite->setTexture(filePath);
+		setTexture(filePath);
 		setTextureRect(frameSize);
 		
 		animations.push_back(new OOP::SpriteSheetAnimation(sprite, 0, true, 0.05F, true, true));
@@ -82,7 +82,7 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 
 		filePath = "images/enemies/EIN_000.png";
 		frameSize = Rect(0.0F, 0.0F, 40.0F, 40.0F);
-		sprite->setTexture(filePath); // sets the enemy's image
+		setTexture(filePath); // sets the enemy's image
 		setTextureRect(frameSize); // sets the rectangle texture
 
 		collisionBodies.push_back(new OOP::PrimitiveCircle(Vec2(20.0F, 20.0F), 20.0F, CLR_DEF));

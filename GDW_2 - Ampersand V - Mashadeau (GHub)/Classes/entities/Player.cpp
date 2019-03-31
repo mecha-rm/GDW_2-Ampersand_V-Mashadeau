@@ -48,9 +48,12 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	setMagicPowerMax(100.0F, false);
 	setMagicPower(getMagicPowerMax());
 
-	weapon1 = new entity::Weapon(0, this);
-	currentWeapon = weapon1;
+	currentWeapon = new entity::Weapon(0, this);
+	weapon1 = new entity::Weapon(1, this);
+	weapons.push_back(currentWeapon);
 	weapons.push_back(weapon1);
+	weapons.push_back(weapon2);
+	weapons.push_back(weapon3);
 
 	// no animation (0); 1 frame
 	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, true, true);
@@ -94,13 +97,15 @@ entity::Player::~Player() {}
 			3) death
 			4) run
 			5) jump
-			6) attack 1
+			6) attack 1 (physical)
+			7) attack 2 (specia)
+			8) attack 3 (non-offensive)
 */
 void entity::Player::runAction(unsigned int ani)
 {
 	runAnimationByTag(ani);
 
-	if (ani == 6 || ani == 7)
+	if (ani == 6 || ani == 7 || ani == 8)
 		currentWeapon->enableCollisionBodies();
 
 }
@@ -114,14 +119,93 @@ entity::Weapon * entity::Player::getWeapon3() const { return weapon3; }
 // returns the current weapon
 entity::Weapon * entity::Player::getCurrentWeapon() const { return currentWeapon; }
 
+// gets the weapon via an provided number. Can be 0 - 3, and returns a nullptr if a value outside of this range is given.
+// [0]: current, [1]: weapon 1, [2]: weapon 2, [3]: weapon 3
+entity::Weapon * entity::Player::getWeapon(unsigned short int weapon)
+{
+	switch (weapon)
+	{
+	case 0:
+		return currentWeapon;
+		break;
+
+	case 1:
+		return weapon1;
+		break;
+
+	case 2:
+		return weapon2;
+		break;
+
+	case 3:
+		return weapon3;
+		break;
+	}
+
+	return nullptr;
+}
+
+
+
 /*
  * Switches the weapon. It can only be a value from 1 - 3
- * [1]: weapon 1
- * [2]: weapon 2
- * [3]: weapon 3
+ * [1]: switch to weapon 1
+ * [2]: switch to weapon 2
+ * [3]: switch to weapon 3
 */
 void entity::Player::switchWeapon(short int weapon)
 {
+	entity::Weapon * tempWeapon = currentWeapon;
+	int anime = getCurrentAnimation()->getTag(); // gets the tag of the current animation.
+
+	if (tempWeapon == nullptr || getWeapon(weapon) == nullptr) // if the weapon is nullptr, then nothing happens.
+		return;
+
+	if (anime == 6 || anime == 7 || anime == 8) // if it's an attack animation, it is stopped.
+	{
+		getCurrentAnimation()->stopAnimation(true);
+	}
+
+	currentWeapon->disableCollisionBodies();
+
+	// switches around the weapons.
+	currentWeapon = getWeapon(weapon);
+	switch (weapon)
+	{
+	case 1:
+		weapon1 = tempWeapon;
+		break;
+	case 2:
+		weapon2 = tempWeapon;
+		break;
+	case 3:
+		weapon3 = tempWeapon;
+		break;
+	}
+}
+
+
+// uses a weapon.
+void entity::Player::useWeapon()
+{
+	if (currentWeapon == nullptr)
+		return;
+
+	switch (currentWeapon->getType()) // runs the action to use the we
+	{
+	case 1: // short-ranged.
+	default:
+		runAction(6);
+		break;
+
+	case 2: // long-ranged
+		runAction(7);
+		break;
+
+	case 3: // other
+		runAction(8);
+		break;
+	}
 }
 
 // gets the magic power of the player.
@@ -181,7 +265,10 @@ void entity::Player::update(float deltaTime)
 	Active::update(deltaTime);
 
 	for (entity::Weapon * w : weapons)
-		w->update(deltaTime);
+	{
+		if (w != nullptr)
+			w->update(deltaTime);
+	}
 
 }
 

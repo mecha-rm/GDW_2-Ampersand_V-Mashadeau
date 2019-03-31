@@ -29,6 +29,18 @@ namespace entity
 		// gets what letter the tile has
 		const char getLetter() const;
 
+		// sets the position of the tile.
+		void setPosition(Vec2 newPos) override;
+
+		// setting the position of the tile.
+		void setPosition(float posX, float posY) override;
+
+		// sets the position on the x-axis
+		void setPositionX(float newPosX) override;
+
+		// sets the position on the y-axis
+		void setPositionY(float newPosY) override;
+
 		// the update loop for for the tiles
 		void update(float deltaTime);
 
@@ -51,7 +63,20 @@ namespace entity
 		void createTile(unsigned int TIN, char letter);
 
 		unsigned int TIN; // tile identification number. This can't be const because of validation checking, but it should be const.
-		char LETTER; // the type of tile. Different tiles may be categorized under the same number, and be differentiated via letters.
+		char LETTER; // the type of tile. Different tiles may be categorized under the same number, and be differentiated via letters.\
+
+		Vec2 startingPoint = Vec2(); // the starting point of the tile
+		Vec2 endingPoint = Vec2(); // the ending point of the tile.
+
+		float moveSpeedX = 0.0F;// the speed of the platform on the x-axis. If this is 0, the platform doesn't move horizontally.
+		float moveSpeedY = 0.0F; // the speed of the platform on the y-axis. If this is 0, the platform doesn't move vertically.
+		
+		float rotationSpeed = 0.0F; // the rotation speed of the platform. If 0, the platform doesn't rotate.
+
+		bool moveUp = false; // used to move the platform up
+		bool moveRight = false; // used to move the platform down
+		bool rotateClockwise = false; // used to rotate the platform clockwise.
+
 	protected:
 
 	};

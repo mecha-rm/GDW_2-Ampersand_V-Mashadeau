@@ -317,8 +317,56 @@ const unsigned int entity::Tile::getTIN() const { return TIN; }
 // the letter of the tile
 const char entity::Tile::getLetter() const { return LETTER; }
 
+// sets the position of the tile, overriding the 'setPosition' in the entity class.
+void entity::Tile::setPosition(Vec2 newPos)
+{
+	cocos2d::Vec2 offset = newPos - getPosition(); // calculates the offset for moving the STARTING_POS and ENDING_POS
+	startingPoint += offset; // proportionally moves the starting position.
+	endingPoint += offset; // proportionally moves the ending position.
+
+	Entity::setPosition(newPos); // sets the position of the vertical platform
+}
+
+// sets the position of the tile using floats.
+void entity::Tile::setPosition(float posX, float posY) { setPosition(Vec2(posX, posY)); }
+
+// sets the position on the x-axis.
+void entity::Tile::setPositionX(float newPosX) { setPosition(Vec2(newPosX, getPositionY())); }
+
+// sets the position of the tile on the y-axis
+void entity::Tile::setPositionY(float newPosY) { setPosition(Vec2(getPositionX(), newPosY)); }
+
 // the update loop for for the tiles
 void entity::Tile::update(float deltaTime)
 {
+	if (moveSpeedX > 0.0F || moveSpeedY > 0.0F) // moves hte platform
+	{
+		Entity::setPosition(getPosition() +
+			Vec2(100.0F * ((moveRight) ? 1 : -1) * moveSpeedX * deltaTime,
+				 100.0F * ((moveUp) ? 1 : -1) * moveSpeedY * deltaTime));
+	}
+
+	if(rotationSpeed > 0.0F)
+		sprite->setRotation(sprite->getRotation() + ((rotateClockwise) ? 1 : -1) * 10.0F * rotationSpeed); // rotates the tile.
+
+	// if the platform has passed the ending point, then it starts moving the other way.
+	if (getPositionX() >= endingPoint.x)
+	{
+		moveRight = false;
+	}
+	else if (getPositionX() <= startingPoint.x) // if the platform has returned to the starting point, it starts to move the other direction again.
+	{
+		moveRight = true;
+	}
+
+	if (getPositionY() >= endingPoint.y) // if the platform has surpassed its endingPoint, it will start moving down.
+	{
+		moveUp = false;
+	}
+	else if (getPositionY() <= startingPoint.y) // if the platform has gone past (or reached) its starting point, it now goes up.
+	{
+		moveUp = true;
+	}
+
 	Entity::update(deltaTime); // calls the 'Entity' update loop
 }

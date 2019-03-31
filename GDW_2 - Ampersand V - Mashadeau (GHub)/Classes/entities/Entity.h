@@ -64,21 +64,21 @@ namespace entity
 
 
 		// Setting the position. While all sprite children move with the sprite, their positions don't change (i.e. getPosition() for them would return the same value).
-		void setPosition(Vec2 newPos);
+		virtual void setPosition(Vec2 newPos);
 
 		// Setting the position
-		void setPosition(float x, float y);
+		virtual void setPosition(float x, float y);
 
 		Vec2 getPosition() const;
 
 		// Setting the sprite's x position.
-		void setPositionX(float x);
+		virtual void setPositionX(float x);
 
 		// Getting the sprite's x position.
 		float getPositionX() const;
 
 		// Setting the sprite's y position.
-		void setPositionY(float y);
+		virtual void setPositionY(float y);
 
 		// Getting the sprite's y position.
 		float getPositionY() const;

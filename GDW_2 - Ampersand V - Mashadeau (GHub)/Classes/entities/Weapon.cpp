@@ -105,9 +105,13 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 		break;
 	}
 
-	owner->getSprite()->addChild(sprite); // the sprite's positon won't be saved unless this is done. This is just to ensure that the code doesn't crash from trying to get the sprite's position.
 	sprite->setVisible(false);
-	addPrimitivesToOwner();
+
+	if (owner != nullptr)
+	{
+		owner->getSprite()->addChild(sprite); // the sprite's positon won't be saved unless this is done. This is just to ensure that the code doesn't crash from trying to get the sprite's position.
+		addPrimitivesToOwner();
+	}
 	
 }
 
@@ -163,7 +167,7 @@ void entity::Weapon::setOwner(entity::Entity * newOwner)
 	if (newOwner == nullptr)
 		return;
 
-	for (int i = 0; i < collisionBodies.size(); i++) // removes the primitives from the old owner.
+	for (int i = 0; i < collisionBodies.size() && owner != nullptr; i++) // removes the primitives from the old owner.
 	{
 		collisionBodies[i]->getPrimitive()->removeFromParent();
 		owner->removeCollisionBody(collisionBodies.at(i)); // removes it from the 

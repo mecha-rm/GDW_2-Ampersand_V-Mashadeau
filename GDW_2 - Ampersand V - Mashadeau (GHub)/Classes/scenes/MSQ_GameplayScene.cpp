@@ -687,6 +687,23 @@ void MSQ_GameplayScene::playerTileCollisions()
 // collisions between enemies and tiles
 void MSQ_GameplayScene::enemyTileCollisions()
 {
+	for (entity::Enemy * emy : *sceneEnemies)
+	{
+		for (entity::Tile * tile: *sceneTiles)
+		{
+			if (emy->collision(tile)) // if there is collision.
+			{
+				if (emy->getMoveForceY() != 0.0F) // if the enemy is choosing to move down
+				{
+					
+				}
+				else if (emy->getMoveForceY() == 0.0F) // if the enemy is not moving, and has fallen via gravity.
+				{
+					emy->setAntiGravity(true);
+				}
+			}
+		}
+	}
 }
 
 // calculates player collision with enemies
@@ -867,7 +884,6 @@ void MSQ_GameplayScene::update(float deltaTime)
 				weaponImages[i] = plyr->getWeapon(i)->getTextureFilePath(); // gets the image path
 				hudWeapons[i][1]->setTexture(weaponImages[i]); // changes the image.
 				
-
 				switch (plyr->getWeapon(i)->getMagic_T()) // the background should correspond with the weapon type.
 				{
 				case magic::null:
@@ -898,7 +914,15 @@ void MSQ_GameplayScene::update(float deltaTime)
 
 			}
 		}
-		
+		else if (plyr->getWeapon(i) == nullptr) // if there is no weapon here, then the image is hidden.
+		{
+			if (hudWeapons[i][1]->getTextureRect().getMaxX() != 0.0F || hudWeapons[i][1]->getTextureRect().getMaxY()) // hides the texture by making it a blank texture rect.
+			{
+				hudWeapons[i][1]->setTextureRect(Rect(0.0F, 0.0F, 0.0F, 0.0F));
+			}
+			
+		}
+
 	}
 
 	// updates the player

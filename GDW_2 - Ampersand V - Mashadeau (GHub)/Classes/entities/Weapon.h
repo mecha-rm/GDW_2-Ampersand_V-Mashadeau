@@ -40,7 +40,7 @@ namespace entity
 		bool hasOwner();
 
 		// gets all of the weapons on top of a single node, positioned appr
-		//vgetAsSingleNode();
+		// getAsSingleNode();
 
 		// called when a weapon is used. If the weapon creates a projectile, then a projectile vector will be sent.
 		// if it's of size '0', then no projectiles were generated. DO NOT USE YET.

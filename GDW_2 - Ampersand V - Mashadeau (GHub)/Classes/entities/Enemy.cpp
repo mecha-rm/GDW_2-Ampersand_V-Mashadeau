@@ -53,6 +53,8 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 		setTexture(filePath);
 		setTextureRect(frameSize);
 		
+		moveForce = (0.0F, 12.0F);
+
 		animations.push_back(new OOP::SpriteSheetAnimation(sprite, 0, true, 0.05F, true, true));
 
 		for (int i = 0; i < 11; i++) // creates the animation for the krawFly

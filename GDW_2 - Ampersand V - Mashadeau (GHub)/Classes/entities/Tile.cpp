@@ -339,7 +339,15 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
 
-	case 802: // eath staff blade
+	case 801: // water staff
+		setTexture("images/weapons/WIN_001.png");
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		weaponNum = 1;
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+
+	case 802: // earth staff
 		setTexture("images/weapons/WIN_002.png");
 		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
 		weaponNum = 2;
@@ -410,42 +418,32 @@ bool entity::Tile::getDamagable() { return damageable; }
 // checks the effect the tile has on the player.
 void entity::Tile::effect(entity::Tile * tile, entity::Player * plyr)
 {
-	entity::Weapon * weapon = nullptr; // the weapon that the player has given up.
+	int WIN = -1; // the weapon number of the weapon the player gave up.
 	entity::Tile * tempTile = nullptr;
 
-	switch (tile->TIN)
+
+	if (tile->TIN == 700) // magic orb
 	{
-	case 700: // magic orb
 		(tile->changeMpMax) ? plyr->addMagicPowerMax(tile->mpAdd, true) : plyr->addMagicPower(tile->mpAdd);
-		break;
-
-	case 701: // health orb
+	}
+	else if (tile->TIN == 701) // hp restore
+	{
 		(tile->changeHpMax) ? plyr->addMaxHealth(tile->hpAdd, true) : plyr->addHealth(tile->hpAdd);
-		break;
-
-	case 800: // null blade
-		weapon = plyr->giveWeapon(new entity::Weapon(tile->weaponNum, plyr));
-		break;
-
-	case 802: // provides a weapon to the player. The weapon numbers (WIN) are 800 less than the tile number they're attachted to (e.g. tile 802 has weapon 002).
-		weapon = plyr->giveWeapon(new entity::Weapon(tile->weaponNum, plyr));
-		break;
-
+	}
+	else if (tile->TIN >= 800 && tile->TIN <= 899)  // weapon replacements.
+	{
+		WIN = plyr->giveWeapon(tile->weaponNum);
 	}
 
-	// if the weapon was switched out, it is then given to the tile to store it, kind of like a box.
-	// if there is no weapon to put back in, then the tile gets its contents removed by setting its health to 0 so that it gets deleted.
-	// (weapon == nullptr) ? tile->setHealth(0.0F) : tile = new entity::Tile(weapon->getWIN() + 800);
-
-	if (weapon == nullptr)
+	if (WIN == -1) // the player didn't lose a weapon.
 	{
 		tile->setHealth(0.0F);
 		tempTile = tile;
 	}
 	else
 	{
-		tile->weaponNum = weapon->getWIN();
-		tile->setTexture(weapon->getTextureFilePath()); // replaces the image
+		tile->weaponNum = WIN;
+		tile->setTexture(entity::Weapon(WIN, nullptr).getTextureFilePath()); // replaces the image
 	}	
 }
 

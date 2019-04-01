@@ -27,14 +27,26 @@ namespace entity
 		// gets weapon 1
 		entity::Weapon * getWeapon1() const;
 
+		// sets weapon 1; fails if the owner isn't the player.
+		void setWeapon1(entity::Weapon * wpn);
+
 		// gets weapon 2
 		entity::Weapon * getWeapon2() const;
 
+		// sets weapon 2; fails if the owner isn't the player.
+		void setWeapon2(entity::Weapon * wpn);
+
 		// gets weapon 3
 		entity::Weapon * getWeapon3() const;
+
+		// sets weapon 3; fails if the owner isn't the player.
+		void setWeapon3(entity::Weapon * wpn);
 		
 		// gets the current weapon equipped
 		entity::Weapon * getCurrentWeapon() const;
+
+		// sets current weapon; fails if the owner isn't the player.
+		void setCurrentWeapon(entity::Weapon * wpn);
 
 		/*
 		// gets the weapon based on a provided number. If the number is out of bounds, then a nullptr is returned.
@@ -46,6 +58,15 @@ namespace entity
 		entity::Weapon * getWeapon(unsigned short int weapon);
 
 		/*
+		// sets the weapon based on a provided number. If the number is out of bounds or the weapon does not already belong to the player, a nullptr is returned.
+		 * [0] = current weapon
+		 * [1] = weapon 1
+		 * [2] = weapon 2
+		 * [3] = weapon 3
+		*/
+		void setWeapon(entity::Weapon * wpn, unsigned int index);
+		
+		/*
 		 * Switches the weapon. It can only be a value from 1 - 3
 		 * [1]: switch to weapon 1
 		 * [2]: switch to weapon 2
@@ -53,9 +74,17 @@ namespace entity
 		*/
 		void switchWeapon(short int weapon);
 
+		// gives the player a weapon, returning the WIN of the weapon replaced. If no weapon was replaced, then a -1 is returned.
+		int giveWeapon(unsigned int WIN);
+		
 		// gives the player a new weapon. If the player has all of their weapon slots filled, it replaces the current weapon.
 		// the weapon that got prepalced is returned. If no weapon was replaced, then a nullptr is returned.
-		entity::Weapon * giveWeapon(entity::Weapon * newWeapon);
+		// gives the player a weapon, returning the WIN of the weapon replaced. If no weapon was replaced, then a -1 is returned.
+		 int giveWeapon(entity::Weapon * newWeapon);
+
+		// removes a weapon from the player. Returns the 'WIN' number of the removed weapon.
+		// [0] = current, [1] = weapon 1, [2] = weapon 2, [3] = weapon 3
+		int removeWeapon(unsigned int index);
 
 		// has the player use their weapon.
 		void useWeapon();

@@ -110,14 +110,36 @@ void entity::Player::runAction(unsigned int ani)
 
 }
 
+// returns weapon 1
 entity::Weapon * entity::Player::getWeapon1() const { return weapon1; }
+
+// sets weapon 1
+void entity::Player::setWeapon1(entity::Weapon * wpn)
+{
+	setWeapon(wpn, 1);
+}
 
 entity::Weapon * entity::Player::getWeapon2() const { return weapon2; }
 
+void entity::Player::setWeapon2(entity::Weapon * wpn)
+{
+	setWeapon(wpn, 2);
+}
+
 entity::Weapon * entity::Player::getWeapon3() const { return weapon3; }
+
+void entity::Player::setWeapon3(entity::Weapon * wpn)
+{
+	setWeapon(wpn, 3);
+}
 
 // returns the current weapon
 entity::Weapon * entity::Player::getCurrentWeapon() const { return currentWeapon; }
+
+void entity::Player::setCurrentWeapon(entity::Weapon * wpn)
+{
+	setWeapon(wpn, 0);
+}
 
 // gets the weapon via an provided number. Can be 0 - 3, and returns a nullptr if a value outside of this range is given.
 // [0]: current, [1]: weapon 1, [2]: weapon 2, [3]: weapon 3
@@ -146,6 +168,42 @@ entity::Weapon * entity::Player::getWeapon(unsigned short int weapon)
 }
 
 
+// sets the player's weapon.
+void entity::Player::setWeapon(entity::Weapon * wpn, unsigned int index)
+{
+	entity::Weapon * oldWeapon = nullptr;
+
+	switch (index)
+	{
+	case 0: // weapon 0
+		oldWeapon = currentWeapon;
+		weapons.at(index) = wpn;
+		currentWeapon = wpn;
+		ustd::addToVector(weapons, oldWeapon); // moves the old weapon to the back.
+
+		break;
+	case 1: // weapon 1
+		oldWeapon = weapon1;
+		weapons.at(index) = wpn;
+		weapon1 = wpn;
+		ustd::addToVector(weapons, oldWeapon); // moves the old weapon to the back.
+
+		break;
+	case 2: // weapon 2
+
+		oldWeapon = weapon2;
+		weapons.at(index) = wpn;
+		weapon2 = wpn;
+		ustd::addToVector(weapons, oldWeapon); // moves the old weapon to the back.
+
+		break;
+	case 3: // weapon 3
+		oldWeapon = weapon3;
+		weapons.at(index) = wpn;
+		weapon3 = wpn;
+		ustd::addToVector(weapons, oldWeapon); // moves the old weapon to the back.
+	}
+}
 
 /*
  * Switches the weapon. It can only be a value from 1 - 3
@@ -184,10 +242,24 @@ void entity::Player::switchWeapon(short int weapon)
 	}
 }
 
+int entity::Player::giveWeapon(unsigned int WIN)
+{
+	if (WIN == 0) // the player cannot get another null blade
+		return -1;
+	else
+		return giveWeapon(new entity::Weapon(WIN, this));
+}
+
 // gives the player a new weapon. If the player has all of their weapon slots filled, it replaces the current weapon.
-entity::Weapon * entity::Player::giveWeapon(entity::Weapon * newWeapon)
+int entity::Player::giveWeapon(entity::Weapon * newWeapon)
 {
 	entity::Weapon * oldWeapon; // the previous weapon.
+	int WIN = -1; // the 'WIN' number of the replaced weaon.
+
+	if (newWeapon == nullptr)
+		return WIN;
+
+	// newWeapon->setOwner(this);
 
 	if (weapon1 == nullptr) // weapon 1 is empty
 	{
@@ -204,16 +276,59 @@ entity::Weapon * entity::Player::giveWeapon(entity::Weapon * newWeapon)
 		oldWeapon = weapon3;
 		weapon3 = newWeapon;
 	}
-	else // replaces the current weapon and returns it.
-	{
-		oldWeapon = currentWeapon;
-		currentWeapon->getSprite()->removeFromParent();
-		currentWeapon = newWeapon;
+	else // replaces weapon 1 and returns its number
+	{	
+		WIN = getWeapon1()->getWIN();
+
+		if (WIN == 0) // if it's the null blade, the removal doesn't happen.
+			return newWeapon->getWIN();
+
+		removeWeapon(1); // removes weapon 1
+		giveWeapon(newWeapon);
+		
+		// weapons.push_back(oldWeapon);
+
+		// oldWeapon = removeWeapon(0);
+		// currentWeapon = newWeapon;
 	}
 
-	return oldWeapon; // returns the weapon that has been replaced.
+	return WIN; // returns the weapon that has been replaced.
 }
 
+// removes a weapon from the player's set
+int entity::Player::removeWeapon(unsigned int index)
+{
+	int WIN = -1;
+
+	if (index > 3)
+		return WIN;
+	
+	if (getWeapon(index) == nullptr || getWeapon(index)->getWIN() == 0) // the null blade cannot be removed.
+		return WIN;
+
+
+	WIN = getWeapon(index)->getWIN(); // gets the number of the weapon being removed.
+	delete getWeapon(index);
+	weapons.at(index) = nullptr;
+
+	switch (index)
+	{
+	case 0:
+		currentWeapon = nullptr;
+		break;
+	case 1:
+		weapon1 = nullptr;
+		break;
+	case 2:
+		weapon2 = nullptr;
+		break;
+	case 3:
+		weapon3 = nullptr;
+		break;
+	}
+	
+	return WIN; // returns the number of the weapon being remvoed.
+}
 
 // uses a weapon.
 void entity::Player::useWeapon()
@@ -308,11 +423,30 @@ void entity::Player::update(float deltaTime)
 	// addForce(moveForce); // adds the force of the player for movement.
 	Active::update(deltaTime);
 
+	//for (int i = 0; i < weapons.size(); i++)
+	//{
+	//	if (weapons.at(i) == nullptr)
+	//		continue;
+
+	//	if (i <= 3)
+	//	{
+	//		weapons.at(i)->update(deltaTime);
+	//	}
+	//	else
+	//	{
+	//		for (OOP::Primitive * p : weapons[i]->getCollisionBodies()) // removing all of the primitives from their parents for the tiles.
+	//			p->getPrimitive()->removeFromParent();
+
+	//		weapons[i]->getSprite()->removeFromParent(); // removes the tile's sprite.
+	//		weapons.erase(weapons.begin() + i); // erases the pointer and other tile data.
+	//	}
+	//}
+
 	for (entity::Weapon * w : weapons)
 	{
 		if (w != nullptr)
 			w->update(deltaTime);
-	}
+	 }
 
 }
 

@@ -555,10 +555,17 @@ void MSQ_GameplayScene::switchArea(std::string & fileName)
 	spawnPoint = std::stoi(spawn); // saves the spawn point of the player for when they get into the new area.
 
 	newScene = GameplayScene::createScene(); // creates the gameplay scene.
+	// ((MSQ_GameplayScene *)newScene)->plyr->setHealth(plyr->getHealth());
 	
+
+
 	// if a scene transition is used, the trnansition must finish before the program allows user input, BUT if this happens then the game will start processing things before the player can actually do anything.
 	// director->replaceScene(TransitionFadeBL::create(1.0F, newScene)); // replaces the scene for the director, and does a transition.
 	director->replaceScene(newScene); // replaces the scene without a transition.
+
+	((MSQ_GameplayScene *)newScene)->plyr->giveWeapon(plyr->getWeapon1()->getWIN());
+	((MSQ_GameplayScene *)newScene)->plyr->giveWeapon(plyr->getWeapon2()->getWIN());
+	((MSQ_GameplayScene *)newScene)->plyr->giveWeapon(plyr->getWeapon3()->getWIN());
 
 	switchingScenes = true; // becomes 'true' so that scene switches don't overlay one another.
 }
@@ -684,6 +691,8 @@ void MSQ_GameplayScene::playerTileCollisions()
 					plyr->setPositionX(tile->getPositionX() + abs(minDistVec.x));
 				}
 				plyr->zeroVelocityX();
+
+
 
 			}
 			// if the player is at an angle greater than 45.0F, the player is on top or below the platform.
@@ -831,7 +840,10 @@ void MSQ_GameplayScene::weaponEnemyCollisions()
 // update loop
 void MSQ_GameplayScene::update(float deltaTime)
 {
-	if (!pauseBool) {
+	// std::cout << "PLYR: MASS = " << plyr->getMass() << " FOR"
+	std::cout << "(" << plyr->getVelocity().x << ", " << plyr->getVelocity().y << ") " << "\n" << std::endl;
+
+	float d_movespeed = 300.0F; // the movement speed of the player (when debug is on).
 	float offset = 0.0F; // used to help with repositioning HUD assets.
 
 		float d_movespeed = 300.0F; // the movement speed of the player (when debug is on).
@@ -878,10 +890,11 @@ void MSQ_GameplayScene::update(float deltaTime)
 	
 	if (plyr->jump)
 	{
-		plyr->zeroVelocityY();
-		plyr->setPositionY(plyr->getPositionY());
+		// plyr->zeroVelocityY();
+		// plyr->setPositionY(plyr->getPositionY());
 		plyr->addJumpForce();
 		plyr->jump = false;
+
 	}
 	if (plyrAction) // animation should be played
 	{

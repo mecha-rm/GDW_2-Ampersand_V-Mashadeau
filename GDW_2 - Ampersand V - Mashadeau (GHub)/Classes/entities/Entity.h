@@ -2,7 +2,6 @@
 #pragma once
 
 #include <string>
-// #include "cocos2d.h"
 
 #include "magics/MagicTypes.h"
 #include "Primitives.h"
@@ -293,6 +292,8 @@ namespace entity
 		static const cocos2d::Color4F CLR_ATK; // colour used for attacking collision shapes (i.e. these deal damage)
 		static const cocos2d::Color4F CLR_DEF; // colour used for defensive collision shapes (i.e. these take damage)
 		static const cocos2d::Color4F CLR_NEU; // colour used for a neutral object that can be interacted with, but does not take or deal damage.
+
+
 
 	private:
 		float mass = 1.0; // the mass of the entity

@@ -70,6 +70,8 @@ public:
 	
 	CREATE_FUNC(MSQ_GameplayScene);
 
+	entity::Player * plyr; // the object used for the player
+
 private:
 
 	// collision between the entity and all tiles.
@@ -108,7 +110,6 @@ private:
 	static std::vector<std::string> areasVisited; // the ares that the player has visited.
 
 
-	entity::Player * plyr; // the object used for the player
 	bool plyrAction = false; // becomes 'true' when a new animation should be played.
 	int pAction = 0; // saves the action the player is taking.
 	

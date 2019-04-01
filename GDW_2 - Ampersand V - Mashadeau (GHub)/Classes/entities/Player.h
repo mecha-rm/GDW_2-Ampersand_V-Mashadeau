@@ -110,6 +110,9 @@ namespace entity
 		// adds to the maximum magic power, and changes the current magic power (only if 'changeCurrent' is true)
 		void addMagicPowerMax(float mpm, bool changeCurrent);
 
+		// called when the player is hit.
+		void gotHit();
+
 		void update(float deltaTime);
 
 		// becomes 'true' to tell the program that the player wishes to move in a certain direction.
@@ -142,6 +145,19 @@ namespace entity
 
 		float magicPower = 0.0F;
 		float magicPowerMax = 0.0F;
+
+		bool hpRefill = true; // if true, restore health periodically
+		bool mpRefill = true; // if false, restore mp periodically.
+
+		// bool hpRegen = false; // becomes 'true' when health should regenerate.
+		float hpAdd = 5.0F; // adds to the player's HP when the timer runs out.
+		float hprTimer = 0.0F; // counts down to 0 from hprTimerMax. When it hits 0, the playe gets back some health.
+		float hprTimerMax = 5.0F; // how long it takes for the player's health to regenerate.
+
+		// bool mpRegen = false; // becomes 'true' when magic should regenerate.
+		float mpAdd = 5.0F; // adds to the player's MP when the timer runs out.
+		float mprTimer = 0.0F; // counts down to 0 from mprTimerMax. When it hits 0, the playe gets back some health.
+		float mprTimerMax = 5.0F; // how long it takes for the player's magic to regenerate.
 
 	protected:
 

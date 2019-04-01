@@ -383,7 +383,11 @@ void entity::Player::useWeapon()
 }
 
 // adds to the player's current health.
-void entity::Player::addHealth(float hp) { setHealth(getHealth() + hp); }
+void entity::Player::addHealth(float hp)
+{
+	if(getHealth() + hp <= getMaxHealth()) // the player shouldn't get more health than their limit.
+		setHealth(getHealth() + hp); 
+}
 
 // adds to the player's maximum health
 void entity::Player::addMaxHealth(float hp, bool changeCurrent)
@@ -406,6 +410,7 @@ float entity::Player::getMagicPowerMax() { return magicPowerMax; }
 void entity::Player::setMagicPower(float mp)
 {
 	magicPower = (mp > magicPowerMax) ? magicPowerMax : (mp < 0.0F) ? 0.0F : mp;
+	mprTimer = mprTimerMax; // resets the magic restore timer.
 }
 
 // sets the maximum magic power which cannot be 0. The current amount of magic is adjusted accordingly.
@@ -431,10 +436,21 @@ void entity::Player::setMagicPowerMax(float mpm, bool changeCurrent)
 
 
 // adds to the magic power of the player.
-void entity::Player::addMagicPower(float mp) { setMagicPower(magicPower + mp); }
+void entity::Player::addMagicPower(float mp)
+{
+	if(magicPower + mp <= magicPowerMax) // the player shouldn't get more than their maximum amount of magic
+		setMagicPower(magicPower + mp);
+}
 
 // adds to the maximum magic power.
 void entity::Player::addMagicPowerMax(float mpm, bool changeCurrent) { setMagicPowerMax(magicPowerMax + mpm, changeCurrent); }
+
+// called when the player gets hit.
+void entity::Player::gotHit()
+{
+	hprTimer = hprTimerMax; // times how long it will be until the player gets healed.
+	Active::gotHit();
+}
 
 void entity::Player::update(float deltaTime)
 {
@@ -470,6 +486,26 @@ void entity::Player::update(float deltaTime)
 	//		weapons.erase(weapons.begin() + i); // erases the pointer and other tile data.
 	//	}
 	//}
+
+	if (hpRefill)
+	{
+		hprTimer -= deltaTime;
+		if (hprTimer <= 0.0F) // the timer has been set to 0.
+		{
+			addHealth(hpAdd); // adds health to the player.
+			hprTimer = hprTimerMax;
+		}
+	}
+
+	if (mpRefill)
+	{
+		mprTimer -= deltaTime;
+		if (mprTimer <= 0.0F) // the timer has been set to 0.
+		{
+			addMagicPower(mpAdd); // adds health to the player.
+			mprTimer = mprTimerMax;
+		}
+	}
 
 	for (entity::Weapon * w : weapons)
 	{

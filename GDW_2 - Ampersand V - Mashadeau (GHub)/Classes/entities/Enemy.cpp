@@ -54,6 +54,7 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 		setTextureRect(frameSize);
 		
 		moveForce = Vec2(0.0F, 12.0F);
+		setMass(0.1);
 
 		animations.push_back(new OOP::SpriteSheetAnimation(sprite, 0, true, 0.05F, true, true));
 

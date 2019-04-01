@@ -738,16 +738,6 @@ void MSQ_GameplayScene::playerEnemyCollisions()
 			// plyr->setHealth(plyr->getHealth() - enemy->getAttackPower());
 			plyr->setHealth(plyr->getHealth() - magic::MagicType::damage(enemy->getMagicType(), plyr->getMagicType(), enemy->getAttackPower())); // replace with proper calculation.
 			plyr->gotHit();
-			
-			offset = hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()); // calculates the offset needed to reposition the newly sized hp bar.
-
-			hpBar[1]->setTextureRect(Rect(0.0F, hpBarRect.getMaxY(), hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()), hpBarRect.getMaxY()));
-			
-			// This takes the size of the hpBar at full size (hpBarRect.getMaxX()), halves it.
-			// It then subtracts the position of hpBar[0] (i.e. the frame doesn't move) by it, and then adds the new size of the health bar divided by '2' to it.
-			// in other words it basically just aligns itself with the left edge of the frame and then moves it over by half of the health bar's current length, since the position is based on its centre.
-			// this is all so the hp bar is where it should be.
-			hpBar[1]->setPositionX(hpBar[0]->getPositionX() - hpBarRect.getMaxX() / 2 + offset / 2);
 
 			break;
 
@@ -807,6 +797,7 @@ void MSQ_GameplayScene::weaponEnemyCollisions()
 void MSQ_GameplayScene::update(float deltaTime)
 {
 	float d_movespeed = 300.0F; // the movement speed of the player (when debug is on).
+	float offset = 0.0F; // used to help with repositioning HUD assets.
 
 	if (switchingScenes) // updates are no longer run if the scene is being switched.
 		return;
@@ -865,7 +856,28 @@ void MSQ_GameplayScene::update(float deltaTime)
 
 		plyrAction = false;
 	}
-	
+
+	// updates the player
+	plyr->update(deltaTime);
+
+	// updates the area the player is currently in. This update also updates the scene tiles, and enemies.
+	sceneArea->update(deltaTime);
+
+	collisions();
+
+	// moves the hp bar, and updates it iwht the current amount of health the player has.
+	offset = hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()); // calculates the offset needed to reposition the newly sized hp bar.
+
+	hpBar[1]->setTextureRect(Rect(0.0F, hpBarRect.getMaxY(), hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()), hpBarRect.getMaxY()));
+
+	// This takes the size of the hpBar at full size (hpBarRect.getMaxX()), halves it.
+	// It then subtracts the position of hpBar[0] (i.e. the frame doesn't move) by it, and then adds the new size of the health bar divided by '2' to it.
+	// in other words it basically just aligns itself with the left edge of the frame and then moves it over by half of the health bar's current length, since the position is based on its centre.
+	// this is all so the hp bar is where it should be.
+	hpBar[1]->setPositionX(hpBar[0]->getPositionX() - hpBarRect.getMaxX() / 2 + offset / 2);
+	hpBarPos = hpBar[1]->getPosition();
+
+
 	for (int i = 0; i < HUD_WEAPONS_ROWS; i++)
 	{
 		if (plyr->getWeapon(i) != nullptr)
@@ -916,13 +928,6 @@ void MSQ_GameplayScene::update(float deltaTime)
 
 	}
 
-	// updates the player
-	plyr->update(deltaTime);
-	
-	// updates the area the player is currently in. This update also updates the scene tiles, and enemies.
-	sceneArea->update(deltaTime);
-
-	collisions();
 
 	if (ENABLE_CAMERA) // updates the camera if it's active.
 	{

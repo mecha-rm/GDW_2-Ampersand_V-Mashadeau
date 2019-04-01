@@ -1,5 +1,6 @@
 #pragma once
 #include "entities/Entity.h"
+#include "entities/Projectile.h"
 
 namespace entity
 {
@@ -47,6 +48,18 @@ namespace entity
 		// adds the force of the active entity's jump.
 		void addJumpForce();
 
+		// returns projectile vector.
+		std::vector<entity::Projectile *> & getProjectileVector();
+
+		// sets projectile vector.
+		void setProjectileVector(std::vector<Projectile *> &);
+
+		// adds projectile to vector.
+		void addProjectile(entity::Projectile * shot);
+
+		// removes projectile form vector.
+		void removeProjectile(entity::Projectile * shot);
+
 		// the update loop for the active entity.
 		void update(float deltaTime);
 
@@ -78,6 +91,8 @@ namespace entity
 
 		float inviTime = 0; // the amount of time since the entity has taken damage
 		float inviTimeMax = 0; // the amount of time an entity stays invincible for after getting hit.
+
+		std::vector<entity::Projectile *> projectiles; // a vector of projectiles
 	};
 }
 

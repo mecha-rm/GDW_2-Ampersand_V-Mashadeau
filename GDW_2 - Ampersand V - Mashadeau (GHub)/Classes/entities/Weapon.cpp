@@ -4,6 +4,8 @@
 
 entity::Weapon::Weapon(unsigned int WIN, entity::Entity * owner) : Inactive(), owner(owner) { createWeapon(WIN); }
 
+// this is a 'PROTECTED' constructor that's called by the projectile class since it has it's own 'createWeapon' function.
+entity::Weapon::Weapon(entity::Entity * owner) : Inactive(), owner(owner) {};
 
 entity::Weapon::~Weapon() {}
 
@@ -20,10 +22,49 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 	// you would use this to determine which weapon to use. A default weapon should be made for weapons that do not have a corresponding number yet.
 	switch (WIN)
 	{
+	case 0: // WIN_000 (also default)
+	default:
+		this->WIN = 0;
 
-	case 1:
+		setName("Lite Dagger");
+		setDescription("A weak dagger that the player starts with");
+		setType(1);
+		setTexture("images/weapons/WIN_000.png");
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		setTextureRect(frameSize);
+
+		setMagicType(magic::null);
+		setDamage(5.0F);
+		// setMagicUsage(10.0F);
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(152.0F, 63.0F), 63, 68, CLR_ATK));
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(187.0F, 71.0F), 37, 89, CLR_ATK));
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(167.0F, 130.0F), 53, 68, CLR_ATK));
 		break;
-	case 2:
+
+	case 1: // WIN_001: staff of ice
+		this->WIN = 1;
+		setName("Staff of Ice");
+		setDescription("A staff of ice.");
+		setType(2);
+		setTexture("images/weapons/WIN_001.png");
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+
+		setMagicType(magic::water);
+		setDamage(2.50);
+
+		break;
+
+	case 2: // WIN_002: staff of earth 
+		this->WIN = 2;
+		setName("Staff of Earth");
+		setDescription("A staff of earth");
+		setType(2);
+		setTexture("images/weapons/WIN_002.png");
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+
+		setMagicType(magic::earth);
+		setDamage(2.50);
 		break;
 	case 3:
 		break;
@@ -41,84 +82,69 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 		break;
 
 
-	case 10: // WIN_010 - Null Sphere (Small)
-		break;
-
-	case 11: // WIN_011 - Null Sphere (Medium)
-		setName("Null Sphere");
-		setDescription("A null energy ball");
-		setTexture("images/weapons/WIN_011.png");
-		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
-		setTextureRect(frameSize);
-
-		setMagicType(magic::null);
-		setDamage(5.0F);
-		setMagicUsage(1.0F);
-
-		collisionBodies.push_back(new OOP::PrimitiveCircle(Vec2(128.0F, 128.0F), 50.0F, CLR_ATK)); 
-		moveForce = Vec2(100.0F, 0.0F);
-
-		owner->getSprite()->addChild(sprite); // the sprite's positon won't be saved unless this is done. This is just to ensure that the code doesn't crash from trying to get the sprite's position.
-		sprite->setVisible(true);
-
-		break;
-	
-	case 12: // WIN_012 - Null Sphere (Large)
-		break;
-	
+	case 10: // Projectiles
+	case 11:
+	case 12:	
 	case 13:
-		break;
 	case 14:
-		break;
 	case 15:
-		break;
 	case 16:
-		break;
 	case 17:
-		break;
 	case 18:
-		break;
 	case 19:
-		break;
 	case 20:
-		break;
 	case 21:
-		break;
 	case 22:
-
-
-	// WIN 000
-	case 0:
-	default:
-		this->WIN = 0;
-
-		setName("Lite Dagger");
-		setDescription("A weak dagger that the player starts with");
-		setTexture("images/weapons/WIN_000.png");
-		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
-		setTextureRect(frameSize);
-
-		setMagicType(magic::null);
-		setDamage(5.0F);
-		// setMagicUsage(10.0F);
-	
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(152.0F, 63.0F), 63, 68, CLR_ATK));
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(187.0F, 71.0F), 37, 89, CLR_ATK));
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(167.0F, 130.0F), 53, 68, CLR_ATK));
-
-		owner->getSprite()->addChild(sprite); // the sprite's positon won't be saved unless this is done. This is just to ensure that the code doesn't crash from trying to get the sprite's position.
-		sprite->setVisible(false);
+	case 23:
+	case 24:
+	case 25:
+	case 26:
+	case 27:
+		*this = Projectile(WIN, owner); // creates the projectile, which has its own createWeapon() function.
+		return;
 		break;
 	}
 
+	sprite->setVisible(false);
+
+	if (owner != nullptr)
+	{
+		owner->getSprite()->addChild(sprite); // the sprite's positon won't be saved unless this is done. This is just to ensure that the code doesn't crash from trying to get the sprite's position.
+		addPrimitivesToOwner();
+	}
 	
+}
+
+// adds all the colision primitives to the owner, and chooses to either enable them, disable them, or do nothing to them.
+void entity::Weapon::addPrimitivesToOwner(bool changeActive, bool activeBodies)
+{
+	bool attachted = false;
+	Vector<Node *> ownerChildren = owner->getSprite()->getChildren(); // gets the children of the owner.
+
 	for (int i = 0; i < collisionBodies.size(); i++)
 	{
-		owner->getSprite()->addChild(collisionBodies.at(i)->getPrimitive()); // adds the drawNode to the owner's sprite.
+		for (int j = 0; j < ownerChildren.size(); j++)
+		{
+			// if the primitive's draw node is already attachted to the owner, it isn't attachted again.
+			if (ownerChildren.at(j) == collisionBodies.at(i)->getPrimitive())
+			{
+				attachted = true; // tells the program that the primitive is already attachted.
+				break;
+			}
+		}
+
+		 // adds the drawNode to the owner's sprite.
 		// owner->addCollisionBody(collisionBodies.at(i)); // adds the collision body to the owner's vector.
+
+		if (!attachted) // if the Node is not already attached.
+		{
+			owner->getSprite()->addChild(collisionBodies.at(i)->getPrimitive());
+			attachted = false;
+		}
 	}
-	
-	disableCollisionBodies(); // disables the collision bodies for the weapon.
+
+	if (changeActive) // if the 'active' parameter should be changed.
+		(activeBodies) ? enableCollisionBodies() : disableCollisionBodies(); // if 'true', then collisions are actived. If false, they're all deactivated.
 }
 
 // gets the damage done by the weapon
@@ -133,6 +159,12 @@ void entity::Weapon::setMagicUsage(float mgu)
 	magicUsage = (mgu >= 0.0F) ? mgu : 0.0F;
 }
 
+// gets the type of the weapon.
+int entity::Weapon::getType() const { return type; }
+
+// sets the type of the weapon. It must be a number from 1 to 3.
+void entity::Weapon::setType(int newType) { type = (newType >= 1 && newType <= 3) ? newType : 0; }
+
 
 // gets the magic usage of the weapon.
 float entity::Weapon::getMagicUsage() const { return magicUsage; }
@@ -143,7 +175,7 @@ void entity::Weapon::setOwner(entity::Entity * newOwner)
 	if (newOwner == nullptr)
 		return;
 
-	for (int i = 0; i < collisionBodies.size(); i++) // removes the primitives from the old owner.
+	for (int i = 0; i < collisionBodies.size() && owner != nullptr; i++) // removes the primitives from the old owner.
 	{
 		collisionBodies[i]->getPrimitive()->removeFromParent();
 		owner->removeCollisionBody(collisionBodies.at(i)); // removes it from the 
@@ -165,16 +197,26 @@ entity::Entity * entity::Weapon::getOwner() const { return owner; }
 // returns 'true' if the entity has an owner, i.e. 'owner' is not a nullptr.
 bool entity::Weapon::hasOwner() { return !(owner == nullptr); }
 
-// gets the movement force of the weapon. If not applicable, it will just be 0.
-Vec2 entity::Weapon::getMoveForce() { return moveForce; }
+/*
+// called to use a weapon.
+std::vector<entity::Projectile*>& entity::Weapon::useWeapon()
+{
+	std::vector<entity::Projectile *> newShots;
 
-// sets the movement force of te weapon.
-void entity::Weapon::setMoveForce(Vec2 newMoveForce) { moveForce = newMoveForce; }
+	
+	return newShots;
+	
+}
+*/
 
 // the update loop
 void entity::Weapon::update(float deltaTime)
 {
-	addForce(moveForce); // for projectiles, a movement force exists. This adds said movement force.
+	switch (WIN)
+	{
+	case 0:
+		break;
+	}
 
 	Inactive::update(deltaTime);
 }

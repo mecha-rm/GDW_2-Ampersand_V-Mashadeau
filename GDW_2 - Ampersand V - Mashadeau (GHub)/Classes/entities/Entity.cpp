@@ -11,6 +11,7 @@ const Color4F entity::Entity::CLR_NEU = Color4F::GREEN; // colour used when two 
 
 entity::Entity::Entity(std::string texture, float globalZOrder) : sprite(Sprite::create())
 {
+	imagePath = texture;
 	sprite->setTexture(texture);
 	sprite->setAnchorPoint(Vec2(0.5, 0.5)); // anchour point is the middle of the sprite
 	sprite->setGlobalZOrder(globalZOrder); // setting the global z order
@@ -20,8 +21,12 @@ entity::Entity::Entity(std::string texture, float globalZOrder) : sprite(Sprite:
 // releases the sprite 
 entity::Entity::~Entity() 
 {
+	for (OOP::Primitive * p : collisionBodies) // removing all of the primitives from their parents
+		p->getPrimitive()->removeFromParent();
+
+	collisionBodies.clear();
+
 	sprite->removeFromParent();
-	collisionBodies.clear(); // clearing the primitives so the destructors are called.
 	
 	
 }
@@ -45,6 +50,12 @@ const std::string entity::Entity::getDescription() const { return description; }
 // sets the description of the entity.
 void entity::Entity::setDescription(std::string description) { this->description = description; }
 
+// gets entity's tag
+entity::etag entity::Entity::getTag() { return (entity::etag)sprite->getTag(); }
+
+// sets entity's tag
+void entity::Entity::setTag(entity::etag tag) { sprite->setTag((int)tag); }
+
 // returns the entity's sprite
 Sprite * entity::Entity::getSprite() const { return sprite; }
 
@@ -55,7 +66,13 @@ void entity::Entity::setSprite(Sprite * sprite) { this->sprite = sprite; }
 Texture2D * entity::Entity::getTexture() const { return sprite->getTexture(); }
 
 // sets the entity's texture via an image path
-void entity::Entity::setTexture(std::string image) { sprite->setTexture(image); }
+void entity::Entity::setTexture(std::string image) {
+	imagePath = image;
+	sprite->setTexture(image);
+}
+
+// gets the texture file path.
+std::string entity::Entity::getTextureFilePath() const { return imagePath; }
 
 // returns hte texture rect used to crop the sprite's image
 Rect entity::Entity::getTextureRect() const { return sprite->getTextureRect(); }
@@ -84,11 +101,7 @@ void entity::Entity::setMagicType(magic::magic_t magicType) { this->magicType = 
 void entity::Entity::setMagicType(magic::MagicType newMagic) { magicType = newMagic; }
 
 // sets the entity's position. While all sprite children move with the sprite, their positions don't change (i.e. getPosition() for them would return the same value).
-void entity::Entity::setPosition(Vec2 newPos) 
-{ 
-
-	sprite->setPosition(newPos);
-}
+void entity::Entity::setPosition(Vec2 newPos)  { sprite->setPosition(newPos); }
 
 // sets the entity's position
 void entity::Entity::setPosition(float x, float y) { setPosition(Vec2(x, y)); }
@@ -105,32 +118,6 @@ void entity::Entity::setPositionY(float y) { setPosition(sprite->getPositionX(),
 
 // gets the sprite's y position.
 float entity::Entity::getPositionY() const { return sprite->getPositionY(); }
-
-/*
-//Just use sprite->rotate().
-
-// rotates the entity using the rotation value stored in the class.
-Vec2 entity::Entity::rotateEntity(Vec2 acceleration) { return rotateEntity(theta, acceleration); }
-
-// rotates the entity. The rotation factor is assumed to be in radians.
-Vec2 entity::Entity::rotateEntity(float theta, Vec2 acceleration)
-{
-	// degrees to radians - 1 degree = pi/180 radians. 
-	// radians to degrees - 1 radian = 180/pi degrees.
-
-	// Rotates Entity
-	cocos2d::Mat4 rotation = Mat4::IDENTITY;
-	// this will make hte sprite rotate on its centre
-	rotation.translate(cocos2d::Vec3(sprite->getCenterRect().size.width * sprite->getAnchorPoint().x, sprite->getCenterRect().size.height * sprite->getAnchorPoint().y, 0.0F));
-	rotation.rotateZ(theta); // applys the 'theta' to the rotation matrix.
-	// this will move hte sprite back to its original location
-	rotation.translate(-cocos2d::Vec3(sprite->getCenterRect().size.width * sprite->getAnchorPoint().x, sprite->getCenterRect().size.height * sprite->getAnchorPoint().y, 0.0F)); // moves it back
-
-	sprite->setAdditionalTransform((cocos2d::Mat4*)(&rotation)); // rotates the image of the entity.
-
-	return umath::rotate(acceleration, theta); // this will return the sprite's acceleration, rotated by the same amount the sprite was.
-}
-*/
 
 // gets the sprite's opacity as a percentage.
 float entity::Entity::getOpacity() { return sprite->getOpacity() / 255.0F; }
@@ -262,6 +249,12 @@ void entity::Entity::addForce(Vec2 force) { this->force += force; }
 // adds to the entity's current force
 void entity::Entity::addForce(float forceX, float forceY) { force += Vec2(forceX, forceY); }
 
+// states whether acceleration gets rotated or not.
+bool entity::Entity::getRotateAcceleration() const { return rotateAccel; }
+
+// sets whether to rotate the acceleration or not.
+void entity::Entity::setRotateAcceleration(bool rAccel) { rotateAccel = rAccel; }
+
 // gets the current velocity of the entity.
 Vec2 entity::Entity::getVelocity() { return velocity; }
 
@@ -287,6 +280,20 @@ void entity::Entity::setMaxVelocity(Vec2 maxVelocity)
 	if (maxVelocity > Vec2(0.0F, 0.0F))
 		this->maxVelocity = maxVelocity;
 }
+
+// gets rotation factor in degrees, which is what it's stored as.
+float entity::Entity::getRotationInDegrees() { return sprite->getRotation(); }
+
+// gets rotation factor in radians
+void entity::Entity::setRotationInDegrees(float theta) { sprite->setRotation(theta); }
+
+// gets the rotation factor in radians.
+float entity::Entity::getRotationInRadians() { return umath::degreesToRadians(sprite->getRotation()); }
+
+// sets the rotation factor in radians
+void entity::Entity::setRotationInRadians(float theta) { sprite->setRotation(umath::radiansToDegrees(theta)); }
+
+
 
 // returns the deceleration rate of the entity.
 Vec2 entity::Entity::getDecelerate() const { return decelerate; }
@@ -434,57 +441,7 @@ void entity::Entity::enableCollisionBodies() { setActiveCollisionBodies(true); }
 
 
 // checks collision between two primitives. If a collision check for this combination doesn't exist, a false is returned.
-bool entity::Entity::collision(OOP::Primitive * prim1, OOP::Primitive * prim2)
-{
-	return OOP::Primitive::collision(prim1, prim2);
-
-
-	/*
-	// temporary vectors used for collision checks.
-	std::vector<OOP::Primitive *> vec1;
-	std::vector<OOP::Primitive *> vec2;
-
-	// pushes the only available primitives to the vectors.
-	vec1.push_back(prim1);
-	vec2.push_back(prim2);
-
-	return collision(vec1, vec2);
-	*/
-
-	/*
-	OOP::PrimitiveSquare * tempRect1 = nullptr; // a temporary object that stores a rect from e1, in the position it is in overall.
-	OOP::PrimitiveSquare * tempRect2 = nullptr; // a temporary object that stores a rect from e2, in the position it is in overall.
-
-	OOP::PrimitiveOrientedSquare * tempObb1 = nullptr; // tempory oriented bounding box for e1
-	OOP::PrimitiveOrientedSquare * tempObb2 = nullptr; // temporary oriented bounding box for e2
-
-	OOP::PrimitiveCircle * tempCirc1 = nullptr; // a temporary object that stores a circle from e1
-	OOP::PrimitiveCircle * tempCirc2 = nullptr; // a temporary object that stores a circle from e2
-
-	OOP::PrimitiveCapsule * tempCap1 = nullptr; // temporary capsule pointer for e1
-	OOP::PrimitiveCapsule * tempCap2 = nullptr; // temporary capsule pointer for e2
-
-
-
-	OOP::Primitive * tempPrim; // a tempory primitive
-	
-	switch (prim1->getId())
-	{
-	case 1: // rectangle.
-
-		break;
-	case 2: // oriented rectangle.
-		break;
-	case 3: // circle
-		break;
-	case 5: // capsule
-		break;
-	}
-	*/
-	/*
-	
-	*/
-}
+bool entity::Entity::collision(OOP::Primitive * prim1, OOP::Primitive * prim2) { return OOP::Primitive::collision(prim1, prim2); }
 
 // checks for collisions between a vector of primitives.
 bool entity::Entity::collision(std::vector<OOP::Primitive*>& cols1, std::vector<OOP::Primitive*>& cols2)
@@ -726,8 +683,6 @@ bool entity::Entity::collision(entity::Entity * e1, const std::vector<OOP::Primi
 }
 
 
-
-
 // gets the animations for the entity.
 std::vector<OOP::SpriteSheetAnimation *> entity::Entity::getAnimations() const { return animations; }
 
@@ -820,6 +775,9 @@ void entity::Entity::update(float deltaTime)
 	Vec2 acceleration; // the enemy's current acceleration
 
 	acceleration = force / mass; // gets the force to be applied, divided by the entity's mass.
+
+	if (rotateAccel) // rotates the acceleration.
+		acceleration = umath::rotate(acceleration, sprite->getRotation(), true);
 
 	if(antiGravity == false)  // applies gravity to the entity if anti gravity is turned off.
 		acceleration.y -= *areaGravity / mass;

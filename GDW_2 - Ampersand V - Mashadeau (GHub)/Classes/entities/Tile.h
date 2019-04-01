@@ -1,6 +1,7 @@
 #pragma once
 #include "entities/Entity.h"
-
+#include "entities/Player.h"
+#include "entities/Weapon.h"
 
 namespace entity
 {
@@ -41,6 +42,18 @@ namespace entity
 		// sets the position on the y-axis
 		void setPositionY(float newPosY) override;
 
+		// gets the amount of health the tile has. All tiles have a default health of 1 or more.
+		float getHealth();
+
+		// sets hte health of the tile.
+		void setHealth(float hp);
+
+		// gets whether the tile can be damaged or not.
+		bool getDamagable();
+
+		// gets the effect applied on the entity by the tile.
+		static void effect(entity::Tile * tile, entity::Player * plyr);
+
 		// the update loop for for the tiles
 		void update(float deltaTime);
 
@@ -58,6 +71,8 @@ namespace entity
 		// if this is false, then it is placed 128 px away from the sprite it was being copied from.
 		const bool OFFSET_BY_SPRITE_SIZE = false;
 
+		unsigned int weaponNum = 0; // a weapon provided by the tile if applicable. DO NOT CHANGE THIS.
+
 	private:
 		// called to create the tile and give it its initial values
 		void createTile(unsigned int TIN, char letter);
@@ -70,14 +85,26 @@ namespace entity
 
 		float moveSpeedX = 0.0F;// the speed of the platform on the x-axis. If this is 0, the platform doesn't move horizontally.
 		float moveSpeedY = 0.0F; // the speed of the platform on the y-axis. If this is 0, the platform doesn't move vertically.
-		
+
 		float rotationSpeed = 0.0F; // the rotation speed of the platform. If 0, the platform doesn't rotate.
 
 		bool moveUp = false; // used to move the platform up
 		bool moveRight = false; // used to move the platform down
 		bool rotateClockwise = false; // used to rotate the platform clockwise.
 
+	
+		float mpAdd = 0.0F; // adds to the entity's magic
+		float hpAdd = 0.0F; // adds to the entity's health
+		
+		bool changeMpMax = false; // if 'true', the maximum mp of the entity is changed with 'mpAdd'. If false, the current mp of the entity is changed with 'mpAdd'
+		bool changeHpMax = false; // if 'true', the maximum mp of the entity is changed with 'hpAdd'. If false, the current mp of the entity is changed with 'hpAdd'
+
+		float health = 1; // the amount of health a tile has. If a tile has 0 health, it will get deleted in the Area update.
+		bool damageable = false; // if true, the tile can be damaged and destroyed.
+
 	protected:
+		
+	
 
 	};
 }

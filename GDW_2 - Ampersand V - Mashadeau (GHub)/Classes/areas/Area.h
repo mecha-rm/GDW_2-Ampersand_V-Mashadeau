@@ -144,13 +144,16 @@ namespace world
 		char * toBytes() const;
 
 		// writes the class data to its desigated file.
-		void writeToFile();
+		void saveToFile();
 
 		// writes the class data to a specific file.
-		void writeToFile(std::string fileName);
+		void saveToFile(std::string fileName, world::Area * area);
 
 		// loads level data from a file if there is any.
-		void loadFromFile();
+		world::Area * loadFromFile();
+
+		// loads an area in from a file. If an error occurs, a nullptr is returned.
+		static world::Area * loadFromFile(std::string fileName);
 
 		// updates the Area.
 		void update(float deltaTime);

@@ -71,7 +71,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 	case 7: // spawn 2
 	case 8: // spawn 3
 	case 9: // spawn 4
-		
+
 		frameSize = Rect(0.0F, 0.0F, 256.0F, 256.0F);
 		sprite->setTextureRect(frameSize); // creates a texture rect, so that the default only has one tile
 		sprite->setColor(Color3B::GREEN);
@@ -83,7 +83,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		// sprite->setVisible(false); // uncomment to hide all graphics
 		break;
 	case 10: // stock block
-		
+
 		// this->LETTER = 'a'; // there's only one block at the moment, so it's set as type a.
 		setName("Stone Block");
 		setDescription("A block made of stone.");
@@ -95,7 +95,7 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		case 'a': // 'a' is also the default type.
 		default:
 			this->LETTER = 'a'; // since 'a' is also the default, this is set to 'a', just to be sure.
-			
+
 			setTextureRect(frameSize);
 			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 128.0F, CLR_DEF));
 			break;
@@ -235,41 +235,31 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
 
-	case 102://cult platform left
-		setName("Cult Platform Left");
+	case 102://cult platforms and Sewer ladder
+		setName("Platforms and Ladders");
 		setDescription("Tile set");
 		setTexture("images/tiles/TIN_102.png");
 		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
 
+		switch (this->LETTER) {
+		case 'a'://platform left
+		default:
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
+
+		case 'b'://platform mid
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'c'://platform right
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'd'://sewer ladder 
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+
+		}
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
-
-	case 103://cult platform middle
-		setName("Cult Platform Middle");
-		setDescription("Tile set");
-		setTexture("images/tiles/TIN_103.png");
-		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
-
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
-		break;
-
-	case 104://cult platform right
-		setName("Cult Platform Right");
-		setDescription("Tile set");
-		setTexture("images/tiles/TIN_104.png");
-		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
-
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
-		break;
-
-	case 105://Sewer Ladder
-		setName("Sewer Ladder");
-		setDescription("Tile set");
-		setTexture("images/tiles/TIN_105.png");
-		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
-
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
-		break;
+	
 
 	case 500: //air area block base
 		setName("Mountain Block");
@@ -281,7 +271,55 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 			case 'a':
 			default:
 				setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'b':
+				setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'c':
+				setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'd':
+				setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'e':
+				setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'f':
+				setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'g':
+				setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'h':
+				setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'i':
+				setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
 		}
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+		
+		case 501://air platform/ladder/hazard
+			setName("Platforms/Ladders/Hazards");
+			setDescription("Tile set");
+			setTexture("images/tiles/TIN_501.png");
+			frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+
+			switch (this->LETTER) {
+			case 'a'://platform
+			default:
+				setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
+
+			case 'b'://ladder
+				setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'c'://hazard
+				setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+		
+			}
+		
 
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
@@ -324,6 +362,38 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
 			break;
 		}
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+
+	case 700: // magic orb
+
+		break;
+
+	case 701: // hp orb
+
+		break;
+
+	case 800: // null blade
+		setTexture("images/weapons/WIN_000.png");
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		weaponNum = 0;
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+
+	case 801: // water staff
+		setTexture("images/weapons/WIN_001.png");
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		weaponNum = 1;
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+
+	case 802: // earth staff
+		setTexture("images/weapons/WIN_002.png");
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		weaponNum = 2;
 
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
@@ -378,6 +448,47 @@ void entity::Tile::setPositionX(float newPosX) { setPosition(Vec2(newPosX, getPo
 
 // sets the position of the tile on the y-axis
 void entity::Tile::setPositionY(float newPosY) { setPosition(Vec2(getPositionX(), newPosY)); }
+
+// gets the health of the tile.
+float entity::Tile::getHealth() { return health; }
+
+// sets the health of the tile.
+void entity::Tile::setHealth(float hp) { health = (hp >= 0.0F) ? hp : 0.0F; }
+
+// gets whether the tile can be damaged or not.
+bool entity::Tile::getDamagable() { return damageable; }
+
+// checks the effect the tile has on the player.
+void entity::Tile::effect(entity::Tile * tile, entity::Player * plyr)
+{
+	int WIN = -1; // the weapon number of the weapon the player gave up.
+	entity::Tile * tempTile = nullptr;
+
+
+	if (tile->TIN == 700) // magic orb
+	{
+		(tile->changeMpMax) ? plyr->addMagicPowerMax(tile->mpAdd, true) : plyr->addMagicPower(tile->mpAdd);
+	}
+	else if (tile->TIN == 701) // hp restore
+	{
+		(tile->changeHpMax) ? plyr->addMaxHealth(tile->hpAdd, true) : plyr->addHealth(tile->hpAdd);
+	}
+	else if (tile->TIN >= 800 && tile->TIN <= 899)  // weapon replacements.
+	{
+		WIN = plyr->giveWeapon(tile->weaponNum);
+	}
+
+	if (WIN == -1) // the player didn't lose a weapon.
+	{
+		tile->setHealth(0.0F);
+		tempTile = tile;
+	}
+	else
+	{
+		tile->weaponNum = WIN;
+		tile->setTexture(entity::Weapon(WIN, nullptr).getTextureFilePath()); // replaces the image
+	}	
+}
 
 // the update loop for for the tiles
 void entity::Tile::update(float deltaTime)

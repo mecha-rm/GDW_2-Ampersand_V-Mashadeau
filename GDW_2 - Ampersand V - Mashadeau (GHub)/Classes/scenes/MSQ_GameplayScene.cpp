@@ -111,9 +111,126 @@ void MSQ_GameplayScene::initSprites()
 	plyr->setAntiGravity(debug);
 	this->addChild(plyr->getSprite());
 
-	// creating the hud
 	hud = DrawNode::create(); // creating the hud
-	
+	hud->setGlobalZOrder(10.0F);
+
+	// initalizing the weapons on the HUD
+	weaponIconSize = Rect(0.0F, 0.0F, 148.0F, 163.5F);
+
+	for (int i = 0; i < HUD_WEAPONS_ROWS; i++) // each row is a different weapon (current, 1, 2, 3)
+	{
+		for (int j = 0; j < HUD_WEAPONS_COLS; j++) // three parts -> (frame, weapon image, backdrop)
+		{
+			hudWeapons[i][j] = Sprite::create();
+			hudWeapons[i][j]->setGlobalZOrder(10.0F);
+
+			switch (j)
+			{
+			case 0: // tile frame; for some reason there's a weird line remenant at the bottom.
+				hudWeapons[i][j]->setTexture("images/HUD_WEAPONS_A.png");
+
+				switch (i) // chooses the frame with the proper number on it.
+				{
+				case 0:
+					hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 2.0F, 0.0F + weaponIconSize.getMaxY() * 0.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+				case 1:
+					hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 3.0F, 0.0F + weaponIconSize.getMaxY() * 0.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+				case 2:
+					hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 4.0F, 0.0F + weaponIconSize.getMaxY() * 0.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+				case 3:
+					hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 5.0F, 0.0F + weaponIconSize.getMaxY() * 0.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+				}
+				
+				hudWeapons[i][j]->setLocalZOrder(3.0F);
+
+				break;
+			case 1: // weapon
+				if (plyr->getWeapon(i) != nullptr)
+				{
+					weaponImages[i] = plyr->getWeapon(i)->getTextureFilePath(); // saves the image name
+					hudWeapons[i][j]->setTexture(weaponImages[i]); // sets the image
+					hudWeapons[i][j]->setTextureRect(weaponIconSize); // sets a section of the image so that it matches up with everything else.
+				}
+				hudWeapons[i][j]->setLocalZOrder(2.0F);
+
+				break;
+
+			case 2: // background
+				
+				hudWeapons[i][j]->setTexture("images/HUD_WEAPONS_A.png");
+				if (plyr->getWeapon(i) != nullptr)
+				{
+					switch (plyr->getWeapon(i)->getMagic_T()) // the background should correspond with the weapon type.
+					{
+					case magic::null:
+					default:
+						hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 0.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+						break;
+
+					case magic::shadow:
+						hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 1.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+						break;
+
+					case magic::fire:
+						hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 2.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+						break;
+
+					case magic::water:
+						hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 3.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+						break;
+
+					case magic::earth:
+						hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 4.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+						break;
+
+					case magic::air:
+						hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 5.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+						break;
+					}
+				}
+				else
+				{
+					// just has null background by default.
+					hudWeapons[i][j]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 0.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+				}
+
+				
+				hudWeapons[i][j]->setLocalZOrder(1.0F);
+				break;
+			}
+
+			this->addChild(hudWeapons[i][j]); // adds the sprite
+
+			switch (i) // moves blocks accordingly.
+			{
+			case 0: // current weapon
+				hudWeapons[i][j]->setPosition(director->getWinSizeInPixels().width * 0.48F, director->getWinSizeInPixels().height * 0.93F); // moves it
+				break;
+
+			case 1: // weapon 1
+				hudWeapons[i][j]->setPosition(director->getWinSizeInPixels().width * 0.65F, director->getWinSizeInPixels().height * 0.93F); // moves it
+				break;
+
+			case 2: // weapon 2
+				hudWeapons[i][j]->setPosition(director->getWinSizeInPixels().width * 0.72F, director->getWinSizeInPixels().height * 0.93F); // moves it
+				break;
+
+			case 3: // weapon 3
+				hudWeapons[i][j]->setPosition(director->getWinSizeInPixels().width * 0.79F, director->getWinSizeInPixels().height * 0.93F); // moves it
+				break;
+			}
+			
+			hudWeapons[i][j]->setScale(0.78F); // scales it.
+
+			hudWeaponOffset[i] = hudWeapons[i][0]->getPosition() - getDefaultCamera()->getPosition(); // gets the offset for the weapon icon.
+		}
+	}
+
+
 	// initalizes the HP bar
 	hpBarRect = Rect(0.0F, 0.0F, 465.0F, 67.0F); // the size of an individual space
 	hpBarPos = Vec2(director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.96F); // setting the hp bar's position.
@@ -135,7 +252,7 @@ void MSQ_GameplayScene::initSprites()
 
 	// initializes the MP bar
 	mpBarRect = Rect(0.0F, 0.0F, 465.0F, 67.0F);
-	mpBarPos = Vec2(director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.89F);
+	mpBarPos = Vec2(director->getWinSizeInPixels().width * 0.135F, director->getWinSizeInPixels().height * 0.885F);
 
 	// [0] = front, [1] = middle (the part that shows the actual MP), [2] = back
 	for (int i = 0; i < BAR_LEN; i++)
@@ -301,8 +418,8 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 			enable_hud = !enable_hud;
 			break;
 
-		case EventKeyboard::KeyCode::KEY_UP_ARROW:
 			moveUp = false;
+		case EventKeyboard::KeyCode::KEY_UP_ARROW:
 
 			if (!debug) // if debug is off, then the jump is turned on upon 'UP' being let go.
 				jump = true;
@@ -324,8 +441,8 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 			jump = true;
 			break;
 		case EventKeyboard::KeyCode::KEY_W:
-			moveUp = false;
 			break;
+			moveUp = false;
 
 		case EventKeyboard::KeyCode::KEY_S:
 			moveDown = false;
@@ -458,7 +575,7 @@ void MSQ_GameplayScene::collisions()
 {	
 	// std::cout << "PX: " << plyr->getAABBs().at(0)->getPosition().x << ", PY: " << plyr->getAABBs().at(0)->getPosition().y << std::endl;
 	playerTileCollisions(); // called for player-tile collisions.
-	enemyTileCollisions(); // collision between the enemies and the tiles.
+	// enemyTileCollisions(); // collision between the enemies and the tiles.
 	
 	playerEnemyCollisions(); // called for player collisions with enemies
 	weaponEnemyCollisions();
@@ -468,6 +585,7 @@ void MSQ_GameplayScene::collisions()
 void MSQ_GameplayScene::playerTileCollisions()
 {
 	entity::Tile * tile = nullptr;
+	entity::Tile * tempTile = nullptr;
 
 	OOP::Primitive * colPrim1; // the primitive from the player that encountered a collision
 	OOP::Primitive * colPrim2; // the primitive from the other entity that encounted a collision
@@ -502,6 +620,11 @@ void MSQ_GameplayScene::playerTileCollisions()
 				return;
 			}
 
+			if (tile->getTIN() >= 800 && tile->getTIN() <= 899) // if it's a weapon tile.
+			{
+				entity::Tile::effect(tile, plyr); // checks to see how the player was effected. The tile still keeps its original TIN, even if something related to it is changed.
+				break;
+			}
 
 			// gets what primitives collided with the player.
 			colPrim1 = plyr->collidedPrimitive;
@@ -601,6 +724,32 @@ void MSQ_GameplayScene::playerTileCollisions()
 // collisions between enemies and tiles
 void MSQ_GameplayScene::enemyTileCollisions()
 {
+	OOP::Primitive * colPrim1; // the primitive from the enemy that encountered a collision
+	OOP::Primitive * colPrim2; // the primitive from the other tile
+
+	for (entity::Enemy * emy : *sceneEnemies)
+	{
+		for (entity::Tile * tile: *sceneTiles)
+		{
+			if (emy->collision(tile)) // if there is collision.
+			{
+				if (emy->getMoveForceY() != 0.0F) // if the enemy is choosing to move vertically.
+				{
+					emy->moveUp = !emy->moveUp; // makes the enemy move in the opposite direction.
+				}
+				else if (emy->getMoveForceY() == 0.0F) // if the enemy is not moving, and has fallen via gravity.
+				{
+					emy->setAntiGravity(true);
+				}
+
+				if (emy->getMoveForceX() != 0.0F)
+				{
+					emy->moveRight = !emy->moveRight;
+				}
+
+			}
+		}
+	}
 }
 
 // calculates player collision with enemies
@@ -624,16 +773,6 @@ void MSQ_GameplayScene::playerEnemyCollisions()
 			// plyr->setHealth(plyr->getHealth() - enemy->getAttackPower());
 			plyr->setHealth(plyr->getHealth() - magic::MagicType::damage(enemy->getMagicType(), plyr->getMagicType(), enemy->getAttackPower())); // replace with proper calculation.
 			plyr->gotHit();
-			
-			offset = hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()); // calculates the offset needed to reposition the newly sized hp bar.
-
-			hpBar[1]->setTextureRect(Rect(0.0F, hpBarRect.getMaxY(), hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()), hpBarRect.getMaxY()));
-			
-			// This takes the size of the hpBar at full size (hpBarRect.getMaxX()), halves it.
-			// It then subtracts the position of hpBar[0] (i.e. the frame doesn't move) by it, and then adds the new size of the health bar divided by '2' to it.
-			// in other words it basically just aligns itself with the left edge of the frame and then moves it over by half of the health bar's current length, since the position is based on its centre.
-			// this is all so the hp bar is where it should be.
-			hpBar[1]->setPositionX(hpBar[0]->getPositionX() - hpBarRect.getMaxX() / 2 + offset / 2);
 
 			break;
 
@@ -693,36 +832,38 @@ void MSQ_GameplayScene::weaponEnemyCollisions()
 void MSQ_GameplayScene::update(float deltaTime)
 {
 	if (!pauseBool) {
+	float offset = 0.0F; // used to help with repositioning HUD assets.
 
 		float d_movespeed = 300.0F; // the movement speed of the player (when debug is on).
 
 		if (switchingScenes) // updates are no longer run if the scene is being switched.
 			return;
 
-		debugMode(); // called to change the settings if debug mode has been turned on/off.
+	// if the cancels are true, then the player can't move that given direction.
 
-		if (ENABLE_CAMERA) // updates the camera if it's active.
-		{
-			this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the position of the camera so that it follows hte player
+	if (plyr->moveUp && !plyr->cancelUp) // moves the player up.
+	{
+		plyr->setPositionY(plyr->getPositionY() + d_movespeed * deltaTime);
+	}
+	else if (plyr->moveDown && !plyr->cancelDown) // moves the player down.
+	{
+		plyr->setPositionY(plyr->getPositionY() - d_movespeed * deltaTime);
+	}
 
-			sceneArea->setAllLayerPositions(this->getDefaultCamera()->getPosition()); // makes the backgrounds be directly behind the player. This needs to be changed later so that it scrolls.
+	if (plyr->moveLeft && !plyr->cancelLeft) // moving left
+	{
+		if (plyr->getFlippedSpriteX() == false) // flips the sprite so that it's facing left
+			plyr->setFlippedSpriteX(true);
 
-			hpBarPos = getDefaultCamera()->getPosition() + hpBarOffset; // moves the hp bar
-			for (int i = 0; i < BAR_LEN; i++) // moves all of the hp bars accordingly.
-				hpBar[i]->setPosition(hpBarPos);
-
-			mpBarPos = getDefaultCamera()->getPosition() + mpBarOffset; // moves the mp bar
-			for (int i = 0; i < BAR_LEN; i++) // moves all of the mp bars accordingly.
-				mpBar[i]->setPosition(hpBarPos);
-
-			grid->setPosition(gridOffset + getDefaultCamera()->getPosition()); // moves the grid so that it
-		}
-
-		if (enable_hud != hud->isVisible()) // if the hud's visibility is wrong, it's set accordingly.
-			hud->setVisible(enable_hud);
-
-		// These movement parameters will need to be changed later.
-		// if the cancels are true, then the player can't move that given direction.
+		if (debug) // if debug is on, then the player moves at a fixed speed.
+			plyr->setPositionX(plyr->getPositionX() - d_movespeed * deltaTime);
+		else
+			plyr->addForce(plyr->getMoveForceX() * -1, 0.0F);
+	}
+	else if (plyr->moveRight && !plyr->cancelRight) // moving right
+	{
+		if (plyr->getFlippedSpriteX() == true) // flips the sprite so that it's facing right (i.e. the default)
+			plyr->setFlippedSpriteX(false);
 
 		if (moveUp && !plyr->cancelUp) // moves the player up.
 		{
@@ -733,27 +874,37 @@ void MSQ_GameplayScene::update(float deltaTime)
 			plyr->setPositionY(plyr->getPositionY() - d_movespeed * deltaTime);
 		}
 
-		if (moveLeft && !plyr->cancelLeft) // moving left
+	}
+	
+	if (plyr->jump)
+	{
+		plyr->zeroVelocityY();
+		plyr->setPositionY(plyr->getPositionY());
+		plyr->addJumpForce();
+		plyr->jump = false;
+	}
+	if (plyrAction) // animation should be played
+	{
+		switch (pAction)
 		{
-			if (plyr->getFlippedSpriteX() == false) // flips the sprite so that it's facing left
-				plyr->setFlippedSpriteX(true);
+		case 6: // attack 1 animation.
 
-			if (debug) // if debug is on, then the player moves at a fixed speed.
-				plyr->setPositionX(plyr->getPositionX() - d_movespeed * deltaTime);
-			else
-				plyr->addForce(plyr->getMoveForceX() * -1, 0.0F);
+			plyr->useWeapon();
+			pAction = 0;
 		}
 		else if (moveRight && !plyr->cancelRight) // moving right
 		{
 			if (plyr->getFlippedSpriteX() == true) // flips the sprite so that it's facing right (i.e. the default)
 				plyr->setFlippedSpriteX(false);
 
-			if (debug) // if debug is on, then the player moves at a fixed speed.
-				plyr->setPositionX(plyr->getPositionX() + d_movespeed * deltaTime);
-			else // if debug is off, the player is given force to move.
-				plyr->addForce(plyr->getMoveForceX(), 0.0F);
+		plyrAction = false;
+	}
 
-		}
+	// updates the player
+	plyr->update(deltaTime);
+
+	// updates the area the player is currently in. This update also updates the scene tiles, and enemies.
+	sceneArea->update(deltaTime);
 
 		if (jump)
 		{
@@ -771,17 +922,97 @@ void MSQ_GameplayScene::update(float deltaTime)
 				pAction = 0;
 			}
 
-			plyrAction = false;
+	// moves the hp bar, and updates it iwht the current amount of health the player has.
+	offset = hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()); // calculates the offset needed to reposition the newly sized hp bar.
+
+	hpBar[1]->setTextureRect(Rect(0.0F, hpBarRect.getMaxY(), hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()), hpBarRect.getMaxY()));
+
+	// This takes the size of the hpBar at full size (hpBarRect.getMaxX()), halves it.
+	// It then subtracts the position of hpBar[0] (i.e. the frame doesn't move) by it, and then adds the new size of the health bar divided by '2' to it.
+	// in other words it basically just aligns itself with the left edge of the frame and then moves it over by half of the health bar's current length, since the position is based on its centre.
+	// this is all so the hp bar is where it should be.
+	hpBar[1]->setPositionX(hpBar[0]->getPositionX() - hpBarRect.getMaxX() / 2 + offset / 2);
+	hpBarPos = hpBar[1]->getPosition();
+
+
+	for (int i = 0; i < HUD_WEAPONS_ROWS; i++)
+	{
+		if (plyr->getWeapon(i) != nullptr)
+		{
+			if (weaponImages[i] != plyr->getWeapon(i)->getTextureFilePath()) // if the weapon has been changed out.
+			{
+				weaponImages[i] = plyr->getWeapon(i)->getTextureFilePath(); // gets the image path
+				hudWeapons[i][1]->setTexture(weaponImages[i]); // changes the image.
+				
+				switch (plyr->getWeapon(i)->getMagic_T()) // the background should correspond with the weapon type.
+				{
+				case magic::null:
+				default:
+					hudWeapons[i][2]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 0.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+
+				case magic::shadow:
+					hudWeapons[i][2]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 1.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+
+				case magic::fire:
+					hudWeapons[i][2]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 2.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+
+				case magic::water:
+					hudWeapons[i][2]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 3.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+
+				case magic::earth:
+					hudWeapons[i][2]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 4.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+
+				case magic::air:
+					hudWeapons[i][2]->setTextureRect(Rect(0.0F + weaponIconSize.getMaxX() * 5.0F, 0.0F + weaponIconSize.getMaxY() * 1.0F, weaponIconSize.getMaxX(), weaponIconSize.getMaxY()));
+					break;
+				}
+
+			}
+		}
+		else if (plyr->getWeapon(i) == nullptr) // if there is no weapon here, then the image is hidden.
+		{
+			if (hudWeapons[i][1]->getTextureRect().getMaxX() != 0.0F || hudWeapons[i][1]->getTextureRect().getMaxY()) // hides the texture by making it a blank texture rect.
+			{
+				hudWeapons[i][1]->setTextureRect(Rect(0.0F, 0.0F, 0.0F, 0.0F));
+			}
+			
 		}
 
+	}
 
-		// std::cout << DrawNode::create()->getPosition().x << std::endl;
-		// updates the player
-		plyr->update(deltaTime);
 
-		// updates the area the player is currently in. This update also updates the scene tiles, and enemies.
-		sceneArea->update(deltaTime);
+	if (ENABLE_CAMERA) // updates the camera if it's active.
+	{
+		this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the position of the camera so that it follows hte player
 
-		collisions();
+		sceneArea->setAllLayerPositions(this->getDefaultCamera()->getPosition()); // makes the backgrounds be directly behind the player. This needs to be changed later so that it scrolls.
+
+		for (int i = 0; i < HUD_WEAPONS_ROWS; i++)
+		{
+			for (int j = 0; j < HUD_WEAPONS_COLS; j++)
+			{
+				hudWeapons[i][j]->setPosition(getDefaultCamera()->getPosition() + hudWeaponOffset[i]);
+			}
+		}
+
+		hpBarPos = getDefaultCamera()->getPosition() + hpBarOffset; // moves the hp bar
+		for (int i = 0; i < BAR_LEN; i++) // moves all of the hp bars accordingly.
+			hpBar[i]->setPosition(hpBarPos);
+
+		mpBarPos = getDefaultCamera()->getPosition() + mpBarOffset; // moves the mp bar
+		for (int i = 0; i < BAR_LEN; i++) // moves all of the mp bars accordingly.
+			mpBar[i]->setPosition(mpBarPos);
+
+		grid->setPosition(gridOffset + getDefaultCamera()->getPosition()); // moves the grid so that it
+	}
+
+	if (enable_hud != hud->isVisible()) // if the hud's visibility is wrong, it's set accordingly.
+		hud->setVisible(enable_hud);
+
 	}
 }

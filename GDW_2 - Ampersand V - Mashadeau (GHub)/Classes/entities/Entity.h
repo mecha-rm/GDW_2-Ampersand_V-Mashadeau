@@ -47,11 +47,20 @@ namespace entity
 		// sets the description of the entity.
 		void setDescription(std::string description);
 
+		// gets the tag that tells the user what kind of entity this is.
+		entity::etag getTag();
+
+		// sets the tag for the entity
+		void setTag(entity::etag tag);
+
 		// returns the entity's sprite
 		Sprite * getSprite() const;
 
 		// returns the image for the sprite
 		Texture2D * getTexture() const;
+
+		// gets the file path for the texture.
+		std::string getTextureFilePath() const;
 
 		// returns the rectangle used for cropping the texture
 		Rect getTextureRect() const;
@@ -82,18 +91,8 @@ namespace entity
 
 		// Getting the sprite's y position.
 		float getPositionY() const;
-
-		/*
-		Just use sprite->rotate().
-
-		// rotates the entity using the rotation value stored in the class.
-		Vec2 rotateEntity(Vec2 acceleration);
-
-		// rotates the entity. An acceleration vector can be passed if the user wants to send the entity in the direction they're being rotated in.
-		// the rotation factor is assumed to be in radians.
-		Vec2 rotateEntity(float theta, Vec2 acceleration);
-		*/
 		
+
 		// Sets the sprite's opacity via a percentage. Use a value from 0.0 to 1.0, with 1.0 (i.e. 100%) being full opacity.
 		// Opacity for sprites are out of 255, but this function works on percentages.
 		void setOpacity(float opacity);
@@ -156,6 +155,12 @@ namespace entity
 		// adds force on the individual axes.
 		void addForce(float forceX = 0.0F, float forceY = 0.0F);
 		
+		// if true, then the acceleration is rotated in the update. If false, then it isn't. 
+		bool getRotateAcceleration() const;
+
+		// if true, then the acceleration is rotated in the update. If false, then it isn't. 
+		void setRotateAcceleration(bool rAccel);
+
 		// gets the current velocity of the entity.
 		Vec2 getVelocity();
 
@@ -170,6 +175,18 @@ namespace entity
 
 		// returns the maximum velocity of the entity.
 		Vec2 getMaxVelocity();
+
+		// gets rotation factor in degrees (which is what it's stored as).
+		float getRotationInDegrees();
+
+		// sets the rotation factor in degrees.
+		void setRotationInDegrees(float theta);
+
+		// gets the rotation factor, converted to radians
+		float getRotationInRadians();
+
+		// sets the rotation factor in radians
+		void setRotationInRadians(float theta);
 
 		// returns the deceleration rate of the entity.
 		Vec2 getDecelerate() const;
@@ -265,8 +282,6 @@ namespace entity
 		virtual void update(float deltaTime);
 
 		static float * areaGravity; // saves the level of gravity in the scene. This should be shared by all entities.
-
-		float theta = 0.0F; // the rotation factor of the entity. THIS SHOULD BE IN RADIANS.
 	
 		// the primitive that has recently encountered a collison. The location of this primitive is where it is overall, NOT where it is relevant to the player.
 		OOP::Primitive * collidedPrimitive;
@@ -278,7 +293,6 @@ namespace entity
 		static const cocos2d::Color4F CLR_ATK; // colour used for attacking collision shapes (i.e. these deal damage)
 		static const cocos2d::Color4F CLR_DEF; // colour used for defensive collision shapes (i.e. these take damage)
 		static const cocos2d::Color4F CLR_NEU; // colour used for a neutral object that can be interacted with, but does not take or deal damage.
-	
 
 	private:
 		float mass = 1.0; // the mass of the entity
@@ -295,13 +309,15 @@ namespace entity
 
 		// makes it so that the entity goes right to its maximum speed, instead of steadily approaching its max speed.
 		bool constVelocity = false;
-
 		
 		float age = 0; // gets the length of time the entity has existed for, in milliseconds (delta time)
 
 		std::string name = ""; // the entity's name
 		// int NAME_LEN; // maximum name lenth
 		std::string description = ""; // the entity's description
+
+		// the image path of the entity. Can be used to create another texture.
+		std::string imagePath = "";
 
 	protected:
 		// sets the sprite for the entity
@@ -352,6 +368,9 @@ namespace entity
 		OOP::SpriteSheetAnimation * currentAnimation = nullptr; // saves a pointer to the current animation being run.
 
 		Vec2 force = Vec2(0.0f, 0.0f); // the force of the entity
+
+		// rotates the acceleration if 'true'. This uses the 'theta' value.
+		bool rotateAccel = false;
 
 		// holds all physical body collisions. There is an 'ID' that tells you what type is stored there so you can downcast.
 		std::vector<OOP::Primitive * > collisionBodies;

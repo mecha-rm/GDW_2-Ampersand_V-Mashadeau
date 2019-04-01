@@ -42,7 +42,7 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(167.0F, 130.0F), 53, 68, CLR_ATK));
 		break;
 
-	case 1: // staff of ice
+	case 1: // WIN_001: staff of ice
 		this->WIN = 1;
 		setName("Staff of Ice");
 		setDescription("A staff of ice.");
@@ -54,7 +54,17 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 		setDamage(2.50);
 
 		break;
-	case 2:
+
+	case 2: // WIN_002: staff of earth 
+		this->WIN = 2;
+		setName("Staff of Earth");
+		setDescription("A staff of earth");
+		setType(2);
+		setTexture("images/weapons/WIN_002.png");
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+
+		setMagicType(magic::earth);
+		setDamage(2.50);
 		break;
 	case 3:
 		break;
@@ -174,6 +184,18 @@ entity::Entity * entity::Weapon::getOwner() const { return owner; }
 
 // returns 'true' if the entity has an owner, i.e. 'owner' is not a nullptr.
 bool entity::Weapon::hasOwner() { return !(owner == nullptr); }
+
+/*
+// called to use a weapon.
+std::vector<entity::Projectile*>& entity::Weapon::useWeapon()
+{
+	std::vector<entity::Projectile *> newShots;
+
+	
+	return newShots;
+	
+}
+*/
 
 // the update loop
 void entity::Weapon::update(float deltaTime)

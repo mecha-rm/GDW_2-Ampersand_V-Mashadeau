@@ -275,6 +275,30 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
 
+	case 700: // magic orb
+
+		break;
+
+	case 701: // hp orb
+
+		break;
+
+	case 800: // null blade
+		setTexture("images/weapons/WIN_000.png");
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		weaponNum = 0;
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+
+	case 802: // eath staff blade
+		setTexture("images/weapons/WIN_002.png");
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		weaponNum = 2;
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+
 	default:
 		this->TIN = 0; // a tile of type 0 is invalid. This number is taken up by something else, but said thing does not actually make a tile.
 		this->LETTER = 'a'; // default letter of 'a'.
@@ -325,6 +349,57 @@ void entity::Tile::setPositionX(float newPosX) { setPosition(Vec2(newPosX, getPo
 
 // sets the position of the tile on the y-axis
 void entity::Tile::setPositionY(float newPosY) { setPosition(Vec2(getPositionX(), newPosY)); }
+
+// gets the health of the tile.
+float entity::Tile::getHealth() { return health; }
+
+// sets the health of the tile.
+void entity::Tile::setHealth(float hp) { health = (hp >= 0.0F) ? hp : 0.0F; }
+
+// gets whether the tile can be damaged or not.
+bool entity::Tile::getDamagable() { return damageable; }
+
+// checks the effect the tile has on the player.
+void entity::Tile::effect(entity::Tile * tile, entity::Player * plyr)
+{
+	entity::Weapon * weapon = nullptr; // the weapon that the player has given up.
+	entity::Tile * tempTile = nullptr;
+
+	switch (tile->TIN)
+	{
+	case 700: // magic orb
+		(tile->changeMpMax) ? plyr->addMagicPowerMax(tile->mpAdd, true) : plyr->addMagicPower(tile->mpAdd);
+		break;
+
+	case 701: // health orb
+		(tile->changeHpMax) ? plyr->addMaxHealth(tile->hpAdd, true) : plyr->addHealth(tile->hpAdd);
+		break;
+
+	case 800: // null blade
+		weapon = plyr->giveWeapon(new entity::Weapon(tile->weaponNum, plyr));
+		break;
+
+	case 802: // provides a weapon to the player. The weapon numbers (WIN) are 800 less than the tile number they're attachted to (e.g. tile 802 has weapon 002).
+		weapon = plyr->giveWeapon(new entity::Weapon(tile->weaponNum, plyr));
+		break;
+
+	}
+
+	// if the weapon was switched out, it is then given to the tile to store it, kind of like a box.
+	// if there is no weapon to put back in, then the tile gets its contents removed by setting its health to 0 so that it gets deleted.
+	// (weapon == nullptr) ? tile->setHealth(0.0F) : tile = new entity::Tile(weapon->getWIN() + 800);
+
+	if (weapon == nullptr)
+	{
+		tile->setHealth(0.0F);
+		tempTile = tile;
+	}
+	else
+	{
+		tile->weaponNum = weapon->getWIN();
+		tile->setTexture(weapon->getTextureFilePath()); // replaces the image
+	}	
+}
 
 // the update loop for for the tiles
 void entity::Tile::update(float deltaTime)

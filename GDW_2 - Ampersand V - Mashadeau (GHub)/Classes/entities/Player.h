@@ -53,8 +53,18 @@ namespace entity
 		*/
 		void switchWeapon(short int weapon);
 
+		// gives the player a new weapon. If the player has all of their weapon slots filled, it replaces the current weapon.
+		// the weapon that got prepalced is returned. If no weapon was replaced, then a nullptr is returned.
+		entity::Weapon * giveWeapon(entity::Weapon * newWeapon);
+
 		// has the player use their weapon.
 		void useWeapon();
+
+		// adds to the player's maximum health.
+		void addHealth(float hp);
+
+		// adds to the player's maximum health. Use 'changeCurrent' if this should adjust the player's current health as well.
+		void addMaxHealth(float hp, bool changeCurrent);
 
 		// gets the magic power of the player
 		float getMagicPower();
@@ -73,6 +83,14 @@ namespace entity
 
 		void update(float deltaTime);
 
+		// becomes 'true' to tell the program that the player wishes to move in a certain direction.
+		bool moveUp = false;
+		bool moveDown = false;
+		bool moveLeft = false;
+		bool moveRight = false;
+		bool jump = false;
+
+		// cancelers for moving in certain directions.
 		bool cancelUp = false;
 		bool cancelDown = false;
 		bool cancelLeft = false;

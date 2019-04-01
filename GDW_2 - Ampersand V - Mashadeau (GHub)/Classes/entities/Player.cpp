@@ -184,6 +184,36 @@ void entity::Player::switchWeapon(short int weapon)
 	}
 }
 
+// gives the player a new weapon. If the player has all of their weapon slots filled, it replaces the current weapon.
+entity::Weapon * entity::Player::giveWeapon(entity::Weapon * newWeapon)
+{
+	entity::Weapon * oldWeapon; // the previous weapon.
+
+	if (weapon1 == nullptr) // weapon 1 is empty
+	{
+		oldWeapon = weapon1;
+		weapon1 = newWeapon;
+	}
+	else if (weapon2 == nullptr) // weapon 2 is empty
+	{
+		oldWeapon = weapon2;
+		weapon2 = newWeapon;
+	}
+	else if (weapon3 == nullptr) // weapon 3 is empty
+	{
+		oldWeapon = weapon3;
+		weapon3 = newWeapon;
+	}
+	else // replaces the current weapon and returns it.
+	{
+		oldWeapon = currentWeapon;
+		currentWeapon->getSprite()->removeFromParent();
+		currentWeapon = newWeapon;
+	}
+
+	return oldWeapon; // returns the weapon that has been replaced.
+}
+
 
 // uses a weapon.
 void entity::Player::useWeapon()
@@ -206,6 +236,20 @@ void entity::Player::useWeapon()
 		runAction(8);
 		break;
 	}
+}
+
+// adds to the player's current health.
+void entity::Player::addHealth(float hp) { setHealth(getHealth() + hp); }
+
+// adds to the player's maximum health
+void entity::Player::addMaxHealth(float hp, bool changeCurrent)
+{
+	float oldMax = getMaxHealth(); // saves the previous amount of health
+
+	setMaxHealth(getMaxHealth() + hp);
+
+	if (changeCurrent) // if true, the current health is proportionally changed.
+		setHealth(getHealth() + (getHealth() / oldMax) * getMaxHealth());
 }
 
 // gets the magic power of the player.

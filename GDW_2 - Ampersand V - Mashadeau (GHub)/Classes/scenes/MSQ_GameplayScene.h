@@ -68,13 +68,6 @@ public:
 	// update function for the scene
 	void update(float deltaTime);
 	
-	/*
-	 * becomes 'true' if in debug, false otherwise. Things that happen 
-	 * if 'debug' is on, the player is moved around wiht the keyboard, and they aren't affected by gravity.
-	*/
-	
-
-
 	CREATE_FUNC(MSQ_GameplayScene);
 
 private:
@@ -155,12 +148,6 @@ private:
 	Rect weaponIconSize; // the size of a frame icon.
 	const int HUD_WEAPONS_ROWS = 4;
 	const int HUD_WEAPONS_COLS = 3;
-
-	bool moveUp = false;
-	bool moveDown = false;
-	bool moveLeft = false;
-	bool moveRight = false;
-	bool jump = false;
 
 
 protected:

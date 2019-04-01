@@ -47,6 +47,12 @@ namespace entity
 		// sets the description of the entity.
 		void setDescription(std::string description);
 
+		// gets the tag that tells the user what kind of entity this is.
+		entity::etag getTag();
+
+		// sets the tag for the entity
+		void setTag(entity::etag tag);
+
 		// returns the entity's sprite
 		Sprite * getSprite() const;
 

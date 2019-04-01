@@ -21,8 +21,12 @@ entity::Entity::Entity(std::string texture, float globalZOrder) : sprite(Sprite:
 // releases the sprite 
 entity::Entity::~Entity() 
 {
+	for (OOP::Primitive * p : collisionBodies) // removing all of the primitives from their parents
+		p->getPrimitive()->removeFromParent();
+
+	collisionBodies.clear();
+
 	sprite->removeFromParent();
-	collisionBodies.clear(); // clearing the primitives so the destructors are called.
 	
 	
 }
@@ -45,6 +49,12 @@ const std::string entity::Entity::getDescription() const { return description; }
 
 // sets the description of the entity.
 void entity::Entity::setDescription(std::string description) { this->description = description; }
+
+// gets entity's tag
+entity::etag entity::Entity::getTag() { return (entity::etag)sprite->getTag(); }
+
+// sets entity's tag
+void entity::Entity::setTag(entity::etag tag) { sprite->setTag((int)tag); }
 
 // returns the entity's sprite
 Sprite * entity::Entity::getSprite() const { return sprite; }

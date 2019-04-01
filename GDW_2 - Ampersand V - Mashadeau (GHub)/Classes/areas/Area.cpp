@@ -528,18 +528,71 @@ char * world::Area::toBytes() const
 }
 
 // writes the level data to a file.
-void world::Area::writeToFile() { writeToFile(fileName); }
+void world::Area::saveToFile() { saveToFile("dats/AIN_" + getName() + ".dat", this); }
 
 // writes the level data to a file.
-void world::Area::writeToFile(std::string fileName)
+void world::Area::saveToFile(std::string fileName, world::Area * area)
 {
+	std::ofstream file;
+	file.open(fileName, std::ios::out); // creates the file for output to it
 
+	// validity check
+	try
+	{
+		if (!file)
+			throw "Failed to open file for saving. Information saving failed";
+	}
+	catch (const char * ex)
+	{
+		std::cout << ex << std::endl;
+		return;
+	}
+	catch (...)
+	{
+		std::cout << "Error encountered. Unable to write to file" << std::endl;
+		return;
+	}
+
+	// writes information to file.
+	file.write(reinterpret_cast<const char *>(area), sizeof(world::Area));
+
+	file.close();
+	
 }
 
 // loads level information from a file if the file isn't empty.
-void world::Area::loadFromFile()
-{
+world::Area * world::Area::loadFromFile() { return loadFromFile("dats/AIN_" + name + ".dat"); }
 
+// loads level information from a provided area file.
+world::Area * world::Area::loadFromFile(std::string fileName)
+{
+	world::Area * area = nullptr;
+
+	std::ifstream file; // the file to be opened
+	file.open(fileName, std::ios::in);
+
+	try
+	{
+		if (!file)
+			throw "Failed to open file for reading. Information failed to load";
+	}
+	catch (const char * ex)
+	{
+		std::cout << ex << std::endl;
+		return nullptr;
+	}
+	catch (...)
+	{
+		std::cout << "Error encountered. Unable to open file for reading" << std::endl;
+		return nullptr;
+	}
+
+	// loads in area information
+	file.read(reinterpret_cast<char *>(area), sizeof(world::Area));
+	
+	file.close();
+
+	return area;
 }
 
 // updates the area
@@ -551,6 +604,16 @@ void world::Area::update(float deltaTime)
 	for (int i = 0; i < areaTiles.size(); i++)
 	{
 		areaTiles.at(i)->update(deltaTime);
+
+		if (areaTiles[i]->getHealth() <= 0.0F) // if the tile has no health, it should be deleted.
+		{
+			for (OOP::Primitive * p : areaTiles[i]->getCollisionBodies()) // removing all of the primitives from their parents for the tiles.
+				p->getPrimitive()->removeFromParent();
+
+			areaTiles[i]->getSprite()->removeFromParent(); // removes the tile's sprite.
+			areaTiles.erase(areaTiles.begin() + i); // erases the pointer and other tile data.
+		}
+
 	}
 		
 

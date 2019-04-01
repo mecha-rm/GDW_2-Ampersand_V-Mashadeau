@@ -338,36 +338,36 @@ void MSQ_GameplayScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event * eve
 	{
 	case EventKeyboard::KeyCode::KEY_UP_ARROW:
 		if (debug)
-			moveUp = true; // tells the program to move the player up.
+			plyr->moveUp = true; // tells the program to move the player up.
 
 		break;
 
 	case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 		if (debug)
-			moveDown = true; // tells the player to go down.
+			plyr->moveDown = true; // tells the player to go down.
 		break;
 
 	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-		moveLeft = true;
+		plyr->moveLeft = true;
 		break;
 
 	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-		moveRight = true;
+		plyr->moveRight = true;
 		break;
 	case EventKeyboard::KeyCode::KEY_W:
-		moveUp = true;
+		plyr->moveUp = true;
 		break;
 
 	case EventKeyboard::KeyCode::KEY_S:
-		moveDown = true;
+		plyr->moveDown = true;
 		break;
 
 	case EventKeyboard::KeyCode::KEY_A:
-		moveLeft = true;
+		plyr->moveLeft = true;
 		break;
 
 	case EventKeyboard::KeyCode::KEY_D:
-		moveRight = true;
+		plyr->moveRight = true;
 		break;
 
 	case EventKeyboard::KeyCode::KEY_F:
@@ -396,42 +396,42 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 		break;
 
 	case EventKeyboard::KeyCode::KEY_UP_ARROW:
-		moveUp = false;
+		plyr->moveUp = false;
 
 		if(!debug) // if debug is off, then the jump is turned on upon 'UP' being let go.
-			jump = true;
+			plyr->jump = true;
 
 		break;
 
 	case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-		moveDown = false;
+		plyr->moveDown = false;
 		break;
 
 	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-		moveLeft = false;
+		plyr->moveLeft = false;
 		break;
 
 	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-		moveRight = false;
+		plyr->moveRight = false;
 		break;
 
 	case EventKeyboard::KeyCode::KEY_SPACE:
-		jump = true;
+		plyr->jump = true;
 		break;
 	case EventKeyboard::KeyCode::KEY_W:
-		moveUp = false;
+		plyr->moveUp = false;
 		break;
 
 	case EventKeyboard::KeyCode::KEY_S:
-		moveDown = false;
+		plyr->moveDown = false;
 		break;
 
 	case EventKeyboard::KeyCode::KEY_A:
-		moveLeft = false;
+		plyr->moveLeft = false;
 		break;
 
 	case EventKeyboard::KeyCode::KEY_D:
-		moveRight = false;
+		plyr->moveRight = false;
 		break;
 	case EventKeyboard::KeyCode::KEY_F: // moved to key down.
 		//attack
@@ -548,6 +548,7 @@ void MSQ_GameplayScene::collisions()
 void MSQ_GameplayScene::playerTileCollisions()
 {
 	entity::Tile * tile = nullptr;
+	entity::Tile * tempTile = nullptr;
 
 	OOP::Primitive * colPrim1; // the primitive from the player that encountered a collision
 	OOP::Primitive * colPrim2; // the primitive from the other entity that encounted a collision
@@ -582,6 +583,11 @@ void MSQ_GameplayScene::playerTileCollisions()
 				return;
 			}
 
+			if (tile->getTIN() >= 800 && tile->getTIN() <= 899) // if it's a weapon tile.
+			{
+				entity::Tile::effect(tile, plyr); // checks to see how the player was effected. The tile still keeps its original TIN, even if something related to it is changed.
+				break;
+			}
 
 			// gets what primitives collided with the player.
 			colPrim1 = plyr->collidedPrimitive;
@@ -791,7 +797,7 @@ void MSQ_GameplayScene::update(float deltaTime)
 
 		mpBarPos = getDefaultCamera()->getPosition() + mpBarOffset; // moves the mp bar
 		for (int i = 0; i < BAR_LEN; i++) // moves all of the mp bars accordingly.
-			mpBar[i]->setPosition(hpBarPos);
+			mpBar[i]->setPosition(mpBarPos);
 
 		grid->setPosition(gridOffset + getDefaultCamera()->getPosition()); // moves the grid so that it
 	}
@@ -801,16 +807,16 @@ void MSQ_GameplayScene::update(float deltaTime)
 
 	// if the cancels are true, then the player can't move that given direction.
 
-	if (moveUp && !plyr->cancelUp) // moves the player up.
+	if (plyr->moveUp && !plyr->cancelUp) // moves the player up.
 	{
 		plyr->setPositionY(plyr->getPositionY() + d_movespeed * deltaTime);
 	}
-	else if (moveDown && !plyr->cancelDown) // moves the player down.
+	else if (plyr->moveDown && !plyr->cancelDown) // moves the player down.
 	{
 		plyr->setPositionY(plyr->getPositionY() - d_movespeed * deltaTime);
 	}
 
-	if (moveLeft && !plyr->cancelLeft) // moving left
+	if (plyr->moveLeft && !plyr->cancelLeft) // moving left
 	{
 		if (plyr->getFlippedSpriteX() == false) // flips the sprite so that it's facing left
 			plyr->setFlippedSpriteX(true);
@@ -820,7 +826,7 @@ void MSQ_GameplayScene::update(float deltaTime)
 		else
 			plyr->addForce(plyr->getMoveForceX() * -1, 0.0F);
 	}
-	else if (moveRight && !plyr->cancelRight) // moving right
+	else if (plyr->moveRight && !plyr->cancelRight) // moving right
 	{
 		if (plyr->getFlippedSpriteX() == true) // flips the sprite so that it's facing right (i.e. the default)
 			plyr->setFlippedSpriteX(false);
@@ -832,12 +838,12 @@ void MSQ_GameplayScene::update(float deltaTime)
 
 	}
 	
-	if (jump)
+	if (plyr->jump)
 	{
 		plyr->zeroVelocityY();
 		plyr->setPositionY(plyr->getPositionY());
 		plyr->addJumpForce();
-		jump = false;
+		plyr->jump = false;
 	}
 	if (plyrAction) // animation should be played
 	{

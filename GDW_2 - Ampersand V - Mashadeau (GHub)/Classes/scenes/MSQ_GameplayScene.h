@@ -82,7 +82,7 @@ private:
 	// event toggles; these turn certain functions on or off.
 	const bool ENABLE_MOUSE = true; // turns mouse functionality on/off.
 	const bool ENABLE_KEYBOARD = true; // turns keyboard functionality on/off.
-	const bool ENABLE_CAMERA = false; // enables the game camera.
+	const bool ENABLE_CAMERA = true; // enables the game camera.
 
 	static bool debug; // becomes 'true' when debug mode is turned on.
 	static bool enable_hud; // enables the hud, or disables it.
@@ -146,6 +146,8 @@ private:
 	Sprite * hudWeapons[4][3];
 	std::string weaponImages[4]{ "", "", "", "" }; // the weapons that go in the hud.
 	Rect weaponIconSize; // the size of a frame icon.
+
+	Vec2 hudWeaponOffset[4]; // how much the tie 
 	const int HUD_WEAPONS_ROWS = 4;
 	const int HUD_WEAPONS_COLS = 3;
 

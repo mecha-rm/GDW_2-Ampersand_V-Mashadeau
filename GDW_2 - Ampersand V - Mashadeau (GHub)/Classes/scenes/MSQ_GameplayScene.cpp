@@ -228,6 +228,8 @@ void MSQ_GameplayScene::initSprites()
 			}
 			
 			hudWeapons[i][j]->setScale(0.78F); // scales it.
+
+			hudWeaponOffset[i] = hudWeapons[i][0]->getPosition() - getDefaultCamera()->getPosition(); // gets the offset for the weapon icon.
 		}
 	}
 
@@ -538,7 +540,7 @@ void MSQ_GameplayScene::collisions()
 {	
 	// std::cout << "PX: " << plyr->getAABBs().at(0)->getPosition().x << ", PY: " << plyr->getAABBs().at(0)->getPosition().y << std::endl;
 	playerTileCollisions(); // called for player-tile collisions.
-	enemyTileCollisions(); // collision between the enemies and the tiles.
+	// enemyTileCollisions(); // collision between the enemies and the tiles.
 	
 	playerEnemyCollisions(); // called for player collisions with enemies
 	weaponEnemyCollisions();
@@ -687,20 +689,29 @@ void MSQ_GameplayScene::playerTileCollisions()
 // collisions between enemies and tiles
 void MSQ_GameplayScene::enemyTileCollisions()
 {
+	OOP::Primitive * colPrim1; // the primitive from the enemy that encountered a collision
+	OOP::Primitive * colPrim2; // the primitive from the other tile
+
 	for (entity::Enemy * emy : *sceneEnemies)
 	{
 		for (entity::Tile * tile: *sceneTiles)
 		{
 			if (emy->collision(tile)) // if there is collision.
 			{
-				if (emy->getMoveForceY() != 0.0F) // if the enemy is choosing to move down
+				if (emy->getMoveForceY() != 0.0F) // if the enemy is choosing to move vertically.
 				{
-					
+					emy->moveUp = !emy->moveUp; // makes the enemy move in the opposite direction.
 				}
 				else if (emy->getMoveForceY() == 0.0F) // if the enemy is not moving, and has fallen via gravity.
 				{
 					emy->setAntiGravity(true);
 				}
+
+				if (emy->getMoveForceX() != 0.0F)
+				{
+					emy->moveRight = !emy->moveRight;
+				}
+
 			}
 		}
 	}
@@ -801,26 +812,6 @@ void MSQ_GameplayScene::update(float deltaTime)
 		return;
 
 	debugMode(); // called to change the settings if debug mode has been turned on/off.
-
-	if (ENABLE_CAMERA) // updates the camera if it's active.
-	{
-		this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the position of the camera so that it follows hte player
-		
-		sceneArea->setAllLayerPositions(this->getDefaultCamera()->getPosition()); // makes the backgrounds be directly behind the player. This needs to be changed later so that it scrolls.
-		
-		hpBarPos = getDefaultCamera()->getPosition() + hpBarOffset; // moves the hp bar
-		for (int i = 0; i < BAR_LEN; i++) // moves all of the hp bars accordingly.
-			hpBar[i]->setPosition(hpBarPos);
-
-		mpBarPos = getDefaultCamera()->getPosition() + mpBarOffset; // moves the mp bar
-		for (int i = 0; i < BAR_LEN; i++) // moves all of the mp bars accordingly.
-			mpBar[i]->setPosition(mpBarPos);
-
-		grid->setPosition(gridOffset + getDefaultCamera()->getPosition()); // moves the grid so that it
-	}
-
-	if (enable_hud != hud->isVisible()) // if the hud's visibility is wrong, it's set accordingly.
-		hud->setVisible(enable_hud);
 
 	// if the cancels are true, then the player can't move that given direction.
 
@@ -932,5 +923,33 @@ void MSQ_GameplayScene::update(float deltaTime)
 	sceneArea->update(deltaTime);
 
 	collisions();
+
+	if (ENABLE_CAMERA) // updates the camera if it's active.
+	{
+		this->getDefaultCamera()->setPosition(plyr->getPosition()); // sets the position of the camera so that it follows hte player
+
+		sceneArea->setAllLayerPositions(this->getDefaultCamera()->getPosition()); // makes the backgrounds be directly behind the player. This needs to be changed later so that it scrolls.
+
+		for (int i = 0; i < HUD_WEAPONS_ROWS; i++)
+		{
+			for (int j = 0; j < HUD_WEAPONS_COLS; j++)
+			{
+				hudWeapons[i][j]->setPosition(getDefaultCamera()->getPosition() + hudWeaponOffset[i]);
+			}
+		}
+
+		hpBarPos = getDefaultCamera()->getPosition() + hpBarOffset; // moves the hp bar
+		for (int i = 0; i < BAR_LEN; i++) // moves all of the hp bars accordingly.
+			hpBar[i]->setPosition(hpBarPos);
+
+		mpBarPos = getDefaultCamera()->getPosition() + mpBarOffset; // moves the mp bar
+		for (int i = 0; i < BAR_LEN; i++) // moves all of the mp bars accordingly.
+			mpBar[i]->setPosition(mpBarPos);
+
+		grid->setPosition(gridOffset + getDefaultCamera()->getPosition()); // moves the grid so that it
+	}
+
+	if (enable_hud != hud->isVisible()) // if the hud's visibility is wrong, it's set accordingly.
+		hud->setVisible(enable_hud);
 
 }

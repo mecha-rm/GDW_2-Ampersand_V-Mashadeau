@@ -12,12 +12,12 @@ entity::Player::Player() : Active("images/PLR_000.png")
 
 	setMagicType(magic::shadow);
 
-	sprite->setTextureRect(frameSize); // setting the area of the sprite that's used
+	sprite->setTextureRect(Rect(0.0F + frameSize.getMaxX() * 0.0F, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY())); // setting the area of the sprite that's used
 	sprite->setGlobalZOrder(2.0F); // sets the global Z order of the player.
 	sprite->setTag(player);
 
 	// collisionShapes.push_back(new OOP::PrimitiveCircle(Vec2(0.0f, 0.0f), 29.0f));
-	collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(sprite->getTextureRect().getMidX(), sprite->getTextureRect().getMidY()), 53.0F, 185.0F, CLR_DEF));
+	collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 53.0F, 185.0F, CLR_DEF));
 	collisionBodies.at(0)->getPrimitive()->setGlobalZOrder(10.1F); // the z-order is now set upon initalization.
 	collisionBodies.at(0)->setVisible(shapesVisible);
 
@@ -58,7 +58,7 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	// no animation (0); 1 frame
 	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, true, true);
 	tempAnimate->setName("static");
-	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(frameSize));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 0.0F, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY())));
 	animations.push_back(tempAnimate);
 
 	currentAnimation = tempAnimate;
@@ -69,9 +69,9 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	
 	// tempAnimate->getFrames().at(getFrames()->)
 	
-	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 0, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 1
-	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 1, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 2
-	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 2, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 3
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 0, 0.0F + frameSize.getMaxY() * 5, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 1
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 1, 0.0F + frameSize.getMaxY() * 5, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 2
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 2, 0.0F + frameSize.getMaxY() * 5, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 3
 	// tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX(), 0.0F + frameSize.getMaxY(), frameSize.getMaxX(), frameSize.getMaxY())));
 	animations.push_back(tempAnimate);
 	
@@ -333,6 +333,8 @@ int entity::Player::removeWeapon(unsigned int index)
 // uses a weapon.
 void entity::Player::useWeapon()
 {
+	entity::Projectile * proj = nullptr;
+
 	if (currentWeapon == nullptr)
 		return;
 
@@ -345,6 +347,33 @@ void entity::Player::useWeapon()
 
 	case 2: // long-ranged
 		runAction(7);
+
+		//switch (currentWeapon->getMagic_T()) // generates a projectile if applicable.
+		//{
+		//case magic::null:
+		//default:
+		//	proj = new entity::Projectile(11, this);
+		//	break;
+		//case magic::shadow:
+		//	proj = new entity::Projectile(14, this);
+		//	break;
+		//case magic::fire:
+		//	proj = new entity::Projectile(17, this);
+		//	break;
+		//case magic::water:
+		//	proj = new entity::Projectile(20, this);
+		//		break;
+		//case magic::earth:
+		//	proj = new entity::Projectile(23, this);
+		//	break;
+		//case magic::air:
+		//	proj = new entity::Projectile(26, this);
+		//	break;
+		//}
+
+		//proj->getSprite()->setVisible(true);
+		//projectiles.push_back(proj); 
+
 		break;
 
 	case 3: // other
@@ -447,6 +476,12 @@ void entity::Player::update(float deltaTime)
 		if (w != nullptr)
 			w->update(deltaTime);
 	 }
+
+	for (entity::Projectile* p : projectiles)
+	{
+		if (p != nullptr)
+			p->update(deltaTime);
+	}
 
 }
 

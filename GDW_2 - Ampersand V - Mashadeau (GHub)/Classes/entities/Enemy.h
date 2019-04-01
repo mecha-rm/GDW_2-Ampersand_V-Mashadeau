@@ -32,6 +32,11 @@ namespace entity
 		// if this is false, then it is placed 128 px away from the sprite it was being copied from.
 		const bool OFFSET_BY_SPRITE_SIZE = false;
 
+		// if true, the enemy's movement force is applied in the positive y direction. If false, it's applied in the negative y direction.
+		bool moveUp = false;
+		// if true, the enemy's movement force is applied in the positive x direction. If false, it's applied in the negative x direction.
+		bool moveRight = false;
+
 	private:
 		// called to create an Enemy and give it initial values.
 		void createEnemy(unsigned int EIN, char letter);

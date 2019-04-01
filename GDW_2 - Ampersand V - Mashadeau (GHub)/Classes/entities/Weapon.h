@@ -46,8 +46,15 @@ namespace entity
 		// if it's of size '0', then no projectiles were generated. DO NOT USE YET.
 		// std::vector<entity::Projectile *> & useWeapon();
 
+		// gets the WIN of the projectile attachted to the weapon. If equal to -1, this weapon doesn't make projectile;
+		// int getProjectileWIN();
+
+
 		// the update loop.
 		void update(float deltaTime);
+
+		// the projectile WIN value. If this is not a proper value
+		// unsigned int projectileWIN = 0;
 
 	private:
 		entity::Entity * owner = nullptr; // the entity that has this weapon.

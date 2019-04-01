@@ -53,7 +53,7 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 		setTexture(filePath);
 		setTextureRect(frameSize);
 		
-		moveForce = (0.0F, 12.0F);
+		moveForce = Vec2(0.0F, 12.0F);
 
 		animations.push_back(new OOP::SpriteSheetAnimation(sprite, 0, true, 0.05F, true, true));
 
@@ -106,7 +106,7 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 void entity::Enemy::update(float deltaTime)
 {
 	// setHealth(getHealth() - 1);
-	addForce(moveForce); // adds to the force of the entity
+	addForce(Vec2(moveForce.x * (moveRight) ? 1 : -1, moveForce.y * (moveUp) ? 1 : -1)); // adds to the force of the entity
 	Active::update(deltaTime); // calls the 'Active' update loop
 
 	

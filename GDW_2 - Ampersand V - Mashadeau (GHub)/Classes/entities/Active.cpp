@@ -109,5 +109,8 @@ void entity::Active::update(float deltaTime)
 		}
 	}
 
+	for (int i = 0; i < projectiles.size(); i++)
+		projectiles.at(i)->update(deltaTime);
+
 	Entity::update(deltaTime); // calls the entity update loop.
 }

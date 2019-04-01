@@ -59,24 +59,64 @@ void entity::Projectile::createWeapon(unsigned int WIN) // creates the projectil
 		case 17: // Fire Sphere Medium
 		case 18: // Fire Sphere Large
 			this->WIN = 17;
+			setTexture("images/weapons/WIN_017.png");
+			frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+			setTextureRect(frameSize);
+
+			setMagicType(magic::fire);
+			setDamage(5.0F);
+			setMagicUsage(1.0F);
+
+			collisionBodies.push_back(new OOP::PrimitiveCircle(Vec2(128.0F, 128.0F), 50.0F, CLR_ATK));
+			moveForce = Vec2(100.0F, 0.0F);
 			break;
 
 		case 19: // Water Sphere Small
 		case 20: // Water Sphere Medium
 		case 21: // Water Sphere Large
 			this->WIN = 20;
+			setTexture("images/weapons/WIN_020.png");
+			frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+			setTextureRect(frameSize);
+
+			setMagicType(magic::water);
+			setDamage(5.0F);
+			setMagicUsage(1.0F);
+
+			collisionBodies.push_back(new OOP::PrimitiveCircle(Vec2(128.0F, 128.0F), 50.0F, CLR_ATK));
+			moveForce = Vec2(100.0F, 0.0F);
 			break;
 
 		case 22: // Earth Sphere Small
 		case 23: // Earth Sphere Medium
 		case 24: // Earth Sphere Large
 			this->WIN = 23;
+			setTexture("images/weapons/WIN_023.png");
+			frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+			setTextureRect(frameSize);
+
+			setMagicType(magic::earth);
+			setDamage(5.0F);
+			setMagicUsage(1.0F);
+
+			collisionBodies.push_back(new OOP::PrimitiveCircle(Vec2(128.0F, 128.0F), 50.0F, CLR_ATK));
+			moveForce = Vec2(100.0F, 0.0F);
 			break;
 
 		case 25: // Air Sphere Small
 		case 26: // Air Sphere Medium
 		case 27: // Air Sphere Large
 			this->WIN = 26;
+			setTexture("images/weapons/WIN_026.png");
+			frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+			setTextureRect(frameSize);
+
+			setMagicType(magic::air);
+			setDamage(5.0F);
+			setMagicUsage(1.0F);
+
+			collisionBodies.push_back(new OOP::PrimitiveCircle(Vec2(128.0F, 128.0F), 50.0F, CLR_ATK));
+			moveForce = Vec2(100.0F, 0.0F);
 
 			break;
 	

@@ -118,6 +118,7 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 // adds all the colision primitives to the owner, and chooses to either enable them, disable them, or do nothing to them.
 void entity::Weapon::addPrimitivesToOwner(bool changeActive, bool activeBodies)
 {
+	bool attachted = false;
 	Vector<Node *> ownerChildren = owner->getSprite()->getChildren(); // gets the children of the owner.
 
 	for (int i = 0; i < collisionBodies.size(); i++)
@@ -126,13 +127,20 @@ void entity::Weapon::addPrimitivesToOwner(bool changeActive, bool activeBodies)
 		{
 			// if the primitive's draw node is already attachted to the owner, it isn't attachted again.
 			if (ownerChildren.at(j) == collisionBodies.at(i)->getPrimitive())
-				continue;
-			else
-				owner->getSprite()->addChild(collisionBodies.at(i)->getPrimitive());
+			{
+				attachted = true; // tells the program that the primitive is already attachted.
+				break;
+			}
 		}
 
 		 // adds the drawNode to the owner's sprite.
 		// owner->addCollisionBody(collisionBodies.at(i)); // adds the collision body to the owner's vector.
+
+		if (!attachted) // if the Node is not already attached.
+		{
+			owner->getSprite()->addChild(collisionBodies.at(i)->getPrimitive());
+			attachted = false;
+		}
 	}
 
 	if (changeActive) // if the 'active' parameter should be changed.

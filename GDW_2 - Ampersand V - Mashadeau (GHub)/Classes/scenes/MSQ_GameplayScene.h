@@ -89,7 +89,7 @@ private:
 	// event toggles; these turn certain functions on or off.
 	const bool ENABLE_MOUSE = true; // turns mouse functionality on/off.
 	const bool ENABLE_KEYBOARD = true; // turns keyboard functionality on/off.
-	const bool ENABLE_CAMERA = false; // enables the game camera.
+	const bool ENABLE_CAMERA = true; // enables the game camera.
 
 	static bool debug; // becomes 'true' when debug mode is turned on.
 	static bool enable_hud; // enables the hud, or disables it.
@@ -159,6 +159,7 @@ private:
 	bool moveRight = false;
 	bool jump = false;
 
+	bool pauseBool = false;
 
 protected:
 

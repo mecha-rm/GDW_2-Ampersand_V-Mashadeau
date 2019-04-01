@@ -92,7 +92,7 @@ void MSQ_MainMenu::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * event) 
 
 	switch (keyCode) {
 	case EventKeyboard::KeyCode::KEY_ENTER:
-		Director::getInstance()->replaceScene(_new); //move to the tutorial scene. This don't work, but leaving it uncommented for the meme (and the potential to be fixed when I'm more mentally functional)
+		Director::getInstance()->replaceScene(msq_gps);
 		break;
 	case EventKeyboard::KeyCode::KEY_ESCAPE:
 		Director::getInstance()->end();

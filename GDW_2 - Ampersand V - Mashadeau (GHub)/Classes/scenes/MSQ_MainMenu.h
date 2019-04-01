@@ -23,8 +23,10 @@ public:
 	// implement the "static create()" method manually
 	CREATE_FUNC(MSQ_MainMenu);
 
+
 private:
 	OOP::KeyboardListener keyboard;
 	Scene* _new = MSQ_TransitionerScene::createScene(); //For switching scenes
+	Scene* msq_gps = MSQ_GameplayScene::createScene();
 
 } MainMenu;

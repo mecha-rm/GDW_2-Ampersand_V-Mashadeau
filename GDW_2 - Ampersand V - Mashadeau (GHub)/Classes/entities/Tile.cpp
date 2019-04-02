@@ -14,7 +14,7 @@ entity::Tile::~Tile() {}
 void entity::Tile::createTile(unsigned int TIN, char letter)
 {
 	DrawNode * tempNode = DrawNode::create(); // used to create an enemy square if no tile of the provided TIN exists.
-
+	
 	sprite->setGlobalZOrder(1.0F); // all tiles should be on the same global z-order.
 	sprite->setTag(tile);
 
@@ -108,47 +108,52 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		// setTexture()
 		break;
 
-	//Tutorial Tiles
-	case 050: //Move Tile
-		setName("TUT Move");
-		setDescription("Tutorial move.");
-		setTexture("images/tiles/TIN_050.png"); // sets the image for the sprite
-		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+	case 50:
+		setName("Move Tile");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_050.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+		setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
 		break;
 
-	case 051: //Jump Tile
-		setName("TUT Jump");
-		setDescription("Tutorial jump.");
-		setTexture("images/tiles/TIN_051.png"); // sets the image for the sprite
-		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+	case 51:
+		setName("Jump Tile");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_051.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+		setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
 		break;
 
-	case 052: //Attack Tile
-		setName("TUT Attack");
-		setDescription("Tutorial attack.");
-		setTexture("images/tiles/TIN_052.png"); // sets the image for the sprite
-		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+	case 52:
+		setName("Attack Tile");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_052.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+		setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
 		break;
 
-	case 053: //Breakable Block Tile
-		setName("TUT Breakable");
-		setDescription("Tutorial breakable block.");
-		setTexture("images/tiles/TIN_053.png"); // sets the image for the sprite
-		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+	case 53:
+		setName("Break Tile");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_053.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+		setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
 		break;
 
-	case 054: //Swap Tile
-		setName("TUT Swap");
-		setDescription("Tutorial swap.");
+	case 54:
+		setName("Swap Tile");
+		setDescription("Tile set");
 		setTexture("images/tiles/TIN_054.png");
 		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+		setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
 		break;
 
-	case 055: //Esc to Pause Tile
-		setName("TUT Pause");
-		setDescription("Tutorial pause.");
+	case 55:
+		setName("Pause Tile");
+		setDescription("Tile set");
 		setTexture("images/tiles/TIN_055.png");
 		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+		setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
 		break;
 
 	case 100://sewer tiles
@@ -260,6 +265,45 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
 
+	case 200: //fire area block base
+		setName("Fire Block");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_200.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+
+		switch (this->LETTER) {
+		case 'a':
+		default:
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'b':
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'c':
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'd':
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'e':
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'f':
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'g':
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'h':
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'i':
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		}
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+
 	case 400://Forest tiles
 		setName("Forest Tile");
 		setDescription("Tile set");
@@ -331,58 +375,58 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
 
 		switch (this->LETTER) {
-		case 'a':
-		default:
-			setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
-			break;
-		case 'b':
-			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-			break;
-		case 'c':
-			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-			break;
-		case 'd':
-			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-			break;
-		case 'e':
-			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-			break;
-		case 'f':
-			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-			break;
-		case 'g':
-			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-			break;
-		case 'h':
-			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-			break;
-		case 'i':
-			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-			break;
+			case 'a':
+			default:
+				setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'b':
+				setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'c':
+				setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'd':
+				setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'e':
+				setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'f':
+				setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'g':
+				setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'h':
+				setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'i':
+				setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
 		}
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
+		
+		case 501://air platform/ladder/hazard
+			setName("Platforms/Ladders/Hazards");
+			setDescription("Tile set");
+			setTexture("images/tiles/TIN_501.png");
+			frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
 
-	case 501://air platform/ladder/hazard
-		setName("Platforms/Ladders/Hazards");
-		setDescription("Tile set");
-		setTexture("images/tiles/TIN_501.png");
-		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+			switch (this->LETTER) {
+			case 'a'://platform
+			default:
+				setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
 
-		switch (this->LETTER) {
-		case 'a'://platform
-		default:
-			setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
-
-		case 'b'://ladder
-			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-			break;
-		case 'c'://hazard
-			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-			break;
-
-		}
-
+			case 'b'://ladder
+				setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+			case 'c'://hazard
+				setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+				break;
+		
+			}
+		
 
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
@@ -478,12 +522,12 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		break;
 	}
 
-		for (OOP::Primitive * colShape : collisionBodies) // adds all of the collision shapes to the sprite.
-		{
-			colShape->getPrimitive()->setGlobalZOrder(10.1F);
-			colShape->getPrimitive()->setVisible(shapesVisible);
-			sprite->addChild(colShape->getPrimitive());
-		}
+	for (OOP::Primitive * colShape : collisionBodies) // adds all of the collision shapes to the sprite.
+	{
+		colShape->getPrimitive()->setGlobalZOrder(10.1F);
+		colShape->getPrimitive()->setVisible(shapesVisible);
+		sprite->addChild(colShape->getPrimitive());
+	}
 
 }
 

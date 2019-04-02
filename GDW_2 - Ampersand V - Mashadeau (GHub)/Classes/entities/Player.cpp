@@ -127,7 +127,7 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	animations.push_back(tempAnimate);
 
 	// jump(5)
-	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, false, 0.0F, false, false); // new animation
+	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, true, 0.0F, false, false); // new animation
 	tempAnimate->setName("jump");
 	tempAnimate->setTag(5);
 
@@ -583,11 +583,11 @@ void entity::Player::update(float deltaTime)
 			w->update(deltaTime);
 	 }
 
-	for (entity::Projectile* p : projectiles)
+	/*for (entity::Projectile* p : projectiles)
 	{
 		if (p != nullptr)
 			p->update(deltaTime);
-	}
+	}*/
 	Active::update(deltaTime);
 
 }

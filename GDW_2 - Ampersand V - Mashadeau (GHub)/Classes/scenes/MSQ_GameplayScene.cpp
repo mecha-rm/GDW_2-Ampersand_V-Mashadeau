@@ -920,7 +920,7 @@ void MSQ_GameplayScene::update(float deltaTime)
 
 	}
 
-	if (plyr->moveLeft == false && plyr->moveRight == false && plyr->jump == false)
+	if (plyr->moveLeft == false && plyr->moveRight == false && plyr->jump == false && plyr->getVelocity() == Vec2(0.0F, 0.0F))
 	{
 		if (plyr->getCurrentAnimation() != nullptr)
 		{

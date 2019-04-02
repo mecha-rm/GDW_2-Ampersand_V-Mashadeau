@@ -259,6 +259,69 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		}
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
+
+	case 400://Forest tiles
+		setName("Forest Tile");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_400.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+
+		switch (this->LETTER)
+		{
+		case 'a':
+		default:
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+
+		case 'b':
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'c':
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'd':
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'e':
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'f':
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'g':
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'h':
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'i':
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		}
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
+
+	case 401://Forest Extra tiles
+		setName("Cult Tile");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_401.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+
+		switch (this->LETTER)
+		{
+		case 'a':
+		default://Platform
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+
+		case 'b'://Hazard
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+		break;
 	
 
 	case 500: //air area block base

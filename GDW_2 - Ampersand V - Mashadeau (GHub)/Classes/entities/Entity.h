@@ -293,7 +293,7 @@ namespace entity
 		static const cocos2d::Color4F CLR_DEF; // colour used for defensive collision shapes (i.e. these take damage)
 		static const cocos2d::Color4F CLR_NEU; // colour used for a neutral object that can be interacted with, but does not take or deal damage.
 
-
+		bool onScreen = true;
 
 	private:
 		float mass = 1.0; // the mass of the entity

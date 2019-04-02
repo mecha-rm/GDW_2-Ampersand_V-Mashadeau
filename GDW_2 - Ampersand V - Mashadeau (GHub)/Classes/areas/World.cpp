@@ -28,6 +28,22 @@ world::Area * world::World::getArea(std::string & AIN)
 	{
 		newArea = new AIN_X01();
 	}
+	else if (AIN == "AIN_B00")
+	{
+		newArea = new AIN_B00();
+	}
+	else if (AIN == "AIN_B01")
+	{
+		newArea = new AIN_B01();
+	}
+	else if (AIN == "AIN_C00")
+	{
+		newArea = new AIN_C00();
+	}
+	else if (AIN == "AIN_C01")
+	{
+		newArea = new AIN_C01();
+	}
 	else if (AIN == "AIN_F00")
 	{
 		newArea = new AIN_F00();

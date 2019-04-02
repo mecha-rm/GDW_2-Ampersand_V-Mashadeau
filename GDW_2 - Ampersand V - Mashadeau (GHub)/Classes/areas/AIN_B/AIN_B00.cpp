@@ -4,7 +4,7 @@
 // using an initalizer list with the variables, caused problems, so a test background is loaded in. These are replaced later.
 world::AIN_B00::AIN_B00() : Area("")
 {
-	bool flipY = false; // flip the tiles and enemies positions on the y-axis
+	bool flipY = true; // flip the tiles and enemies positions on the y-axis
 
 	name = "B00";
 	Area::setBackgroundLayer1(bg_img1);
@@ -14,6 +14,21 @@ world::AIN_B00::AIN_B00() : Area("")
 
 	// there is a default gravity for all areas, so this line isn't required. However, if you want custom gravity for your area, you change it here.
 	// setGravity(200.0F); // sets the level of gravity in the scene. This should NOT be negative.
+	
+	// setting all of the exits. Format: AIN_###_#
+	// - the last digit (after the second underscore) determines what spawn point to use.
+	exit0 = "AIN_B01_0"; //AIN_F00_0
+	exit1 = "AIN_A00_0"; //Castle 
+	exit2 = "";
+	exit3 = "";
+	exit4 = "";
+
+	// setting all of the spawn points. These are based on the middle of the sprite.
+	spawn0 = Vec2(512.0f, 640.0f);
+	spawn1 = Vec2(6400.0F, 2640.0F); //From B_01 (second floor)
+	spawn2 = Vec2(0.0F, 0.0F);
+	spawn3 = Vec2(0.0F, 0.0F);
+	spawn4 = Vec2(0.0F, 0.0F);
 
 	Area::tileArrayToVector(tileGrid, flipY); // set to 'true' to flip the tiles along the y-axis
 	Area::enemyArrayToVector(enemyGrid, flipY); // set to 'true' to flip the enemies along the y-axis.

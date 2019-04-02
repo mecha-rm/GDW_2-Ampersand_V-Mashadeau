@@ -3,8 +3,16 @@
 #include <iostream>
 
 // initalizing static variables
-std::string MSQ_GameplayScene::areaName = "AIN_X00"; // debug area
+std::string MSQ_GameplayScene::areaName = "AIN_B00"; // debug area
 int MSQ_GameplayScene::spawnPoint = 0; // spawn point 0
+
+// used for saving information between scenes
+int MSQ_GameplayScene::pHealth = -1;
+int MSQ_GameplayScene::pHealthMax = -1;
+int MSQ_GameplayScene::pMagic = -1;
+int MSQ_GameplayScene::pMagicMax = -1;
+std::vector<int> MSQ_GameplayScene::pWeapons;
+
 
 bool MSQ_GameplayScene::debug = true;
 bool MSQ_GameplayScene::enable_hud = true; // enables hud view
@@ -112,6 +120,33 @@ void MSQ_GameplayScene::initSprites()
 	plyr = new entity::Player(); // creates the player
 	plyr->setPosition(sceneArea->getSpawn(spawnPoint)); // sets the player using spawn point 0.
 	plyr->setAntiGravity(debug);
+
+	// changes the player's values to what they were when leaving the previous scene.
+	if (pHealth > -1)
+	{
+		plyr->setHealth(pHealth);
+		pHealth = -1;
+	}
+	if (pHealthMax > -1)
+	{
+		plyr->setMaxHealth(pHealthMax);
+		pHealthMax = -1;
+	}
+	if (pMagic > -1)
+	{
+		plyr->setMagicPower(pMagic);
+		pMagic = -1;
+	}
+	if (pMagicMax > -1)
+	{
+		plyr->setMagicPowerMax(pMagicMax, false);
+		pMagicMax = -1;
+	}
+	for (int i = 0; i < pWeapons.size(); i++) // giving the player back their weapons via providing their WIN.
+		plyr->giveWeapon(pWeapons.at(i));
+	
+	pWeapons.clear(); // removes the 'WIN' numbers since the weapons have been added.
+
 	this->addChild(plyr->getSprite());
 
 	hud = DrawNode::create(); // creating the hud
@@ -278,7 +313,7 @@ void MSQ_GameplayScene::initSprites()
 	// creating the grid
 	grid = new OOP::PrimitiveGrid(cocos2d::Vec2(0.0F, 0.0F), cocos2d::Vec2(director->getWinSizeInPixels().width, director->getWinSizeInPixels().height), 128.0F, Color4F::WHITE);
 	// grid->getPrimitive()->setGlobalZOrder(10.3F); // makes the grid be above everything else.
-	grid->getPrimitive()->setVisible(true); // makes the grid visible (or not visible)
+	grid->getPrimitive()->setVisible(false); // makes the grid visible (or not visible)
 	this->addChild(grid->getPrimitive()); // adds grid to drawList
 	gridOffset = grid->getPosition() - getDefaultCamera()->getPosition();
 
@@ -298,6 +333,8 @@ void MSQ_GameplayScene::initSprites()
 	}
 
 	debugMode(); // called to turn on (or off) debug mode.
+	winSize = director->getWinSizeInPixels(); // gets the window size.
+
 }
 
 // initializes pause menu; currently does nothing.
@@ -332,6 +369,7 @@ void MSQ_GameplayScene::onMouseReleased(EventMouse::MouseButton mouseButt, Event
 		break;
 	}
 }
+
 void MSQ_GameplayScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event * event)
 {
 	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event); // casting as a keyboard event
@@ -519,18 +557,23 @@ void MSQ_GameplayScene::switchArea(std::string & fileName)
 	areaName = fileName; // saves the new area so that it's set upon initalization of the new game object.
 	spawnPoint = std::stoi(spawn); // saves the spawn point of the player for when they get into the new area.
 
+	pHealth = plyr->getHealth();
+	pHealthMax = plyr->getMaxHealth();
+	pMagic = plyr->getMagicPower();
+	pMagicMax = plyr->getMagicPowerMax();
+	
+	for (int i = 0; i < HUD_WEAPONS_ROWS; i++) // saves the 'WIN' number of the weapons the player had when leaving the scene.
+	{
+		if (plyr->getWeapon(i) != nullptr)
+			pWeapons.push_back(plyr->getWeapon(i)->getWIN());
+	}
+
 	newScene = GameplayScene::createScene(); // creates the gameplay scene.
 	// ((MSQ_GameplayScene *)newScene)->plyr->setHealth(plyr->getHealth());
-	
-
 
 	// if a scene transition is used, the trnansition must finish before the program allows user input, BUT if this happens then the game will start processing things before the player can actually do anything.
 	// director->replaceScene(TransitionFadeBL::create(1.0F, newScene)); // replaces the scene for the director, and does a transition.
 	director->replaceScene(newScene); // replaces the scene without a transition.
-
-	((MSQ_GameplayScene *)newScene)->plyr->giveWeapon(plyr->getWeapon1()->getWIN());
-	((MSQ_GameplayScene *)newScene)->plyr->giveWeapon(plyr->getWeapon2()->getWIN());
-	((MSQ_GameplayScene *)newScene)->plyr->giveWeapon(plyr->getWeapon3()->getWIN());
 
 	switchingScenes = true; // becomes 'true' so that scene switches don't overlay one another.
 }
@@ -539,7 +582,15 @@ void MSQ_GameplayScene::switchArea(std::string & fileName)
 void MSQ_GameplayScene::exitGame()
 {
 	areasVisited.clear(); // removes the 'memory' of visited areas.
-	// TODO: switch back to menu.
+
+	// removes static information.
+	pHealth = -1;
+	pHealthMax = -1;
+	pMagic = -1;
+	pMagicMax = -1;
+	pWeapons.clear();
+
+	spawnPoint = 0;
 }
 
 // runs collision tests.
@@ -569,16 +620,29 @@ void MSQ_GameplayScene::playerTileCollisions()
 
 	float compAngle = 60.0F; // the angle used to check the player's position relative to the tile, in degrees.
 
+	bool platformBelow = false;
+
 	if(debug == false)
 		plyr->setAntiGravity(false); // the player is now affected by gravity. If the player is on a tile, gravity is turned off.
 	
 	plyr->cancelUp = false;
 	plyr->cancelDown = false;
 	plyr->cancelLeft = false;
-	plyr->cancelRight = false;
+	plyr->cancelRight = false;;
 
 	for (int i = 0; i < sceneArea->getAreaTiles()->size(); i++)
 	{
+		// checks if its close enough for collision checks.
+		if (abs(sceneArea->getAreaTiles()->at(i)->getPosition().x - plyr->getPosition().x) > winSize.width / 1.80F || abs(sceneArea->getAreaTiles()->at(i)->getPosition().y - plyr->getPosition().y) > winSize.height / 1.80F)
+		{
+			sceneArea->getAreaTiles()->at(i)->onScreen = false;
+			continue;
+		}
+		else
+		{
+			sceneArea->getAreaTiles()->at(i)->onScreen = true;
+		}
+
 		if (entity::Entity::collision(plyr, sceneArea->getAreaTiles()->at(i))) // if collision has happened, the program doesn't continue to check.
 		{
 			tile = sceneArea->getAreaTiles()->at(i); // saves the tile the player has collided with.
@@ -657,17 +721,16 @@ void MSQ_GameplayScene::playerTileCollisions()
 				}
 				plyr->zeroVelocityX();
 
-
-
 			}
 			// if the player is at an angle greater than 45.0F, the player is on top or below the platform.
 			else if (abs(umath::radiansToDegrees(theta)) >= compAngle)
 			{
+				std::cout << "(" << plyr->getVelocity().x << ", " << plyr->getVelocity().y << ")" << std::endl;
+				std::cout << std::endl;
 				if (distVec.y <= 0.0F)
 				{
 					
-					plyr->cancelUp = true;
-					plyr->setPositionY(tile->getPositionY() - abs(minDistVec.y));
+					plyr->setPositionY(tile->getPositionY() - abs(minDistVec.y) - 10.0F);
 
 					if(debug == false)
 						plyr->setAntiGravity(false);
@@ -682,6 +745,7 @@ void MSQ_GameplayScene::playerTileCollisions()
 						plyr->setAntiGravity(true);
 				}
 
+				platformBelow = true;
 				plyr->zeroVelocityY();
 			}
 
@@ -693,6 +757,9 @@ void MSQ_GameplayScene::playerTileCollisions()
 		
 		}
 	}
+
+	if (platformBelow == true)
+		canJump = true;
 }
 
 // collisions between enemies and tiles
@@ -737,6 +804,17 @@ void MSQ_GameplayScene::playerEnemyCollisions()
 	// entity::Enemy * enemy; // saves a pointer to the 
 	for each(entity::Enemy * enemy in *sceneArea->getAreaEnemies())
 	{
+		// checks if its close enough for collision checks.
+		if (abs(enemy->getPosition().x - plyr->getPosition().x) > 768 || abs(enemy->getPosition().y - plyr->getPosition().y) > 768)
+		{
+			enemy->onScreen = false;
+			continue;
+		}
+		else
+		{
+			enemy->onScreen = true;
+		}
+
 		if (entity::Entity::collision(plyr, enemy)) // checks for collision
 		{
 			// gets the primitives that collided with one another.
@@ -772,6 +850,18 @@ void MSQ_GameplayScene::weaponEnemyCollisions()
 		if (sceneEnemies->at(i) == nullptr)
 			continue;
 
+
+		// checks if its close enough for collision checks.
+		if (abs(sceneEnemies->at(i)->getPosition().x - plyr->getPosition().x) > winSize.width / 1.80F  || abs(sceneEnemies->at(i)->getPosition().y - plyr->getPosition().y) > winSize.height / 1.80F)
+		{
+			sceneEnemies->at(i)->onScreen = false;
+			continue;
+		}
+		else
+		{
+			sceneEnemies->at(i)->onScreen = true;
+		}
+
 		entity::Enemy * emy = sceneEnemies->at(i);
 
 		// so essenially, a problem with the weapon collisions is that they would be based off the weapon's sprite instead of the player's sprite under a normal function call.
@@ -806,7 +896,10 @@ void MSQ_GameplayScene::weaponEnemyCollisions()
 void MSQ_GameplayScene::update(float deltaTime)
 {
 	// std::cout << "PLYR: MASS = " << plyr->getMass() << " FOR"
-	std::cout << "(" << plyr->getVelocity().x << ", " << plyr->getVelocity().y << ") " << "\n" << std::endl;
+	// std::cout << "(" << plyr->getVelocity().x << ", " << plyr->getVelocity().y << ") " << "\n" << std::endl;
+	static float playerFallTime = 0.0F; // how long the player has been falling for.
+	const float playerFallTimeMax = 5.0F; // how long the player should fall before getting back to the spawn point.
+
 
 	float d_movespeed = 300.0F; // the movement speed of the player (when debug is on).
 	float offset = 0.0F; // used to help with repositioning HUD assets.
@@ -825,7 +918,20 @@ void MSQ_GameplayScene::update(float deltaTime)
 	else if (plyr->moveDown && !plyr->cancelDown) // moves the player down.
 	{
 		plyr->setPositionY(plyr->getPositionY() - d_movespeed * deltaTime);
+
 	}
+
+	if (plyr->moveLeft == false && plyr->moveRight == false && plyr->jump == false)
+	{
+		if (plyr->getCurrentAnimation() != nullptr)
+		{
+			if (plyr->getCurrentAnimation()->getTag() != 2)
+			{
+				plyr->runAction(2);
+			}
+		}
+	}
+
 
 	if (plyr->moveLeft && !plyr->cancelLeft) // moving left
 	{
@@ -836,6 +942,13 @@ void MSQ_GameplayScene::update(float deltaTime)
 			plyr->setPositionX(plyr->getPositionX() - d_movespeed * deltaTime);
 		else
 			plyr->addForce(plyr->getMoveForceX() * -1, 0.0F);
+
+		if (plyr->getCurrentAnimation()->getTag() != 4)
+		{
+			plyrAction = true;
+			pAction = 4;
+		}
+
 	}
 	else if (plyr->moveRight && !plyr->cancelRight) // moving right
 	{
@@ -847,16 +960,37 @@ void MSQ_GameplayScene::update(float deltaTime)
 		else // if debug is off, the player is given force to move.
 			plyr->addForce(plyr->getMoveForceX(), 0.0F);
 
+		if (plyr->getCurrentAnimation()->getTag() != 4)
+		{
+			plyrAction = true;
+			pAction = 4;
+		}
+	}
+	else
+	{
+		if (plyr->getCurrentAnimation()->getTag() != 2) // return to idle.
+		{
+			pAction = true;
+			plyr->runAction(2);
+		}
 	}
 	
-	if (plyr->jump)
+	if (plyr->jump && canJump)
 	{
 		// plyr->zeroVelocityY();
 		// plyr->setPositionY(plyr->getPositionY());
 		plyr->addJumpForce();
 		plyr->jump = false;
+		canJump = false;
+		plyrAction = true;
+		pAction = 5;
 
 	}
+	else if (plyr->jump && !canJump)
+	{
+		plyr->jump = false;
+	}
+
 	if (plyrAction) // animation should be played
 	{
 		switch (pAction)
@@ -865,6 +999,12 @@ void MSQ_GameplayScene::update(float deltaTime)
 
 			plyr->useWeapon();
 			pAction = 0;
+			break;
+
+		default:
+			plyr->runAction(pAction);
+			pAction = 0;
+			break;
 		}
 
 		plyrAction = false;
@@ -969,5 +1109,20 @@ void MSQ_GameplayScene::update(float deltaTime)
 
 	if (enable_hud != hud->isVisible()) // if the hud's visibility is wrong, it's set accordingly.
 		hud->setVisible(enable_hud);
+
+	if (plyr->getAntiGravity() == false) // if the player is falling
+	{
+		playerFallTime += deltaTime;
+
+		if (playerFallTime >= playerFallTimeMax)
+		{
+			plyr->setPosition(sceneArea->getSpawn(spawnPoint));
+			playerFallTime = 0.0F;
+		}
+	}
+	else
+	{
+		playerFallTime = 0.0F;
+	}
 
 }

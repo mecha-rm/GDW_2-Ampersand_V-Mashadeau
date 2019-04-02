@@ -61,33 +61,95 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 0.0F, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY())));
 	animations.push_back(tempAnimate);
 
+	// currentAnimation = tempAnimate;
+
+	// idle animation (2): 5 frames
+	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, true, 0.2F, false, true);
+	tempAnimate->setName("idle");
+	tempAnimate->setTag(2);
+
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 0.0F, 0.0F + frameSize.getMaxY() * 1.0f, frameSize.getMaxX(), frameSize.getMaxY()), 20.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 1.0F, 0.0F + frameSize.getMaxY() * 1.0f, frameSize.getMaxX(), frameSize.getMaxY()), 0.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 2.0F, 0.0F + frameSize.getMaxY() * 1.0f, frameSize.getMaxX(), frameSize.getMaxY()), 0.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 3.0F, 0.0F + frameSize.getMaxY() * 1.0f, frameSize.getMaxX(), frameSize.getMaxY()), 0.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 4.0F, 0.0F + frameSize.getMaxY() * 1.0f, frameSize.getMaxX(), frameSize.getMaxY()), 0.0F));
+																															 
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 3.0F, 0.0F + frameSize.getMaxY() * 1.0f, frameSize.getMaxX(), frameSize.getMaxY()), 0.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 3.0F, 0.0F + frameSize.getMaxY() * 1.0f, frameSize.getMaxX(), frameSize.getMaxY()), 0.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 2.0F, 0.0F + frameSize.getMaxY() * 1.0f, frameSize.getMaxX(), frameSize.getMaxY()), 0.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 1.0F, 0.0F + frameSize.getMaxY() * 1.0f, frameSize.getMaxX(), frameSize.getMaxY()), 0.0F));
+
+	animations.push_back(tempAnimate);
 	currentAnimation = tempAnimate;
 
-	// idel animation (2): 5 frames
-	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, true, 0, false, true);
+	// death (3): 17 frames
+	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, false, 0, true, false);
+	tempAnimate->setName("death");
+	tempAnimate->setTag(3);
+
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 0.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 1.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 2.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 3.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 4.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 5.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 6.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 7.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 8.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 9.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 10.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 11.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
 
 
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 12.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 13.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 14.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 15.0F, 0.0F + frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
 
-	// attack animation 1 (tag = 6) : 3 frames
-	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, false, 0.0F, true, false); // new animation
-	tempAnimate->setTag(6); // sets the tag
-	
+	animations.push_back(tempAnimate);
+
+	// run (4): 7 frames
+	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, true, 0.1F, true, false); // new animation
+	tempAnimate->setName("run");
+	tempAnimate->setTag(4); // sets the tag
+
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 0.0F, 0.0F + frameSize.getMaxY() * 3.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 1.0F, 0.0F + frameSize.getMaxY() * 3.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 2.0F, 0.0F + frameSize.getMaxY() * 3.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 3.0F, 0.0F + frameSize.getMaxY() * 3.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 4.0F, 0.0F + frameSize.getMaxY() * 3.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 5.0F, 0.0F + frameSize.getMaxY() * 3.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 6.0F, 0.0F + frameSize.getMaxY() * 3.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.0F));
+
+	animations.push_back(tempAnimate);
+
+	// jump(5)
+	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, false, 0.0F, false, false); // new animation
+	tempAnimate->setName("jump");
+	tempAnimate->setTag(5);
+
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 0.0F, 0.0F + frameSize.getMaxY() * 4.0F, frameSize.getMaxX(), frameSize.getMaxY()), 2.0F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 1.0F, 0.0F + frameSize.getMaxY() * 4.0F, frameSize.getMaxX(), frameSize.getMaxY()), 1.5F));
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 2.0F, 0.0F + frameSize.getMaxY() * 4.0F, frameSize.getMaxX(), frameSize.getMaxY()), 2.0F));
+
+	animations.push_back(tempAnimate);
+
+	// attack (6):
 	// tempAnimate->getFrames().at(getFrames()->)
-	
-	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 1, 0.0F + frameSize.getMaxY() * 5, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 1
-	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 2, 0.0F + frameSize.getMaxY() * 5, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 2
-	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 3, 0.0F + frameSize.getMaxY() * 5, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 3
+	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, false, 0.5F, true, false); // new animation
+	tempAnimate->setName("attack");
+	tempAnimate->setTag(6);
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 1, 0.0F + frameSize.getMaxY() * 5.0F, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 1
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 2, 0.0F + frameSize.getMaxY() * 5.0F, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 2
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 3, 0.0F + frameSize.getMaxY() * 5.0F, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 3
 	// tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX(), 0.0F + frameSize.getMaxY(), frameSize.getMaxX(), frameSize.getMaxY())));
 	animations.push_back(tempAnimate);
-	
-	// runAction(0);
-
-	// currentAnimation->runAnimation();
 
 	for (OOP::Primitive * prim : collisionBodies)
 		sprite->addChild(prim->getPrimitive());
-
-	
 }
 
 
@@ -108,6 +170,7 @@ entity::Player::~Player() {}
 */
 void entity::Player::runAction(unsigned int ani)
 {
+	getCurrentAnimation()->stopAnimation();
 	runAnimationByTag(ani);
 
 	if (ani == 6 || ani == 7 || ani == 8)
@@ -343,48 +406,50 @@ void entity::Player::useWeapon()
 	if (currentWeapon == nullptr)
 		return;
 
-	switch (currentWeapon->getType()) // runs the action to use the we
-	{
-	case 1: // short-ranged.
-	default:
-		runAction(6);
-		break;
+	runAction(6);
 
-	case 2: // long-ranged
-		runAction(7);
+	//switch (currentWeapon->getType()) // runs the action to use the we
+	//{
+	//case 1: // short-ranged.
+	//default:
+	//	runAction(6);
+	//	break;
 
-		//switch (currentWeapon->getMagic_T()) // generates a projectile if applicable.
-		//{
-		//case magic::null:
-		//default:
-		//	proj = new entity::Projectile(11, this);
-		//	break;
-		//case magic::shadow:
-		//	proj = new entity::Projectile(14, this);
-		//	break;
-		//case magic::fire:
-		//	proj = new entity::Projectile(17, this);
-		//	break;
-		//case magic::water:
-		//	proj = new entity::Projectile(20, this);
-		//		break;
-		//case magic::earth:
-		//	proj = new entity::Projectile(23, this);
-		//	break;
-		//case magic::air:
-		//	proj = new entity::Projectile(26, this);
-		//	break;
-		//}
+	//case 2: // long-ranged
+	//	runAction(7);
 
-		//proj->getSprite()->setVisible(true);
-		//projectiles.push_back(proj); 
+	//	//switch (currentWeapon->getMagic_T()) // generates a projectile if applicable.
+	//	//{
+	//	//case magic::null:
+	//	//default:
+	//	//	proj = new entity::Projectile(11, this);
+	//	//	break;
+	//	//case magic::shadow:
+	//	//	proj = new entity::Projectile(14, this);
+	//	//	break;
+	//	//case magic::fire:
+	//	//	proj = new entity::Projectile(17, this);
+	//	//	break;
+	//	//case magic::water:
+	//	//	proj = new entity::Projectile(20, this);
+	//	//		break;
+	//	//case magic::earth:
+	//	//	proj = new entity::Projectile(23, this);
+	//	//	break;
+	//	//case magic::air:
+	//	//	proj = new entity::Projectile(26, this);
+	//	//	break;
+	//	//}
 
-		break;
+	//	//proj->getSprite()->setVisible(true);
+	//	//projectiles.push_back(proj); 
 
-	case 3: // other
-		runAction(8);
-		break;
-	}
+	//	break;
+
+	//case 3: // other
+	//	runAction(8);
+	//	break;
+	//}
 }
 
 // adds to the player's current health.
@@ -464,7 +529,7 @@ void entity::Player::update(float deltaTime)
 		switch (currentAnimation->getTag()) // checks the tag of the animation that just finished.
 		{
 		case 6: // attack 1
-			runAction(0); // switches back to idle once animation is done.
+			runAction(2); // switches back to idle once animation is done.
 			currentWeapon->disableCollisionBodies(); // turns off the weapon collisions.
 			break;
 		}

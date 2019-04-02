@@ -603,6 +603,9 @@ void world::Area::update(float deltaTime)
 	// updates the scene tiles
 	for (int i = 0; i < areaTiles.size(); i++)
 	{
+		if (areaTiles.at(i)->onScreen == false) // not on screen, so don't update.
+			continue;
+
 		areaTiles.at(i)->update(deltaTime);
 
 		if (areaTiles[i]->getHealth() <= 0.0F) // if the tile has no health, it should be deleted.
@@ -620,6 +623,9 @@ void world::Area::update(float deltaTime)
 	// updates the enemies
 	for (int i = 0; i < areaEnemies.size(); i++)
 	{
+		if (areaEnemies.at(i)->onScreen == false) // not on screen, so don't update.
+			continue;
+
 		areaEnemies[i]->update(deltaTime);
 		
 		if (areaEnemies[i]->getHealth() <= 0.0F) // if the enemy has lost all of its health.

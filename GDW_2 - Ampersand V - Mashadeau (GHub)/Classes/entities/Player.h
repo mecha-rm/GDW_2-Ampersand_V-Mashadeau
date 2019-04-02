@@ -76,11 +76,6 @@ namespace entity
 
 		// gives the player a weapon, returning the WIN of the weapon replaced. If no weapon was replaced, then a -1 is returned.
 		int giveWeapon(unsigned int WIN);
-		
-		// gives the player a new weapon. If the player has all of their weapon slots filled, it replaces the current weapon.
-		// the weapon that got prepalced is returned. If no weapon was replaced, then a nullptr is returned.
-		// gives the player a weapon, returning the WIN of the weapon replaced. If no weapon was replaced, then a -1 is returned.
-		 int giveWeapon(entity::Weapon * newWeapon);
 
 		// removes a weapon from the player. Returns the 'WIN' number of the removed weapon.
 		// [0] = current, [1] = weapon 1, [2] = weapon 2, [3] = weapon 3
@@ -103,6 +98,10 @@ namespace entity
 
 		// gets the maximum magic power the player has.
 		float getMagicPowerMax();
+
+		// sets the maximum magic power, which cannot be 0. The current amount of magic is adjusted accordingly.
+		// if 'changeCurrent' is true, then the current amount of magic power is changed accordingly.
+		void setMagicPowerMax(float mpm, bool changeCurrent);
 
 		// adds to the magic power of the player. If this goes beyond the maximum magic power, it's set to max. If it goes below 0, it's set to 0.
 		void addMagicPower(float mp);
@@ -130,7 +129,10 @@ namespace entity
 
 	private:
 
-		
+		// gives the player a new weapon. If the player has all of their weapon slots filled, it replaces the current weapon.
+		// the weapon that got prepalced is returned. If no weapon was replaced, then a nullptr is returned.
+		// gives the player a weapon, returning the WIN of the weapon replaced. If no weapon was replaced, then a -1 is returned.
+		int giveWeapon(entity::Weapon * newWeapon);
 
 		std::vector<entity::Weapon *> weapons; // saves all of the weapons the player has.
 
@@ -160,10 +162,6 @@ namespace entity
 		float mprTimerMax = 5.0F; // how long it takes for the player's magic to regenerate.
 
 	protected:
-
-		// sets the maximum magic power, which cannot be 0. The current amount of magic is adjusted accordingly.
-		// if 'changeCurrent' is true, then the current amount of magic power is changed accordingly.
-		void setMagicPowerMax(float mpm, bool changeCurrent);
 
 	};
 }

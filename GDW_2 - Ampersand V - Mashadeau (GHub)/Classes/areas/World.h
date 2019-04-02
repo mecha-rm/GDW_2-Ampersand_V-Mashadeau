@@ -3,6 +3,12 @@
 
 #include "areas/Area.h"
 
+#include "areas/AIN_B/AIN_B00.h";
+#include "areas/AIN_B/AIN_B01.h";
+
+#include "areas/AIN_C/AIN_C00.h";
+#include "areas/AIN_C/AIN_C01.h"
+
 #include "areas/AIN_F/AIN_F00.h"
 #include "areas/AIN_F/AIN_F01.h"
 

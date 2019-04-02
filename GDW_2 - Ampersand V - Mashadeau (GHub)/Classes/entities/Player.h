@@ -127,6 +127,9 @@ namespace entity
 		bool cancelLeft = false;
 		bool cancelRight = false;
 
+		int jumpCD = 0;
+		const int jumpFull = 5;
+
 	private:
 
 		// gives the player a new weapon. If the player has all of their weapon slots filled, it replaces the current weapon.
@@ -154,12 +157,12 @@ namespace entity
 		// bool hpRegen = false; // becomes 'true' when health should regenerate.
 		float hpAdd = 5.0F; // adds to the player's HP when the timer runs out.
 		float hprTimer = 0.0F; // counts down to 0 from hprTimerMax. When it hits 0, the playe gets back some health.
-		float hprTimerMax = 5.0F; // how long it takes for the player's health to regenerate.
+		float hprTimerMax = 8.0F; // how long it takes for the player's health to regenerate.
 
 		// bool mpRegen = false; // becomes 'true' when magic should regenerate.
 		float mpAdd = 5.0F; // adds to the player's MP when the timer runs out.
 		float mprTimer = 0.0F; // counts down to 0 from mprTimerMax. When it hits 0, the playe gets back some health.
-		float mprTimerMax = 5.0F; // how long it takes for the player's magic to regenerate.
+		float mprTimerMax = 8.0F; // how long it takes for the player's magic to regenerate.
 
 	protected:
 

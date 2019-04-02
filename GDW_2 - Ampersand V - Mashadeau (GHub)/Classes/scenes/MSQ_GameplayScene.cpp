@@ -3,7 +3,8 @@
 #include <iostream>
 
 // initalizing static variables
-std::string MSQ_GameplayScene::areaName = "AIN_B00"; // debug area
+std::string MSQ_GameplayScene::areaName = "AIN_B00";
+const std::string MSQ_GameplayScene::DEFAULT_AREA = "AIN_B00_0"; 
 int MSQ_GameplayScene::spawnPoint = 0; // spawn point 0
 
 // used for saving information between scenes
@@ -725,8 +726,6 @@ void MSQ_GameplayScene::playerTileCollisions()
 			// if the player is at an angle greater than 45.0F, the player is on top or below the platform.
 			else if (abs(umath::radiansToDegrees(theta)) >= compAngle)
 			{
-				std::cout << "(" << plyr->getVelocity().x << ", " << plyr->getVelocity().y << ")" << std::endl;
-				std::cout << std::endl;
 				if (distVec.y <= 0.0F)
 				{
 					
@@ -985,6 +984,7 @@ void MSQ_GameplayScene::update(float deltaTime)
 		plyrAction = true;
 		pAction = 5;
 
+		
 	}
 	else if (plyr->jump && !canJump)
 	{
@@ -1117,12 +1117,20 @@ void MSQ_GameplayScene::update(float deltaTime)
 		if (playerFallTime >= playerFallTimeMax)
 		{
 			plyr->setPosition(sceneArea->getSpawn(spawnPoint));
+			plyr->addHealth(-20.0F);
 			playerFallTime = 0.0F;
+			plyr->gotHit();
 		}
 	}
 	else
 	{
 		playerFallTime = 0.0F;
+	}
+
+	if (plyr->getHealth() == 0.0F)
+	{
+		std::string tempStr = DEFAULT_AREA;
+		switchArea(tempStr);
 	}
 
 }

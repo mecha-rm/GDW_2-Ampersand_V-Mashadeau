@@ -37,19 +37,19 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	// setMass(1.0F);
 	
 	// Final game gravity?
-	setJumpForce(13000.0F);
+	setJumpForce(35000.0F);
 	setDecelerate(Vec2(getDecelerate().x, 0.99F));
 	setMass(0.5F);
 
 	setMaxHealth(100.0F);
-	setHealth(getMaxHealth());
+	setHealth(100.0F);
 	inviTimeMax = 3.0F;
 
 	setMagicPowerMax(100.0F, false);
 	setMagicPower(getMagicPowerMax());
 
 	currentWeapon = new entity::Weapon(0, this);
-	weapon1 = new entity::Weapon(1, this);
+	// weapon1 = new entity::Weapon(1, this);
 	weapons.push_back(currentWeapon);
 	weapons.push_back(weapon1);
 	weapons.push_back(weapon2);

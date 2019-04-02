@@ -74,6 +74,7 @@ public:
 	Size winSize; // the window size.
 	bool canJump = true;
 
+
 private:
 
 	// collision between the entity and all tiles.
@@ -111,6 +112,8 @@ private:
 	int startingSpawn = 0;
 
 	static std::string areaName; // saves the current area of the scene. This will be used for loading and unloading areas. This is only used upon scene initialization.
+	static const std::string DEFAULT_AREA;
+	
 	static int spawnPoint; // the spawn point used upon entering the area. This is only used upon scene initialization.
 	static std::vector<std::string> areasVisited; // the ares that the player has visited.
 

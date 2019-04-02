@@ -50,6 +50,7 @@ entity::Player::Player() : Active("images/PLR_000.png")
 
 	currentWeapon = new entity::Weapon(0, this);
 	weapon1 = new entity::Weapon(1, this);
+	weapon2 = new entity::Weapon(2, this);
 	weapons.push_back(currentWeapon);
 	weapons.push_back(weapon1);
 	weapons.push_back(weapon2);

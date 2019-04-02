@@ -15,7 +15,7 @@ int MSQ_GameplayScene::pMagicMax = -1;
 std::vector<int> MSQ_GameplayScene::pWeapons;
 
 
-bool MSQ_GameplayScene::debug = true;
+bool MSQ_GameplayScene::debug = false;
 bool MSQ_GameplayScene::enable_hud = true; // enables hud view
 
 std::vector<std::string> MSQ_GameplayScene::areasVisited;
@@ -27,7 +27,7 @@ void MSQ_GameplayScene::preloadAudio() { //This thing is called to preload all t
 	//Music
 	
 	//Effects
-	AudioLibrary::MSQ_whoosh0.preload();
+	AudioLibrary::MSQ_sword.preload();
 }
 
 Scene * MSQ_GameplayScene::createScene()
@@ -63,6 +63,9 @@ bool MSQ_GameplayScene::init()
 
 	//Init the Sprites
 	initSprites();
+
+	// Initialize the pause menu
+	// initPauseMenu();
 
 	// Allows for the update() function to be called by cocos
 	this->scheduleUpdate();
@@ -315,8 +318,6 @@ void MSQ_GameplayScene::initSprites()
 	this->addChild(grid->getPrimitive()); // adds grid to drawList
 	gridOffset = grid->getPosition() - getDefaultCamera()->getPosition();
 
-	// Initialize the pause menu
-	initPauseMenu();
 
 	// setting the camera if it's activated.
 	if (ENABLE_CAMERA)
@@ -338,26 +339,7 @@ void MSQ_GameplayScene::initSprites()
 }
 
 // initializes pause menu; currently does nothing.
-void MSQ_GameplayScene::initPauseMenu() {
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-	auto label0 = Label::createWithTTF("PRESS ENTER TO RESUME", "fonts/BRITANIC.TTF", 24);
-	label0->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 160.0f));
-	this->addChild(label0, 1);
-
-	auto label1 = Label::createWithTTF("PRESS ESCAPE TO EXIT TO MAIN MENU", "fonts/BRITANIC.TTF", 24);
-	label1->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 200.0f));
-	this->addChild(label1, 1);
-
-	auto label2 = Label::createWithTTF("-GAME PAUSED-", "fonts/BRITANIC.TTF", 24);
-	label2->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
-	this->addChild(label2, 1);
-	
-	label0->setVisible(pauseBool);
-	label1->setVisible(pauseBool);
-	label2->setVisible(pauseBool);
-}
+void MSQ_GameplayScene::initPauseMenu() {}
 
 
 //// CALLBACKS /////////////////////////////////////////////////////////////
@@ -393,50 +375,49 @@ void MSQ_GameplayScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event * eve
 {
 	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event); // casting as a keyboard event
 
-	if (!pauseBool) {
-		switch (keyCode)
-		{
-		case EventKeyboard::KeyCode::KEY_UP_ARROW:
-			if (debug)
-				moveUp = true; // tells the program to move the player up.
-	
-			break;
-	
-		case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-			if (debug)
-				moveDown = true; // tells the player to go down.
-			break;
-	
-		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-			moveLeft = true;
-			break;
-	
-		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-			moveRight = true;
-			break;
-		case EventKeyboard::KeyCode::KEY_W:
-			moveUp = true;
-			break;
-	
-		case EventKeyboard::KeyCode::KEY_S:
-			moveDown = true;
-			break;
-	
-		case EventKeyboard::KeyCode::KEY_A:
-			moveLeft = true;
-			break;
-	
-		case EventKeyboard::KeyCode::KEY_D:
-			moveRight = true;
-			break;
-	
-		case EventKeyboard::KeyCode::KEY_F:
-			pAction = 6;
-			plyrAction = true;
-			AudioLibrary::MSQ_whoosh0.play();
-			break;
-		}
+	switch (keyCode)
+	{
+	case EventKeyboard::KeyCode::KEY_UP_ARROW:
+		if (debug)
+			plyr->moveUp = true; // tells the program to move the player up.
+
+		break;
+
+	case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+		if (debug)
+			plyr->moveDown = true; // tells the player to go down.
+		break;
+
+	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+		plyr->moveLeft = true;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+		plyr->moveRight = true;
+		break;
+	case EventKeyboard::KeyCode::KEY_W:
+		plyr->moveUp = true;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_S:
+		plyr->moveDown = true;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_A:
+		plyr->moveLeft = true;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_D:
+		plyr->moveRight = true;
+		break;
+
+	case EventKeyboard::KeyCode::KEY_F:
+		pAction = 6;
+		plyrAction = true;
+		AudioLibrary::MSQ_sword.play();
+		break;
 	}
+
 	// change last parameter to check for key codes
 	// if(keyCode == EventKeyboard::KeyCode::KEY_0)
 }
@@ -445,89 +426,73 @@ void MSQ_GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * ev
 {
 	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event); // casting as a keyboard event
 	
-	//Normal controls
-	if (!pauseBool) {
-		switch (keyCode)
-		{
-		case EventKeyboard::KeyCode::KEY_X: // turns debug mode on/off.
-			debug = !debug;
-			break;
+	switch (keyCode)
+	{
+	case EventKeyboard::KeyCode::KEY_X: // turns debug mode on/off.
+		// debug = !debug;
+		break;
 
-		case EventKeyboard::KeyCode::KEY_H: // toggles on/off hud.
-			enable_hud = !enable_hud;
-			break;
+	case EventKeyboard::KeyCode::KEY_H: // toggles on/off hud.
+		enable_hud = !enable_hud;
+		break;
 
-			moveUp = false;
-		case EventKeyboard::KeyCode::KEY_UP_ARROW:
+	case EventKeyboard::KeyCode::KEY_UP_ARROW:
+		plyr->moveUp = false;
 
-			if (!debug) // if debug is off, then the jump is turned on upon 'UP' being let go.
-				jump = true;
-			break;
+		if(!debug) // if debug is off, then the jump is turned on upon 'UP' being let go.
+			plyr->jump = true;
 
-		case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-			moveDown = false;
-			break;
+		break;
 
-		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-			moveLeft = false;
-			break;
+	case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+		plyr->moveDown = false;
+		break;
 
-		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-			moveRight = false;
-			break;
+	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+		plyr->moveLeft = false;
+		break;
 
-		case EventKeyboard::KeyCode::KEY_SPACE:
-			jump = true;
-			break;
-		case EventKeyboard::KeyCode::KEY_W:
-			break;
-			moveUp = false;
+	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+		plyr->moveRight = false;
+		break;
 
-		case EventKeyboard::KeyCode::KEY_S:
-			moveDown = false;
-			break;
+	case EventKeyboard::KeyCode::KEY_SPACE:
+		plyr->jump = true;
+		break;
+	case EventKeyboard::KeyCode::KEY_W:
+		plyr->moveUp = false;
+		break;
 
-		case EventKeyboard::KeyCode::KEY_A:
-			moveLeft = false;
-			break;
+	case EventKeyboard::KeyCode::KEY_S:
+		plyr->moveDown = false;
+		break;
 
-		case EventKeyboard::KeyCode::KEY_D:
-			moveRight = false;
-			break;
-		case EventKeyboard::KeyCode::KEY_F: // moved to key down.
-			//attack
-			// pAction = 6;
-			// plyrAction = true;
-			// AudioLibrary::MSQ_sword.play();
+	case EventKeyboard::KeyCode::KEY_A:
+		plyr->moveLeft = false;
+		break;
 
-			break;
-		case EventKeyboard::KeyCode::KEY_1:
-			//item 1
-			break;
-		case EventKeyboard::KeyCode::KEY_2:
-			//item 2
-			break;
-		case EventKeyboard::KeyCode::KEY_3:
-			//item 3
-			break;
-		case EventKeyboard::KeyCode::KEY_ESCAPE:
-			//menu
-			pauseBool = true;
-			break;
-		}
-	} else {
-	//Paused controls
-		switch (keyCode)
-		{
-		case EventKeyboard::KeyCode::KEY_ENTER:
-			pauseBool = false;
-			break;
-		case EventKeyboard::KeyCode::KEY_ESCAPE:
-			pauseBool = false;
-			//GO TO THE MAIN MENU
-			break;
-		}
-		//TODO: add quit to menu here
+	case EventKeyboard::KeyCode::KEY_D:
+		plyr->moveRight = false;
+		break;
+	case EventKeyboard::KeyCode::KEY_F: // moved to key down.
+		//attack
+		// pAction = 6;
+		// plyrAction = true;
+		// AudioLibrary::MSQ_sword.play();
+
+		break;
+	case EventKeyboard::KeyCode::KEY_1:
+		plyr->switchWeapon(1);
+		break;
+	case EventKeyboard::KeyCode::KEY_2:
+		plyr->switchWeapon(2);
+		break;
+	case EventKeyboard::KeyCode::KEY_3:
+		plyr->switchWeapon(3);
+		break;
+	case EventKeyboard::KeyCode::KEY_ESCAPE:
+		//menu
+		break;
 	}
 }
 
@@ -932,16 +897,16 @@ void MSQ_GameplayScene::update(float deltaTime)
 	// std::cout << "PLYR: MASS = " << plyr->getMass() << " FOR"
 	// std::cout << "(" << plyr->getVelocity().x << ", " << plyr->getVelocity().y << ") " << "\n" << std::endl;
 	static float playerFallTime = 0.0F; // how long the player has been falling for.
-	const float playerFallTimeMax = 5.0F; // how long the player should fall before getting back to the spawn point.
+	const float playerFallTimeMax = 6.5F; // how long the player should fall before getting back to the spawn point.
 
 
 	float d_movespeed = 300.0F; // the movement speed of the player (when debug is on).
 	float offset = 0.0F; // used to help with repositioning HUD assets.
 
-		float d_movespeed = 300.0F; // the movement speed of the player (when debug is on).
+	if (switchingScenes) // updates are no longer run if the scene is being switched.
+		return;
 
-		if (switchingScenes) // updates are no longer run if the scene is being switched.
-			return;
+	debugMode(); // called to change the settings if debug mode has been turned on/off.
 
 	// if the cancels are true, then the player can't move that given direction.
 
@@ -989,14 +954,10 @@ void MSQ_GameplayScene::update(float deltaTime)
 		if (plyr->getFlippedSpriteX() == true) // flips the sprite so that it's facing right (i.e. the default)
 			plyr->setFlippedSpriteX(false);
 
-		if (moveUp && !plyr->cancelUp) // moves the player up.
-		{
-			plyr->setPositionY(plyr->getPositionY() + d_movespeed * deltaTime);
-		}
-		else if (moveDown && !plyr->cancelDown) // moves the player down.
-		{
-			plyr->setPositionY(plyr->getPositionY() - d_movespeed * deltaTime);
-		}
+		if(debug) // if debug is on, then the player moves at a fixed speed.
+			plyr->setPositionX(plyr->getPositionX() + d_movespeed * deltaTime);
+		else // if debug is off, the player is given force to move.
+			plyr->addForce(plyr->getMoveForceX(), 0.0F);
 
 		if (plyr->getCurrentAnimation()->getTag() != 4)
 		{
@@ -1016,7 +977,7 @@ void MSQ_GameplayScene::update(float deltaTime)
 	if (plyr->jump && canJump)
 	{
 		// plyr->zeroVelocityY();
-		// plyr->setPositionY(plyr->getPositionY());
+		plyr->setPositionY(plyr->getPositionY() + 10.0F);
 		plyr->addJumpForce();
 		plyr->jump = false;
 		canJump = false;
@@ -1045,10 +1006,6 @@ void MSQ_GameplayScene::update(float deltaTime)
 			pAction = 0;
 			break;
 		}
-		else if (moveRight && !plyr->cancelRight) // moving right
-		{
-			if (plyr->getFlippedSpriteX() == true) // flips the sprite so that it's facing right (i.e. the default)
-				plyr->setFlippedSpriteX(false);
 
 		plyrAction = false;
 	}
@@ -1059,21 +1016,7 @@ void MSQ_GameplayScene::update(float deltaTime)
 	// updates the area the player is currently in. This update also updates the scene tiles, and enemies.
 	sceneArea->update(deltaTime);
 
-		if (jump)
-		{
-			plyr->zeroVelocityY();
-			plyr->setPositionY(plyr->getPositionY());
-			plyr->addJumpForce();
-			jump = false;
-		}
-		if (plyrAction) // animation should be played
-		{
-			switch (pAction)
-			{
-			case 6: // attack 1 animation.
-				plyr->runAction(pAction);
-				pAction = 0;
-			}
+	collisions();
 
 	// moves the hp bar, and updates it iwht the current amount of health the player has.
 	offset = hpBarRect.getMaxX() * (plyr->getHealth() / plyr->getMaxHealth()); // calculates the offset needed to reposition the newly sized hp bar.
@@ -1167,5 +1110,28 @@ void MSQ_GameplayScene::update(float deltaTime)
 	if (enable_hud != hud->isVisible()) // if the hud's visibility is wrong, it's set accordingly.
 		hud->setVisible(enable_hud);
 
+	if (plyr->getAntiGravity() == false) // if the player is falling
+	{
+		playerFallTime += deltaTime;
+
+		if (playerFallTime >= playerFallTimeMax)
+		{
+			plyr->setPosition(sceneArea->getSpawn(spawnPoint));
+			plyr->addHealth(-20.0F);
+			playerFallTime = 0.0F;
+			plyr->gotHit();
+		}
 	}
+	else
+	{
+		playerFallTime = 0.0F;
+	}
+
+	if (plyr->getHealth() == 0.0F)
+	{
+		plyr->setHealth(plyr->getMaxHealth() / 2);
+		std::string tempStr = DEFAULT_AREA;
+		switchArea(tempStr);
+	}
+
 }

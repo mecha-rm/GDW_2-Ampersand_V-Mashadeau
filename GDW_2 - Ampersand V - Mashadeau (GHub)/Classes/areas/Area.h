@@ -170,7 +170,7 @@ namespace world
 
 	private:
 		// float gravity = 100.0F; // the level of gravity in the area. This is too floaty.
-		float gravity = 600.0F; // final game gravity?
+		float gravity = 500.0F; // final game gravity?
 
 		std::string fileName; // the name of the file
 		std::fstream file; // the file itself

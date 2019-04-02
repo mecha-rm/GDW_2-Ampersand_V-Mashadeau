@@ -47,7 +47,7 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 
 		setMaxHealth(1.0F);
 		setHealth(getMaxHealth());
-		setAttackPower(55.0F);
+		setAttackPower(20.0F);
 
 		filePath = "images/enemies/EIN_101.png"; // sets the file path for the enemy.
 		frameSize = Rect(0.0F, 0.0F, 192.0F, 192.0F);

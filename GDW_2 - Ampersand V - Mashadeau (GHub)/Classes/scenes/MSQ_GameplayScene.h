@@ -168,8 +168,6 @@ private:
 	const int HUD_WEAPONS_ROWS = 4;
 	const int HUD_WEAPONS_COLS = 3;
 
-	bool pauseBool = false;
-
 protected:
 
 } GameplayScene;

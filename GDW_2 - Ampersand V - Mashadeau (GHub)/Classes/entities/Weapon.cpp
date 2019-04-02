@@ -37,8 +37,10 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 		setDamage(5.0F);
 		// setMagicUsage(10.0F);
 
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(167.0F, 130.0F), 75, 90, CLR_ATK));
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(152.0F, 63.0F), 63, 68, CLR_ATK));
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(187.0F, 71.0F), 37, 89, CLR_ATK));
+		
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(167.0F, 130.0F), 53, 68, CLR_ATK));
 		break;
 
@@ -53,6 +55,8 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 		setMagicType(magic::water);
 		setDamage(2.50);
 
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(147.0F, 130.0F), 75, 90, CLR_ATK));
+
 		break;
 
 	case 2: // WIN_002: staff of earth 
@@ -65,6 +69,8 @@ void entity::Weapon::createWeapon(unsigned int WIN)
 
 		setMagicType(magic::earth);
 		setDamage(2.50);
+
+		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(147.0F, 130.0F), 75, 90, CLR_ATK));
 		break;
 	case 3:
 		break;

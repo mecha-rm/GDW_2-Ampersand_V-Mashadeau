@@ -10,14 +10,17 @@ namespace entity
 		Active(std::string texture = "");
 		~Active();
 		
-		// sets the entity's health
-		void setHealth(float health);
-
 		// gets the entity's health
 		float getHealth() const;
 
+		// sets the entity's health
+		void setHealth(float health);
+
 		// gets the entity's maximum health;
 		float getMaxHealth() const;
+
+		// sets the maximum health of the entity
+		void setMaxHealth(float maxHealth);
 		
 		// tells the program that the active entity has taken damage. Invincibility frames are started when this occures.
 		virtual void gotHit();
@@ -75,8 +78,6 @@ namespace entity
 		float jump = 0.0F; // the fore applied when an active entity jumps
 
 	protected:
-		// sets the maximum health of the entity
-		void setMaxHealth(float maxHealth);
 
 		// sets the entity's attack power
 		void setAttackPower(float attackPower);

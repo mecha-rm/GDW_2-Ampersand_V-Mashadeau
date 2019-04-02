@@ -269,7 +269,11 @@ void OOP::SpriteSheetAnimation::setTag(int tag) { this->tag = tag; }
 bool OOP::SpriteSheetAnimation::isRunning() { return running; }
 
 // starts the animation from the beginning.
-void OOP::SpriteSheetAnimation::runAnimation() { running = true; }
+void OOP::SpriteSheetAnimation::runAnimation()
+{
+	running = true;
+	spriteSheet->setTextureRect(frames.at(0)->getRect());
+}
 
 // stops an animation. This will cause the animation to return to its start.
 void OOP::SpriteSheetAnimation::stopAnimation(bool restoreF1)

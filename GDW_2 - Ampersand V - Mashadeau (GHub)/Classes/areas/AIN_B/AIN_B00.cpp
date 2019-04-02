@@ -18,7 +18,7 @@ world::AIN_B00::AIN_B00() : Area("")
 	// setting all of the exits. Format: AIN_###_#
 	// - the last digit (after the second underscore) determines what spawn point to use.
 	exit0 = "AIN_B01_0"; //AIN_F00_0
-	exit1 = ""; //Castle 
+	exit1 = "AIN_A00_0"; //Castle 
 	exit2 = "";
 	exit3 = "";
 	exit4 = "";

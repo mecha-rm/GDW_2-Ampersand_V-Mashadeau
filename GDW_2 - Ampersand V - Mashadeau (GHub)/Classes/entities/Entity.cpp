@@ -2,7 +2,7 @@
 #include "Utilities.h"
 
 float * entity::Entity::areaGravity = new float(1.0F); // the default level of gravity for all entities.
-bool entity::Entity::shapesVisible = true; // change this to 'false' to hide all collision shapes from view.
+bool entity::Entity::shapesVisible = false; // change this to 'false' to hide all collision shapes from view.
 
 const Color4F entity::Entity::CLR_ATK = Color4F::RED; // colour used for attacking collision shapes (i.e. these deal damage)
 const Color4F entity::Entity::CLR_DEF = Color4F::BLUE; // colour used for defensive collision shapes (i.e. these take damage)

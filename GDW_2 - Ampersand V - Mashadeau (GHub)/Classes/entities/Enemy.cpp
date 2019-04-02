@@ -25,6 +25,7 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 	sprite->setGlobalZOrder(3.0F); // the global z order of enemies
 	sprite->setTag(enemy);
 	inviTimeMax = 1.0F;
+	setAntiGravity(true);
 
 	this->EIN = EIN; // saving the EIN; will be changed if invalid.
 	this->LETTER = letter; // saving the letter; will be changed if invalid.
@@ -54,7 +55,7 @@ void entity::Enemy::createEnemy(unsigned int EIN, char letter)
 		setTextureRect(frameSize);
 		
 		moveForce = Vec2(0.0F, 12.0F);
-		setMass(0.1);
+		setMass(20.0F);
 
 		animations.push_back(new OOP::SpriteSheetAnimation(sprite, 0, true, 0.05F, true, true));
 

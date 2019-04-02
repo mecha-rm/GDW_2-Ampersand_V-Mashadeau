@@ -1,4 +1,5 @@
 // The main gameplay scene for the game
+// Version whatever, 04/01/2019
 #pragma once
 
 #include "areas/World.h"
@@ -70,7 +71,9 @@ public:
 	
 	CREATE_FUNC(MSQ_GameplayScene);
 
-	entity::Player * plyr; // the object used for the player
+	Size winSize; // the window size.
+	bool canJump = true;
+
 
 private:
 
@@ -105,14 +108,27 @@ private:
 	// bool swapScene = false; 
 	// std::string nextArea = "";
 
+	std::string startingArea = "";
+	int startingSpawn = 0;
+
 	static std::string areaName; // saves the current area of the scene. This will be used for loading and unloading areas. This is only used upon scene initialization.
+	static const std::string DEFAULT_AREA;
+	
 	static int spawnPoint; // the spawn point used upon entering the area. This is only used upon scene initialization.
 	static std::vector<std::string> areasVisited; // the ares that the player has visited.
 
 
+	entity::Player * plyr; // the object used for the player
 	bool plyrAction = false; // becomes 'true' when a new animation should be played.
 	int pAction = 0; // saves the action the player is taking.
 	
+	// used for saving information between scenes.
+	static int pHealth; // the player's current health when leaving the scene
+	static int pHealthMax; // the player's max health when leaving the scene
+	static int pMagic; // the player's magic amount when leaving the scene
+	static int pMagicMax; // the player's maximum magic amount when leaving the scene
+	static std::vector<int> pWeapons; // the player's weapons when leaving the scene.
+
 	// static std::vector<world::Area *> areas; // this will save the areas gone to, and will be used to switch screens if scenes are not stored. These will be stored in dat files later on.
 	
 	std::vector<entity::Tile *> * sceneTiles; // the tiles in the scene, which are gotten from the Area class.

@@ -3,9 +3,8 @@
 #include <iostream>
 
 // initalizing static variables
-std::string MSQ_GameplayScene::areaName = "AIN_B00"; //First area in the game
-//std::string MSQ_GameplayScene::areaName = "AIN_X00"; //Debug area
-
+std::string MSQ_GameplayScene::areaName = "AIN_B00";
+const std::string MSQ_GameplayScene::DEFAULT_AREA = "AIN_B00_0"; 
 int MSQ_GameplayScene::spawnPoint = 0; // spawn point 0
 
 // used for saving information between scenes
@@ -665,7 +664,7 @@ void MSQ_GameplayScene::playerTileCollisions()
 	plyr->cancelUp = false;
 	plyr->cancelDown = false;
 	plyr->cancelLeft = false;
-	plyr->cancelRight = false;
+	plyr->cancelRight = false;;
 
 	for (int i = 0; i < sceneArea->getAreaTiles()->size(); i++)
 	{

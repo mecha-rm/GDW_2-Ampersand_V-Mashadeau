@@ -14,7 +14,7 @@ entity::Tile::~Tile() {}
 void entity::Tile::createTile(unsigned int TIN, char letter)
 {
 	DrawNode * tempNode = DrawNode::create(); // used to create an enemy square if no tile of the provided TIN exists.
-	
+
 	sprite->setGlobalZOrder(1.0F); // all tiles should be on the same global z-order.
 	sprite->setTag(tile);
 
@@ -275,11 +275,11 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		case 'b'://Hazard
 			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
 			break;
-		
 
-		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
-		break;
-	
+
+			collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
+			break;
+		}
 
 	case 500: //air area block base
 		setName("Mountain Block");
@@ -288,58 +288,58 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
 
 		switch (this->LETTER) {
-			case 'a':
-			default:
-				setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
-				break;
-			case 'b':
-				setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-				break;
-			case 'c':
-				setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-				break;
-			case 'd':
-				setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-				break;
-			case 'e':
-				setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-				break;
-			case 'f':
-				setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-				break;
-			case 'g':
-				setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-				break;
-			case 'h':
-				setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-				break;
-			case 'i':
-				setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-				break;
+		case 'a':
+		default:
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'b':
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'c':
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'd':
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'e':
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'f':
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 1.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'g':
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'h':
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'i':
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 2.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
 		}
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
-		
-		case 501://air platform/ladder/hazard
-			setName("Platforms/Ladders/Hazards");
-			setDescription("Tile set");
-			setTexture("images/tiles/TIN_501.png");
-			frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
 
-			switch (this->LETTER) {
-			case 'a'://platform
-			default:
-				setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
+	case 501://air platform/ladder/hazard
+		setName("Platforms/Ladders/Hazards");
+		setDescription("Tile set");
+		setTexture("images/tiles/TIN_501.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
 
-			case 'b'://ladder
-				setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-				break;
-			case 'c'://hazard
-				setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
-				break;
-		
-			}
-		
+		switch (this->LETTER) {
+		case 'a'://platform
+		default:
+			setTextureRect(Rect(frameSize.getMaxX() * 0.0f, frameSize.getMaxY() * 0.0f, frameSize.getMaxX(), frameSize.getMaxY()));
+
+		case 'b'://ladder
+			setTextureRect(Rect(frameSize.getMaxX() * 1.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+		case 'c'://hazard
+			setTextureRect(Rect(frameSize.getMaxX() * 2.0F, frameSize.getMaxY() * 0.0F, frameSize.getMaxX(), frameSize.getMaxY()));
+			break;
+
+		}
+
 
 		collisionBodies.push_back(new OOP::PrimitiveSquare(Vec2(frameSize.getMidX(), frameSize.getMidY()), 128.0F, CLR_DEF));
 		break;
@@ -435,12 +435,12 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		break;
 	}
 
-	for (OOP::Primitive * colShape : collisionBodies) // adds all of the collision shapes to the sprite.
-	{
-		colShape->getPrimitive()->setGlobalZOrder(10.1F);
-		colShape->getPrimitive()->setVisible(shapesVisible);
-		sprite->addChild(colShape->getPrimitive());
-	}
+		for (OOP::Primitive * colShape : collisionBodies) // adds all of the collision shapes to the sprite.
+		{
+			colShape->getPrimitive()->setGlobalZOrder(10.1F);
+			colShape->getPrimitive()->setVisible(shapesVisible);
+			sprite->addChild(colShape->getPrimitive());
+		}
 
 }
 

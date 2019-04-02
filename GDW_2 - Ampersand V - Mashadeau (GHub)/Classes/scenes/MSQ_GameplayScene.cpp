@@ -82,7 +82,7 @@ void MSQ_GameplayScene::initListeners()
 	// the mouse listener gets added to the scene that is passed, so the line below is no longer needed.
 	// getEventDispatcher()->addEventListenerWithFixedPriority(mouse.getListener(), 1); // adds a mouse listener to the scene using the event dispatcher. It has a priority of 1.
 	
-	mouse.setLabelVisible(true); // sets whether the label is visible or not.
+	mouse.setLabelVisible(false); // sets whether the label is visible or not.
 	//mouse.getListener()->onMouseDown = CC_CALLBACK_2(MSQ_GameplayScene::onMousePressed, this);
 	//mouse.getListener()->onMouseUp = CC_CALLBACK_2(MSQ_GameplayScene::onMouseReleased, this);
 	mouse.getListener()->setEnabled(ENABLE_MOUSE); // sets whether the mouse is enabled or not.

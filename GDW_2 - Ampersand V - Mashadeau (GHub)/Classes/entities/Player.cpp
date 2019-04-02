@@ -56,12 +56,17 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	weapons.push_back(weapon3);
 
 	// no animation (0); 1 frame
-	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, true, true);
+	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, true, 0.25F, true);
 	tempAnimate->setName("static");
 	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 0.0F, 0.0F + frameSize.getMaxY() * 1, frameSize.getMaxX(), frameSize.getMaxY())));
 	animations.push_back(tempAnimate);
 
 	currentAnimation = tempAnimate;
+
+	// idel animation (2): 5 frames
+	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, true, 0, false, true);
+
+
 
 	// attack animation 1 (tag = 6) : 3 frames
 	tempAnimate = new OOP::SpriteSheetAnimation(sprite, 0, false, 0.0F, true, false); // new animation
@@ -69,9 +74,9 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	
 	// tempAnimate->getFrames().at(getFrames()->)
 	
-	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 0, 0.0F + frameSize.getMaxY() * 5, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 1
-	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 1, 0.0F + frameSize.getMaxY() * 5, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 2
-	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 2, 0.0F + frameSize.getMaxY() * 5, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 3
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 1, 0.0F + frameSize.getMaxY() * 5, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 1
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 2, 0.0F + frameSize.getMaxY() * 5, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 2
+	tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX() * 3, 0.0F + frameSize.getMaxY() * 5, frameSize.getMaxX(), frameSize.getMaxY()))); // frame 3
 	// tempAnimate->add(new OOP::SpriteSheetAnimationFrame(Rect(0.0F + frameSize.getMaxX(), 0.0F + frameSize.getMaxY(), frameSize.getMaxX(), frameSize.getMaxY())));
 	animations.push_back(tempAnimate);
 	
@@ -466,7 +471,7 @@ void entity::Player::update(float deltaTime)
 
 	}
 	// addForce(moveForce); // adds the force of the player for movement.
-	Active::update(deltaTime);
+	
 
 	//for (int i = 0; i < weapons.size(); i++)
 	//{
@@ -518,6 +523,7 @@ void entity::Player::update(float deltaTime)
 		if (p != nullptr)
 			p->update(deltaTime);
 	}
+	Active::update(deltaTime);
 
 }
 

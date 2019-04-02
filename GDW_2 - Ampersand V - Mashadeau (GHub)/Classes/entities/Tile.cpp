@@ -108,6 +108,49 @@ void entity::Tile::createTile(unsigned int TIN, char letter)
 		// setTexture()
 		break;
 
+	//Tutorial Tiles
+	case 050: //Move Tile
+		setName("TUT Move");
+		setDescription("Tutorial move.");
+		setTexture("images/tiles/TIN_050.png"); // sets the image for the sprite
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		break;
+
+	case 051: //Jump Tile
+		setName("TUT Jump");
+		setDescription("Tutorial jump.");
+		setTexture("images/tiles/TIN_051.png"); // sets the image for the sprite
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		break;
+
+	case 052: //Attack Tile
+		setName("TUT Attack");
+		setDescription("Tutorial attack.");
+		setTexture("images/tiles/TIN_052.png"); // sets the image for the sprite
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		break;
+
+	case 053: //Breakable Block Tile
+		setName("TUT Breakable");
+		setDescription("Tutorial breakable block.");
+		setTexture("images/tiles/TIN_053.png"); // sets the image for the sprite
+		frameSize = Rect(0.0F, 0.0F, 128.0F, 128.0F);
+		break;
+
+	case 054: //Swap Tile
+		setName("TUT Swap");
+		setDescription("Tutorial swap.");
+		setTexture("images/tiles/TIN_054.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+		break;
+
+	case 055: //Esc to Pause Tile
+		setName("TUT Pause");
+		setDescription("Tutorial pause.");
+		setTexture("images/tiles/TIN_055.png");
+		frameSize = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+		break;
+
 	case 100://sewer tiles
 		setName("Sewer Tile");
 		setDescription("Tile set");

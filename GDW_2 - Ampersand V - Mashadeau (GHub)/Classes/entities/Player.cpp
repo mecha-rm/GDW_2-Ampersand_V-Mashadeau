@@ -37,7 +37,7 @@ entity::Player::Player() : Active("images/PLR_000.png")
 	// setMass(1.0F);
 	
 	// Final game gravity?
-	setJumpForce(35000.0F);
+	setJumpForce(3200.0f);
 	setDecelerate(Vec2(getDecelerate().x, 0.99F));
 	setMass(0.5F);
 

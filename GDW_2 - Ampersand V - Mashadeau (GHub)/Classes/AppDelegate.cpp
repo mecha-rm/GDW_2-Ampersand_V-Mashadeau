@@ -1,3 +1,16 @@
+/*
+Project: Mashadeau: Sorcerer's Quest (Game Development Workshop II (INFR 1396U) Video Game)
+Team: Ampersand V (&V)
+	- Caleb Birnie (100699828)
+	- Carter Menary (100700587)
+	- Devin Fitzpatrick (100709082)
+	- Nathan Tuck (100708651)
+	- Roderick “R.J.” Montague (100701758)
+	- Jason Lee (100698121)
+		*Jason Lee was only part of this group for the purposes of Digital Game Design.
+		*Jason is not in Essential Mathematics for Games II, Object Oriented Programming, or Game Development Workshop II.
+Date: 04/03/2019
+*/
 /****************************************************************************
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
@@ -126,52 +139,21 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 	
     // create a scene. it's an autorelease object
-	auto _scene = MSQ_GameplayScene::createScene();
-	auto _menu = MSQ_MainMenu::createScene();
-	// auto scene = HelloWorld::createScene();
+	auto _scene = MSQ_GameplayScene::createScene(); // creates a gameplay scene
+	auto _menu = MSQ_MainMenu::createScene(); // creates a menu scene
+	// auto scene = HelloWorld::createScene(); // this was the default scene
 	
-	bool stats = true; // set it to 'true' if you want the stats to be visisble.
+	bool stats = false; // set it to 'true' if you want the stats to be visisble, like frame rate.
 	
 	if (stats)
 	{
-		director->setDisplayStats(false); // turn on display FPS
-		director->setAnimationInterval(1.0f / 60); // set FPS. the default value is 1.0/60 if you don't call this
+		director->setDisplayStats(true); // turn on display FPS
+		director->setAnimationInterval(1.0f / 60); // set FPS. the default value is 1.0/60 if you don't call this.
 	}
 	
-    // run
-	//director->runWithScene(_menu); //USE THIS TO RUN FROM MAIN MENU
-    director->runWithScene(_scene); //USE THIS TO RUN FROM GAMEPLAYSCENE
-	
-	/*
-	// Creating the cocos window.
-	Director* director = Director::getInstance();
-	auto glview = director->getOpenGLView();
-
-	float width(1900.0F), height(850.0F); // sets the size of the screen
-
-	// DISPLAY->init(960.0f, 540.0f, "100701758 - Essential Mathematics for Games I - Assignment 3", false);
-
-	if (!glview)
-	{
-
-		// window name, window sizezoom factor, resizable
-		glview = GLViewImpl::createWithRect("Mashadeau", Rect(0.0f, 0.0f, width, height), 1.0f, false);
-		director->setOpenGLView(glview);
-	}
-
-	// INPUTS->init();
-
-	// Originally took no arguments; now takes the screen width and height
-	Scene* scene = MSQ_GameplayScene::createScene(width, height);
-
-	// Scene* scene = MSQ_GameplayScene::createScene();
-	director->runWithScene(scene);
-
-	return true;
-
-	// run
-	director->runWithScene(scene);
-	*/
+    // running a scene
+	//director->runWithScene(_menu); // Used to run from the main menu. This wasn't completed in time, so it is not used.
+    director->runWithScene(_scene); // Used to run the gameplay scene.
 
     return true;
 }

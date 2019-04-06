@@ -175,16 +175,16 @@ namespace entity
 		// returns the maximum velocity of the entity.
 		Vec2 getMaxVelocity();
 
-		// gets rotation factor in degrees (which is what it's stored as).
+		// gets rotation factor in degrees (which is what it's stored as in the sprite).
 		float getRotationInDegrees();
 
 		// sets the rotation factor in degrees.
 		void setRotationInDegrees(float theta);
 
-		// gets the rotation factor, converted to radians
+		// gets the rotation factor, converted to radians.
 		float getRotationInRadians();
 
-		// sets the rotation factor in radians
+		// sets the rotation factor in radians.
 		void setRotationInRadians(float theta);
 
 		// returns the deceleration rate of the entity.
@@ -213,7 +213,8 @@ namespace entity
 		virtual std::vector<OOP::Primitive *> getOffsetCollisionBodies() const;
 
 		// returns the collision bodies of the provided entity, offset so that they're where they are relative to the whole game world.
-		// NOTE: if the entity doesn't have a sprite, and/or if the sprite hasn't been added to anything, you shouldn't use this function, since it's based on the position of the sprite.
+		// NOTE: if the entity doesn't have a sprite, and/or if the sprite hasn't been added to anything, you shouldn't use this function.
+		//		* Calling this function under these conditions will throw an exception.
 		static std::vector<OOP::Primitive *> getOffsetCollisionBodies(const cocos2d::Sprite * spr, const std::vector<OOP::Primitive *> & prims);
 
 		// adds a primitive to the collision bodies vector. If it's already in the vector, it won't be added again.
@@ -225,7 +226,7 @@ namespace entity
 		// used to make all of the collision bodies either active or not active. Non-active collison boxes will not be picked up by collisions.
 		void setActiveCollisionBodies(bool active);
 
-		// turns off the collision bodies for the sprite.
+		// turns off the collision bodies for the entity.
 		void disableCollisionBodies();
 
 		// turns on the body collisions for the entity
@@ -234,18 +235,16 @@ namespace entity
 		// checks collision between two primitives. Do note that if the primitives don't have a collision algorithim setup, this will return false.
 		static bool collision(OOP::Primitive * prim1, OOP::Primitive * prim2);
 
-		// runs collisions between two primitive vectors. This should be used to check if a body collision collides with an attack collision.
-		// this cannot save what two primitives collided with one another.
+		// runs collisions between two primitive vectors. This cannot tell you which primitives collided, just that there was or was not a collision.
 		static bool collision(std::vector<OOP::Primitive *>& cols1, std::vector<OOP::Primitive *>& cols2);
 
-		// checks for collision between the entity object and the one passed. This uses the collisionBodies.
+		// checks for collision between the current entity object and the one passed. This reuses the static collision(entity, entity) function.
 		bool collision(entity::Entity * e2);
 
 		// checks for collision between two entities. This uses the collisionBodies vectors for both entities.
 		static bool collision(entity::Entity * e1, entity::Entity * e2);
 
-		// checks for collision between two entities. If the collisionBodies vector isn't the one meant to be used, pass a different set of vectors. Just make sure they're actually meant for the entites.
-		// this offsets the locations of the attached primitives so that they're in the proper place.
+		// checks for collision between two entities. If the collisionBodies vector isn't the one meant to be used, pass a different set of vectors.
 		static bool collision(entity::Entity * e1, const std::vector<OOP::Primitive *> & e1Bodies, entity::Entity * e2, const std::vector<OOP::Primitive *> & e2Bodies);
 
 
@@ -256,22 +255,22 @@ namespace entity
 		// returns an animation at the provided index. If no animation exists at this index, a 'nullptr' is returned.
 		OOP::SpriteSheetAnimation * getAnimationByIndex(unsigned int index) const;
 
-		// gets an animation by a tag. The first animation with this tag will be returned. If an animation with this tag is not found, a nullptr is returned.
+		// gets an animation by a tag. The first animation found with this tag will be returned. If an animation with this tag is not found, a nullptr is returned.
 		OOP::SpriteSheetAnimation * getAnimationByTag(int tag);
 
-		// returns the index of the animation. If the animation does not exist in the animation vector, then a '-1' is returned.
+		// returns the index of the passed animation. If the animation does not exist in the animation vector, then a '-1' is returned.
 		int getAnimationIndex(const OOP::SpriteSheetAnimation *) const;
 
 		// gets the current animation being used. If there is no current animation, a nullptr is returned.
 		OOP::SpriteSheetAnimation * getCurrentAnimation();
 
-		// adds an animation to the entity. It also returns the index get the animation that has been added.
+		// adds an animation to the entity's animation vector.
 		void addAnimation(OOP::SpriteSheetAnimation *);
 
 		// runs an animation based on a provided index. If no animation has this index, then no animation is run.
 		void runAnimationByIndex(unsigned int index);
 
-		// runs an animation based on a provided tag. If no animation has this tag, no changes are made.
+		// runs an animation based on a provided tag. If no animation has this tag, nothing is run.
 		void runAnimationByTag(int tag);
 
 		// returns 'true' if an animation is currently running, and false otherwise.
@@ -280,20 +279,20 @@ namespace entity
 		// update loop
 		virtual void update(float deltaTime);
 
-		static float * areaGravity; // saves the level of gravity in the scene. This should be shared by all entities.
+		static float * areaGravity; // saves the level of gravity for the area. This should be shared by all entities.
 	
-		// the primitive that has recently encountered a collison. The location of this primitive is where it is overall, NOT where it is relevant to the player.
+		// the primitive that has recently encountered a collison. The location of this primitive is where it is in the game world overall, NOT where it is relative to the entity.
 		OOP::Primitive * collidedPrimitive;
 
 		// a boolean that toggles on/off hitbox visibility.
-		// If you don't want to have some collision shapes visible, set this to 'false', and set specific entities to 'true' or 'false' after initialization.
+		// If you don't want to have some collision shapes visible, set this to 'false', and set specific primitive visibilities to 'true' or 'false' after initialization.
 		static bool shapesVisible;
 
-		static const cocos2d::Color4F CLR_ATK; // colour used for attacking collision shapes (i.e. these deal damage)
-		static const cocos2d::Color4F CLR_DEF; // colour used for defensive collision shapes (i.e. these take damage)
-		static const cocos2d::Color4F CLR_NEU; // colour used for a neutral object that can be interacted with, but does not take or deal damage.
+		static const cocos2d::Color4F CLR_ATK; // colour used for attacking collision shapes (i.e. these deal damage). This wasn't used much in the final product.
+		static const cocos2d::Color4F CLR_DEF; // colour used for defensive collision shapes (i.e. these take damage). This wasn't used much in the final product.
+		static const cocos2d::Color4F CLR_NEU; // colour used for a neutral object that can be interacted with, but does not take or deal damage. This wasn't used much in the GameCon build.
 
-		bool onScreen = true;
+		bool onScreen = true; // becomes 'true' when the entity is on screen, and 'false' when they aren't Used for optimization of collisions and updates.
 
 	private:
 		float mass = 1.0; // the mass of the entity

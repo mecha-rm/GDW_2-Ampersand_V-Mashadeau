@@ -2,9 +2,10 @@
 #include <math.h>
 
 /// STRING AND GENERAL FUNCTIONS //////////////////////////////////////////////////////
+// converts a string to lower case.
 std::string ustd::toLower(std::string str)
 {
-	// returns the string if its of length zero.
+	// returns the string if it's of length zero.
 	if (str.length() == 0)
 		return str;
 
@@ -31,7 +32,7 @@ std::string ustd::toUpper(std::string str)
 
 	for (int i = 0; i < strL.length(); i++)
 	{
-		strL.at(i) = toupper(strL.at(i)); // converts each 'char' to its uppercase version if applicable
+		strL.at(i) = toupper(strL.at(i)); // converts each 'char' to its uppercase version if applicable.
 	}
 
 	return strL;
@@ -76,10 +77,10 @@ bool ustd::isInt(std::string str)
 // checks if a string is a decimal number (specifically a double).
 bool ustd::isDecimal(std::string str)
 {
-	double strDbl; // gets the string as an float
+	double strDbl; // gets the string as a double.
 	std::stringstream ss(str); // creates a string stream for converting the string to an integer.
 
-	ss >> strDbl; // puts the string stream into the double. If non-int values exist, then the doubleis truncated.
+	ss >> strDbl; // puts the string stream into the double. If non-double values exist, then the double is truncated.
 
 	return std::to_string(strDbl) == str; // returns 'true' if all values were carried over from the string.
 }
@@ -103,7 +104,7 @@ bool umath::aabbCollision(const Vec2 aMin, const Vec2 aMax, const Vec2 bMin, con
 	// xCol gets the result of this collision check. If the projection on the x-axis shows collision, then xCol is set to true.
 	xCol = ((bMin.x > aMin.x && bMin.x < aMax.x) ^ (aMin.x > bMin.x && aMin.x < bMax.x));
 
-	//  yCol gets the result of this collision check. If the projection on the y-axis shows collision, yCol is set to true.
+	// yCol gets the result of this collision check. If the projection on the y-axis shows collision, yCol is set to true.
 	yCol = ((bMin.y > aMin.y && bMin.y < aMax.y) ^ (aMin.y > bMin.y && aMin.y < bMax.y));
 
 	// if the x-collision and y-collision return positive, then there is collision.
@@ -123,12 +124,12 @@ bool umath::aabbCollision(const Vec2 topLeftA, const Vec2 topRightA, const Vec2 
 bool umath::aabbCollision(const Rect * rect1, const Rect * rect2)
 {
 	return rect1->intersectsRect(*rect2);
-	// Reuses the other collison check. It originally had its own algorithm, which is shwon below.
+	// Reuses the other collison check. We originally made our own algorithm, which is shwon below.
 	//return umath::aabbCollision(Vec2(rect1->getMinX(), rect1->getMinY()), Vec2(rect1->getMaxX(), rect1->getMaxY()), Vec2(rect2->getMinX(), rect2->getMinY()), Vec2(rect2->getMaxX(), rect2->getMaxY()));
 }
 
 // calculates obb collision between two rectangles; this assumes that the rotation angles are based on the middle of the rectangles.
-// These calculations require that the angle is put into radians, but since cocos2d inherently uses degrees, 'isRadians' needs to check what form the angle is in.
+// These calculations require that the angle is put into radians, but since cocos2d inherently uses degrees, 'inDegrees' needs to check what form the angle is in.
 bool umath::obbCollision(Rect & rectA, float angleA, Rect & rectB, float angleB, bool inDegrees)
 {
 	// if the angles have been provided in degrees, then they are converted to radians for the rotation calculations.
@@ -156,7 +157,7 @@ bool umath::obbCollision(const Vec2 topLeftA, const Vec2 topRightA, const Vec2 b
 
 	bool intersects = false; // saves the results of intersection checks.
 
-	if (IS_ROTATED == false) // if the boxes have not been rotated, the function does so around their centre
+	if (IS_ROTATED == false) // if the boxes have not been rotated, the function does so around their centres.
 	{
 		tempTLA = umath::rotate(topLeftA - posA, thetaA) + posA;
 		tempTRA = umath::rotate(topRightA - posA, thetaA) + posA;
@@ -198,7 +199,6 @@ float umath::degreesToRadians(float degrees) { return degrees * (M_PI / 180); }
 float umath::radiansToDegrees(float radians) { return radians * (180 / M_PI); }
 
 // a rotation function. While it doesn't use a rotation matrix, it's modeled after how one would be used for a rotation.
-//  The angle is IN RADIANS.
 Vec2 umath::rotate(Vec2 points, float angle, bool inDegrees)
 {
 	// rotates the coordinate points using a rotation matrix. Well, it technically ISN'T using a matrix, but it's modeled after how two matrices would be multiplied with one another.
@@ -217,12 +217,12 @@ int umath::randInt(int lBound, int uBound, bool includeUBound)
 {
 	int tempInt(0);
 	int randInt(0);
-	// If the upper and lower bounds on the same, it returns the lBound
+	// If the upper and lower bounds on the same, it returns the lBound.
 	if (lBound == uBound)
 	{
 		return lBound;
 	}
-	// If the lower bound is greater than the upper bound, they are swapped
+	// If the lower bound is greater than the upper bound, they are swapped.
 	else if (lBound > uBound)
 	{
 		tempInt = lBound;
@@ -231,14 +231,13 @@ int umath::randInt(int lBound, int uBound, bool includeUBound)
 	}
 
 	// If the upperbound is positive, the values can be used as is.
-	// If the upperbound and lowerbound are both negative, then a randomizer is run to get their absoluted range, then another randomizer is run to make it positive or negative.
+	// If the lowerbound is negative while the upperbound is not, then a randomizer is run to get their absoluted range, then another randomizer is run to make it positive or negative.
 
 	randInt = (uBound > 0) ? rand() % (uBound - lBound + includeUBound) + lBound : (abs(uBound) - abs(lBound) + includeUBound) + abs(lBound);
 
 	// If the number must be negative, it is multiplied by -1 to make it so.
 	if (lBound < 0 && uBound < 0)
 		randInt *= -1;
-	randInt = rand() % (uBound - lBound + includeUBound) + lBound;
 
 	return randInt;
 }

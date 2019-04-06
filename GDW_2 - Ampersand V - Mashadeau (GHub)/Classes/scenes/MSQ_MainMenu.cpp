@@ -1,7 +1,24 @@
+/*
+Project: Mashadeau: Sorcerer's Quest (Game Development Workshop II (INFR 1396U) Video Game)
+Team: Ampersand V (&V)
+	- Caleb Birnie (100699828)
+	- Carter Menary (100700587)
+	- Devin Fitzpatrick (100709082)
+	- Nathan Tuck (100708651)
+	- Roderick “R.J.” Montague (100701758)
+	- Jason Lee (100698121)
+		*Jason Lee was only part of this group for the purposes of Digital Game Design.
+		*Jason is not in Essential Mathematics for Games II, Object Oriented Programming, or Game Development Workshop II.
+Date: 04/03/2019
+*/
+
+// This was meant for the main menu, which was not used in the GDW build.
 #include "scenes/MSQ_MainMenu.h"
 
+// constructor
 MSQ_MainMenu::MSQ_MainMenu() : keyboard(OOP::KeyboardListener(this)) {}
 
+// creates a menu scene.
 Scene* MSQ_MainMenu::createScene() {
 	return MSQ_MainMenu::create();
 }
@@ -46,7 +63,7 @@ bool MSQ_MainMenu::init() {
 
 		this->addChild(label1, 1);
 	}
-	//&V
+	//Ampersand V (&V) Text
 	Label* label2 = Label::createWithTTF("&V (AMPERSAND V)", "fonts/BRITANIC.TTF", 18);
 	if (label2 == nullptr) problemLoading("'fonts/BRITANIC.TTF'");
 	else {
@@ -73,6 +90,7 @@ bool MSQ_MainMenu::init() {
 	return true;
 }
 
+// When the key has been pressed, certain sounds should play.
 void MSQ_MainMenu::onKeyPressed(EventKeyboard::KeyCode keyCode, Event * event) {
 	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event);
 
@@ -87,6 +105,7 @@ void MSQ_MainMenu::onKeyPressed(EventKeyboard::KeyCode keyCode, Event * event) {
 	}
 }
 
+// When the key is released, the proper action actually happens.
 void MSQ_MainMenu::onKeyReleased(EventKeyboard::KeyCode keyCode, Event * event) {
 	EventKeyboard* keyboardEvent = dynamic_cast<EventKeyboard*>(event);
 

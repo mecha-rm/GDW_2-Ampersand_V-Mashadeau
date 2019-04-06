@@ -1,3 +1,16 @@
+/*
+Project: Mashadeau: Sorcerer's Quest (Game Development Workshop II (INFR 1396U) Video Game)
+Team: Ampersand V (&V)
+	- Caleb Birnie (100699828)
+	- Carter Menary (100700587)
+	- Devin Fitzpatrick (100709082)
+	- Nathan Tuck (100708651)
+	- Roderick “R.J.” Montague (100701758)
+	- Jason Lee (100698121)
+		*Jason Lee was only part of this group for the purposes of Digital Game Design.
+		*Jason is not in Essential Mathematics for Games II, Object Oriented Programming, or Game Development Workshop II.
+Date: 04/04/2019
+*/
 #include "SpriteAnimation.h"
 
 //// SPRITE SHEET ANIMATION FRAME CLASS ////
@@ -15,7 +28,7 @@ cocos2d::Rect OOP::SpriteSheetAnimationFrame::getRect() const { return rect; }
 // sets the rect used for etting a section of the sprite sheet.
 void OOP::SpriteSheetAnimationFrame::setRect(cocos2d::Rect & rect) { this->rect = rect; }
 
-// returns the amount of delay units
+// returns the amount of delay units.
 float OOP::SpriteSheetAnimationFrame::getDelayUnits() const { return delayUnits; }
 
 // sets the amount of delay units. If the value passed is negative, delayUnits is set to zero.
@@ -30,7 +43,7 @@ void OOP::SpriteSheetAnimationFrame::setTag(int & tag) { this->tag = tag; }
 // sets the primitives tied to the animation frame.
 void OOP::SpriteSheetAnimationFrame::setPrimitives(std::vector<OOP::Primitive*>& newPrims) { prims = newPrims; }
 
-// removes a primitive from the animation frame.
+// adds a primitive to the animation frame.
 void OOP::SpriteSheetAnimationFrame::addPrimitive(OOP::Primitive * prim)
 {
 	// if it's already in the vector, it won't be added again.
@@ -43,6 +56,7 @@ void OOP::SpriteSheetAnimationFrame::addPrimitive(OOP::Primitive * prim)
 	prims.push_back(prim);
 }
 
+// removes a primitive from the animation frame.
 void OOP::SpriteSheetAnimationFrame::removePrimitive(const OOP::Primitive * prim)
 {
 	// removes the primitive if it exists in the vector.
@@ -69,7 +83,7 @@ void OOP::SpriteSheetAnimationFrame::setActivePrimitives(bool active)
 
 
 //////////// SPRITE SHEET ANIMATION CLASS ///////////////////
-// sets a sprite sheet
+// sets a sprite sheet only
 OOP::SpriteSheetAnimation::SpriteSheetAnimation(cocos2d::Sprite * spriteSheet, unsigned int totalLoops, bool infiniteLoop, float delayUnits, bool sharedDelay, bool restoreOriginalFrame)
 	: spriteSheet(spriteSheet), sharedDelay(sharedDelay), restoreOriginalFrame(restoreOriginalFrame)
 {
@@ -91,7 +105,7 @@ OOP::SpriteSheetAnimation::SpriteSheetAnimation(cocos2d::Sprite * spriteSheet, s
 // gets the amount loops for the sprite sheet animation.
 unsigned int OOP::SpriteSheetAnimation::getLoops() const { return totalLoops; }
 
-// sets how many times the animation loops If the total loops are now less than the amount of loops that have been done, the animation finishes on the next update loop.
+// sets how many times the animation loops. If the total loops are now less than the amount of loops that have been done, the animation finishes on the next update loop.
 void OOP::SpriteSheetAnimation::setLoops(unsigned int totalLoops) { this->totalLoops = totalLoops; }
 
 // returns how many loops have been finished.
@@ -162,6 +176,9 @@ void OOP::SpriteSheetAnimation::setFlippedAnimationY() { setFlippedAnimationY(!f
 // gets whether the animation is flipped on the y-axis or not.
 bool OOP::SpriteSheetAnimation::getFlippedAnimationY() const { return flipY; }
 
+// starts playing the animation in reverse by flipping around the vector of frames.
+void OOP::SpriteSheetAnimation::reverse() { std::reverse(frames.begin(), frames.end()); }
+
 
 void OOP::SpriteSheetAnimation::setDelayUnits(float & delayUnits)
 {
@@ -213,9 +230,7 @@ void OOP::SpriteSheetAnimation::operator+=(OOP::SpriteSheetAnimationFrame * newF
 			return;
 	}
 
-	newFrame->setActivePrimitives(false);
-	// for (int i = 0; i < newFrame->getPrimitives().size(); i++)
-		// spriteSheet->addChild(newFrame->getPrimitives().at(i)->getPrimitive());
+	newFrame->setActivePrimitives(false); // turns off the primitive.
 		
 	frames.push_back(newFrame); // adds the frame into the vector.
 }
@@ -324,7 +339,7 @@ void OOP::SpriteSheetAnimation::update(float deltaTime)
 	frameDuration = (sharedDelay) ? delayUnits : frames[index]->getDelayUnits();
 
 	// if the frame has been on screen for the proper amount of time or longer, then it moves onto the next frame.
-	if (frameTime >= frameDuration / speed) // we divide by speed because we're doing a 'greater than' comparison.
+	if (frameTime >= frameDuration / speed) // we divide by 'speed' because we're doing a 'greater than' comparison.
 	{
 		index++;
 		frameTime = 0.0F;
@@ -347,13 +362,13 @@ void OOP::SpriteSheetAnimation::update(float deltaTime)
 
 		newIndex = index;
 		
-		for (int i = 0; i < frames.at(oldIndex)->getPrimitives().size(); i++) // turns off the primitives for the previous animation.
+		for (int i = 0; i < frames.at(oldIndex)->getPrimitives().size(); i++) // turns off the primitives for the previous animation frame.
 			if(frames.at(index - 1) != nullptr)
 				frames.at(index - 1)->getPrimitives().at(i)->setActive(false);
 
-		spriteSheet->setTextureRect(frames.at(index)->getRect()); // moves onto the next frame.
+		spriteSheet->setTextureRect(frames.at(index)->getRect()); // moves onto the next nimation frame.
 
-		for (int i = 0; i < frames.at(newIndex)->getPrimitives().size(); i++) // turns on the primitives for the now current animation.
+		for (int i = 0; i < frames.at(newIndex)->getPrimitives().size(); i++) // turns on the primitives for the now current animation frame.
 			if (frames.at(index - 1) != nullptr)
 				frames.at(index - 1)->getPrimitives().at(i)->setActive(true);
 

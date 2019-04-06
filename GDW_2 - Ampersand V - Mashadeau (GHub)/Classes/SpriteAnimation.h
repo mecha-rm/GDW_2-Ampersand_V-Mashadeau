@@ -1,4 +1,17 @@
-// a class used for animating a sprite sheet
+/*
+Project: Mashadeau: Sorcerer's Quest (Game Development Workshop II (INFR 1396U) Video Game)
+Team: Ampersand V (&V)
+	- Caleb Birnie (100699828)
+	- Carter Menary (100700587)
+	- Devin Fitzpatrick (100709082)
+	- Nathan Tuck (100708651)
+	- Roderick “R.J.” Montague (100701758)
+	- Jason Lee (100698121)
+		*Jason Lee was only part of this group for the purposes of Digital Game Design.
+		*Jason is not in Essential Mathematics for Games II, Object Oriented Programming, or Game Development Workshop II.
+Date: 04/04/2019
+*/
+// a class used for animating a sprite sheet manually
 #pragma once
 
 #include "cocos/2d/CCSprite.h"
@@ -64,7 +77,7 @@ namespace OOP
 		
 		float delayUnits; // the delay units (in milliseconds) between this frame and the following frame.
 		
-		std::vector<OOP::Primitive *> prims;
+		std::vector<OOP::Primitive *> prims; // vector of primitives, used for collisions. We did not end up using it in the final game.
 
 	protected:
 
@@ -158,6 +171,8 @@ namespace OOP
 		// checks to see if the animation is flipped on the y-axis.
 		bool getFlippedAnimationY() const;
 
+		// flips around the vector so that the animation will play the frames in reverse.
+		void reverse();
 
 
 		// sets the shared delay units between all frames. If you want to use the delay units in the sprite frame.
@@ -244,18 +259,18 @@ namespace OOP
 		cocos2d::Sprite * spriteSheet; // the sprite sheet.
 		std::vector<OOP::SpriteSheetAnimationFrame *> frames; // the frames of the animation.
 
-		unsigned int totalLoops = 0; // how many times the animation loops
-		unsigned int finishedLoops = 0; // the amount 
-		bool infiniteLoop = true; // determines if the animation loops infinitely. If so, then 'getLoops' will be 0.
+		unsigned int totalLoops = 0; // how many times the animation loops.
+		unsigned int finishedLoops = 0; // the amount of finished loops.
+		bool infiniteLoop = true; // determines if the animation loops infinitely. If so, then 'getLoops()' will return 0.
 		
 		
 
 		float delayUnits = 0.0F; // the amount of delay units for all frames. This is set to 0 if each frame has its own delayUnits.
 		float speed = 1.0F; // the speed of the animation. It cannot be below or equal to zero.
-		bool sharedDelay = false; // deterimes whether all sprites share a delay.
+		bool sharedDelay = false; // determines whether all sprite frames share a delay (i.e. they're on the screen for the same amount of time).
 		bool restoreOriginalFrame = true; // determines whether to restore the first frame of animation or not.
-		bool flipX = false; // saves whether to flip the animation on the x-axis.
-		bool flipY = false; // saves whether to flip the animation on the y-axis.
+		bool flipX = false; // saves whether to flip the animation on the x-axis or not.
+		bool flipY = false; // saves whether to flip the animation on the y-axis or not.
 
 		std::string name = ""; // a name for the animation.
 		std::string description = ""; // a description for the animation.

@@ -1,7 +1,4 @@
-
-// Question 1: Primitive.h Creation
-// #include "2d/CCDrawNode.h"
-// #include "math/Mat4.h"
+// used for making shapes in cocos2d
 #include "Primitives.h"
 #include "Utilities.h"
 #include <iostream>
@@ -77,10 +74,10 @@ bool OOP::Primitive::collision(OOP::Primitive * p1, OOP::Primitive * p2)
 {
 	bool col = false;
 
-	if (p1 == nullptr || p2 == nullptr) // returns false of one of these are null.
+	if (p1 == nullptr || p2 == nullptr) // returns false of at least one of these are null.
 		return false;
 
-	if (!p1->isActive() || !p2->isActive()) // returns false if one of these are inactive.
+	if (!p1->isActive() || !p2->isActive()) // returns false if at least one of these are inactive.
 		return false;
 
 	if (p1->getId() == 1 && p2->getId() == 1) // AABB and AABB
@@ -119,19 +116,17 @@ bool OOP::Primitive::collision(OOP::Primitive * p1, OOP::Primitive * p2)
 
 		col = collision(((OOP::PrimitiveCapsule *)p1)->getOrientedRect(), ((OOP::PrimitiveCapsule *)p2)->getOrientedRect()); // p1 oriented rect and p2 oriented rect
 
-		// Improper checks
-		// col = collision(((OOP::PrimitiveCapsule *)p1)->getOrientedRect(), OOP::PrimitiveSquare(p2->getPosition(), p2->)
 	}
-	else if ((p1->getId() == 1 && p2->getId() == 2) || (p1->getId() == 2 || p2->getId() == 1)) // AABB and OBB (or OBB and AABB)
+	else if ((p1->getId() == 1 && p2->getId() == 2) || (p1->getId() == 2 || p2->getId() == 1)) // AABB and OBB (or OBB and AABB) - converts AABB to OBB.
 	{
-		if (p1->getId() == 2 || p2->getId() == 1) // flips the two primitives aorund so that the collision check can be done.
+		if (p1->getId() == 2 || p2->getId() == 1) // swaps the primitives for the collision check.
 			return collision(p2, p1);
 
 		return umath::obbCollision(((OOP::PrimitiveSquare *)p1)->getRect(), 0.0F, ((OOP::PrimitiveOrientedSquare *)p2)->getRect(), ((OOP::PrimitiveOrientedSquare *)p2)->getRotationInRadians(), false);
 	}
 	else if ((p1->getId() == 1 && p2->getId() == 3) || (p1->getId() == 3 || p2->getId() == 1)) // AABB and circle
 	{
-		if (p1->getId() == 3 || p2->getId() == 1) // flips the two shapes around so that they acn use this check
+		if (p1->getId() == 3 || p2->getId() == 1) // swaps the primitives for the collision check.
 			return collision(p2, p1);
 
 		return umath::aabbCircleCollision(((OOP::PrimitiveSquare *)p1)->getRect(), p2->getPosition(), ((OOP::PrimitiveCircle *)p2)->m_RADIUS);
@@ -144,17 +139,13 @@ bool OOP::Primitive::collision(OOP::Primitive * p1, OOP::Primitive * p2)
 
 
 ///// SQUARE /////////////////////////////////////////////////////////////////////////////
-// Question 3: initalization of the DrawNode (Square)
+// initalization of the DrawNode (Square)
 OOP::PrimitiveSquare::PrimitiveSquare(const cocos2d::Vec2 &a_StartPosition, const cocos2d::Vec2 &a_EndPosition, const cocos2d::Color4F colour) 
 	: Primitive(1), /*m_Node(cocos2d::DrawNode::create()),*/ m_WIDTH(abs((a_EndPosition - a_StartPosition).x)), m_HEIGHT(abs((a_EndPosition - a_StartPosition).y))
 {
 	// draws the rectangle
 	m_Node->drawRect(cocos2d::Vec2(0.0F, 0.0F) - cocos2d::Vec2(m_WIDTH / 2, m_HEIGHT / 2), cocos2d::Vec2(0.0F, 0.0F) + cocos2d::Vec2(m_WIDTH / 2, m_HEIGHT / 2), colour);
 	m_Node->setPosition((a_StartPosition + a_EndPosition) / 2); // sets the position to be the middle of the two corners of the quadrilateral.
-
-	//m_Node->setAnchorPoint(cocos2d::Vec2(0.5F, 0.5F));
-	//m_Node->drawRect(a_StartPosition, a_EndPosition, colour);
-	//m_Position = a_StartPosition + (a_EndPosition - a_StartPosition) / 2; // gets the location of the primitive.
 }
 
 // creates a rect based on a position, length, and width provided by the user. This is based on the middle of the rect.
@@ -164,9 +155,6 @@ OOP::PrimitiveSquare::PrimitiveSquare(const cocos2d::Vec2 position, const float 
 	// draws the rectangle at location (0, 0).
 	m_Node->drawRect(cocos2d::Vec2(0.0F, 0.0F) - cocos2d::Vec2(width / 2, height / 2), cocos2d::Vec2(0.0F, 0.0F) + cocos2d::Vec2(width / 2, height / 2), colour);
 	m_Node->setPosition(position); // sets the position of the node to be where the rectangle should be.
-
-	// m_Node->drawRect(cocos2d::Vec2(position.x - width / 2, position.y - height / 2), cocos2d::Vec2(position.x + width / 2, position.y + height / 2), colour);
-	// m_Position = position; // saves the location of the square.
 }
 
 // creates a rect based on a given position and side length; this is guaranteed to be a square. This is based on the middle of the square.
@@ -182,17 +170,6 @@ cocos2d::DrawNode * OOP::PrimitiveSquare::getPrimitive() const { return m_Node; 
 void OOP::PrimitiveSquare::setPosition(cocos2d::Vec2 position)
 {
 	m_Node->setPosition(position); // changes the node's position.
-
-	/*
-	// because the position of the node isn't the same as the primitive itself, this calculation is needed.
-	// m_Node->setPosition(m_Node->getPosition() - this->m_Position - position);
-	if (m_Node == nullptr)
-		std::cout << "What?" << std::endl;
-
-	// because the position of the node isn't the same as the primitive itself, this calculation is needed.
-	m_Node->setPosition(m_Node->getPosition() + position - m_Position);
-	m_Position = position;
-	*/
 }
 
 // returns the rectangle object representing the primitive graphic.
@@ -240,8 +217,6 @@ OOP::PrimitiveCircle::PrimitiveCircle(cocos2d::Vec2 location, float radius, cons
 {
 	m_Node->drawCircle(cocos2d::Vec2(0.0F, 0.0F), abs(radius), 20.0F, 30, false, cocos2d::Color4F(0.0, 0.0F, 1.0F, 1.0F)); // draws the circle at location (0, 0).
 	m_Node->setPosition(location); // moves the circle to where it shoudld be.
-	// m_Node->drawCircle(location, abs(radius), 20.0F, 30, false, cocos2d::Color4F(0.0, 0.0F, 1.0F, 1.0F));
-	// m_Position = location;
 }
 
 OOP::PrimitiveCircle::~PrimitiveCircle() { /*m_Node->release();*/ }
@@ -250,9 +225,6 @@ OOP::PrimitiveCircle::~PrimitiveCircle() { /*m_Node->release();*/ }
 void OOP::PrimitiveCircle::setPosition(cocos2d::Vec2 position)
 {
 	m_Node->setPosition(position); // changes the position of the draw node.
-	// because the position of the node isn't the same as the primitive itself, this calculation is needed.
-	// m_Node->setPosition(m_Node->getPosition() + position - m_Position);
-	//this->m_Position = position;
 }
 
 
@@ -265,9 +237,6 @@ OOP::PrimitiveLine::PrimitiveLine(cocos2d::Vec2 startingPoint, cocos2d::Vec2 end
 	// draws the line with its centre at position (0.0F, 0.0F).
 	m_Node->drawLine(cocos2d::Vec2(0.0F - abs(m_DISTANCE.x / 2), 0.0F - abs(m_DISTANCE.y / 2)), cocos2d::Vec2(0.0F + abs(m_DISTANCE.x / 2), 0.0F + abs(m_DISTANCE.y / 2)), colour);
 	m_Node->setPosition((startingPoint + endingPoint) / 2); // sets the position of the node to where the shape should be.
-
-	// m_Node->drawLine(startingPoint, endingPoint, colour); // creating the line
-	// m_Position = startingPoint + (endingPoint - startingPoint) / 2; // gets the location of the primitive.
 }
 
 
@@ -277,10 +246,6 @@ OOP::PrimitiveLine::~PrimitiveLine() { /*m_Node->release();*/ }
 void OOP::PrimitiveLine::setPosition(cocos2d::Vec2 position)
 {
 	m_Node->setPosition(position); // sets the position of the node.
-
-	// because the position of the node isn't the same as the primitive itself, this calculation is needed.
-	// m_Node->setPosition(m_Node->getPosition() + position - m_Position);
-	// this->m_Position = position;
 }
 
 // gets the rotation factor in degrees. This is inherently how the rotation factor is stored.
@@ -343,15 +308,6 @@ OOP::PrimitiveCapsule::PrimitiveCapsule(cocos2d::Vec2 startingPoint, cocos2d::Ve
 
 	// angle = M_PI - angle; // flips the angle to the adjacent quadrant. Used to move the centre lines.
 	offset = cocos2d::Vec2(offset.x * (cosf(angle)) - offset.y * (sinf(angle)), offset.x * (sinf(angle)) + offset.y * (cosf(angle)));
-	
-	/*
-	// revised version. This is meant to draw an axis-aligned capsule that then gets rotated to where it should be. It doesn't work...
-	m_Node->drawCircle(cocos2d::Vec2((startingPoint - position).x, 0.0F), radius, 0.0F, 30, false, colour);
-	m_Node->drawCircle(cocos2d::Vec2((endingPoint - position).x, 0.0F), radius, 0.0F, 30, false, colour);
-
-	m_Node->drawLine(startingPoint + offset - position, cocos2d::Vec2((endingPoint + offset - position).x, (startingPoint + offset - position).y), colour);
-	m_Node->drawLine(startingPoint - offset - position, cocos2d::Vec2((endingPoint - offset - position).x, (startingPoint - offset - position).y), colour);
-	*/
 
 	// original drawLines
 	// drawing the starting and ending circles. These now subtract the position of the capsule so that the centre is at (0, 0).
@@ -363,7 +319,6 @@ OOP::PrimitiveCapsule::PrimitiveCapsule(cocos2d::Vec2 startingPoint, cocos2d::Ve
 	m_Node->drawLine(startingPoint - offset - position, endingPoint - offset - position, colour);
 
 	m_Node->setPosition(position); // sets the position of the drawNode to where the capsule should be.
-	// m_Node->setRotation(m_theta);
 	m_Circle1 = startingPoint; // saves the location of the starting point as the location of the first circle.
 	m_Circle2 = endingPoint; // saves the location of the ending circle as the endingPoint of the capsule, which is where the circle was drawn.
 
@@ -492,33 +447,6 @@ OOP::PrimitiveGrid::PrimitiveGrid(cocos2d::Vec2 startingPoint, cocos2d::Vec2 end
 
 	m_Node->setPosition(POSITION); // sets the node to the position of the grid.
 	m_Node->setGlobalZOrder(10.3F); // sets the global z order of the grid. This is different from the global z order of other primitives.
-
-	/*
-	cocos2d::Vec2 tempVec;
-	m_Node->setAnchorPoint(cocos2d::Vec2(0.5F, 0.5F));
-
-	if (startingPoint.x > endingPoint.x) // switches the start point and end point if the ending point is before the starting point.
-	{
-		tempVec = startingPoint;
-		startingPoint = endingPoint;
-		endingPoint = tempVec;
-	}
-
-	// draws horizontal lines until the bounds of the grid are reached.
-	for (float i = 0; startingPoint.y + i < endingPoint.y; i += squareSize)
-		m_Node->drawLine(startingPoint + cocos2d::Vec2(0.0F, i), cocos2d::Vec2(endingPoint.x, startingPoint.y + i), colour); // draws a horizontal line
-
-	// vertical lines until the bounds of the grid are reached.
-	for (float i = 0; startingPoint.x + i < endingPoint.x; i += squareSize)
-		m_Node->drawLine(startingPoint + cocos2d::Vec2(i, 0.0F), cocos2d::Vec2(startingPoint.x + i, endingPoint.y), colour); // draws a vertical line
-
-
-	// if 'gridBox' is 'true', then a quadrilateral is drawn around the whole grid.
-	if (gridBox)
-		m_Node->drawRect(startingPoint, endingPoint, colour);
-
-	m_Position = startingPoint + (endingPoint - startingPoint) / 2; // gets the location of the primitive.
-	*/
 }
 
 // creates a grid using a size and position instead of a starting point and ending point.
@@ -535,7 +463,4 @@ OOP::PrimitiveGrid::~PrimitiveGrid() { /*m_Node->release();*/ }
 void OOP::PrimitiveGrid::setPosition(cocos2d::Vec2 position)
 {
 	m_Node->setPosition(position);
-	// because the position of the node isn't the same as the primitive itself, this calculation is needed.
-	//m_Node->setPosition(m_Node->getPosition() + position - m_Position);
-	//this->m_Position = position;
 }

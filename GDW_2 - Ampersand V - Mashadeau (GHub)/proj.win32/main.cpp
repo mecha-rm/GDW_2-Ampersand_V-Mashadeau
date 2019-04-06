@@ -7,8 +7,9 @@ Team: Ampersand V (&V)
 	- Nathan Tuck (100708651)
 	- Roderick “R.J.” Montague (100701758)
 	- Jason Lee (100698121)
-Date: 01/23/2019
-References: 
+		*Jason Lee was only part of this group for the purposes of Digital Game Design.
+		*Jason is not in Essential Mathematics for Games II, Object Oriented Programming, or Game Development Workshop II.
+Date: 04/03/2019 
 */
 
 /****************************************************************************
@@ -52,9 +53,9 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-	srand(time(0)); // seeding the randomizer
-	AllocConsole(); // creates a text console for debugging
-	freopen("CONOUT$", "w", stdout); // allows cout
+	//srand(time(0)); // seeding the randomizer. This was ultimately not used.
+	// AllocConsole(); // creates a text console for debugging purposes.
+	// freopen("CONOUT$", "w", stdout); // allows for cout.
 
     // create the application instance
     AppDelegate app;

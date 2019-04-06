@@ -1,4 +1,4 @@
-// Used to create primitive objects; re-used lab assignment
+// Used to create primitive objects; re-used lab assignment with a few modifications.
 #ifndef PRIMITIVES_H
 #define PRIMITIVES_H
 
@@ -8,22 +8,10 @@
 #include "cocos/2d/ccdrawnode.h"
 #include "2d/CCDrawNode.h"
 
-/*
-// Using a namespace caused issues, so it is no longer used.
-namespace cocos2d // includes specific classes from cocos2d
-{
-	class Vec2;
-	class Vec3;
-	class DrawNode;
-}
-*/
-
 namespace OOP
 {
 
-	// a base primitive class. This has a 'pure virtual' function so that the users can't create a primitive without specifying what shape it is.
-	// NOTE: this class originally didn't have a Primitive class, with said functions being hard coded for each derived class.
-	//	- these functions have been commented out, since they are no longer needed. If these comments are still in place, then they were not removed in time.
+	// a base primitive class. This has an abstract class so that the users can't create a primitive without specifying what shape it is.
 	class Primitive
 	{
 	public:
@@ -39,7 +27,7 @@ namespace OOP
 		cocos2d::Vec2 getPosition() const;
 
 		// sets the position of the primitive. This is a 'pure virtual' function so that an object of this type can't be created.
-		// the setPosition() was made virtual because some other things may need to be repositioned in specific primitives.
+		// the setPosition() was made virtual for the needs of specific derived classes.
 		virtual void setPosition(cocos2d::Vec2 position) = 0;
 
 		// returns whether the collision shape is visible or not.
@@ -58,23 +46,21 @@ namespace OOP
 		void setTag(int tag);
 			
 		// if 'true', then that means this shape is being used for collisions. If false, then this shape is NOT being used for collisions.
-		// Note that this parameter is essentially meaningless for grid and line primitives.
-		// primitives will have have their opacity cut by 50% when they are not active.
-		// this is true by default.
+		// note that this parameter is essentially meaningless for grid and line primitives.
+		// returns 'true' by default.
 		bool isActive() const;
 			
 		// sets whether a primitive is active or not, i.e. if it's open for collisions or not.
 		// Note that this parameter is essentially meaningless for grid and line primitives.
-		// primitives will have have their opacity cut by 50% when they are not active.
+		// opacity is set to 50% when 'active' is false.
 		void setActive(bool active);
 
-		// toggle's primitive functionality as a collision shape on and off.
+		// toggle's primitive functionality as a collision shape on and off (i.e. on -> off, off -> on)
 		// Note that this parameter is essentially meaningless for grid and line primitives.
-		// primitives will have have their opacity cut put at 50% when they are not active.
 		void setActive();
 
 		/*
-			* The type of the primitive. Use this for reference when you need to know what to downcast to.
+		 * The type of the primitive. Use this for reference when you need to know what to downcast to.
 			* 1 = sqaure (AABB)
 			* 2 = square (OBB)
 			* 3 = circle
@@ -82,20 +68,18 @@ namespace OOP
 			* 5 = capsule
 			* 6 = grid
 
-			// returns an id that identifies what type the primitive is.
+			// returns an ID that identifies what type the primitive is.
 		*/
 		short int getId();
 
 		/*
-		* collision between two primitives. Returns false if there is no check availble, at least one of the primitives is inactive, or if there is no collision.
-		* These are the accurate collision checks that have proper algorithms. 
+		 * collision between two primitives. Returns false if there is no check availble, at least one of the primitives is inactive, or if there is no collision.
+		 * These are the included collision checks.
 			* AABB - AABB
 			* Circle - Circle
 			* AABB - OBB
 		
-		* These are the 'inaccurate' collision checks. NONE OF THESE HAVE BEEN IMPLEMENTED.
-			* Capsule - Capsule (this cannot do OBB and Circle, so the circles are made into AABBs for the sake of the check)
-			* OBB - Circle (this makes the circle an AABB box in order for it to work).
+		* Some collision checks are not compatible due to lacking code for certain combinations.
 		*/
 		static bool collision(OOP::Primitive * p1, OOP::Primitive * p2);
 
@@ -121,7 +105,8 @@ namespace OOP
 		short int ID = 0;
 	};
 
-	class PrimitiveSquare : public Primitive // square
+	// Primitive Square class
+	class PrimitiveSquare : public Primitive
 	{
 	public:
 		// creates and initalizes drawNode for square.
@@ -157,7 +142,7 @@ namespace OOP
 
 	};
 
-	// a child of the PrimitiveSquare class that allows for rotations.
+	// a subclass of the PrimitiveSquare class that allows for rotations.
 	class PrimitiveOrientedSquare : public PrimitiveSquare
 	{
 	public:
